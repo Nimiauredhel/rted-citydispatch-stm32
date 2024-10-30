@@ -1,0 +1,346 @@
+\hypertarget{main_8c}{}\doxysection{Src/main.c File Reference}
+\label{main_8c}\index{Src/main.c@{Src/main.c}}
+
+
+\+: Main program body  
+
+
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}cmsis\+\_\+os.\+h\char`\"{}}\newline
+Include dependency graph for main.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{main_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_a5bee4f77f84f0c92aeb06fdccdb82573}\label{main_8c_a5bee4f77f84f0c92aeb06fdccdb82573}} 
+typedef Static\+Task\+\_\+t {\bfseries os\+Static\+Thread\+Def\+\_\+t}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8c_a70af21c671abfcc773614a9a4f63d920}{System\+Clock\+\_\+\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em System Clock Configuration. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_af475b2bcffc8ac53bc8e5eb934fc1c88}{Event\+Gen\+Task}} (void $\ast$argument)
+\begin{DoxyCompactList}\small\item\em Function implementing the event\+Gen\+Task thread. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a76fd42ab5eea65dfe446816f0beb1595}{Dispatcher\+Task}} (void $\ast$argument)
+\begin{DoxyCompactList}\small\item\em Function implementing the dispatcher\+Task thread. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a2abd7613d2a0ed87b890f90473043d4a}{Logger\+Task}} (void $\ast$argument)
+\begin{DoxyCompactList}\small\item\em Function implementing the logger\+Task thread. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_aa6c52cdee7e7dcebc89d6c59e2746413}{User\+Input\+Task}} (void $\ast$argument)
+\begin{DoxyCompactList}\small\item\em Function implementing the user\+Input\+Task thread. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\begin{DoxyCompactList}\small\item\em The application entry point. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a8a3b0ad512a6e6c6157440b68d395eac}{HAL\+\_\+\+TIM\+\_\+\+Period\+Elapsed\+Callback}} (TIM\+\_\+\+Handle\+Type\+Def $\ast$htim)
+\begin{DoxyCompactList}\small\item\em Period elapsed callback in non blocking mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a1730ffe1e560465665eb47d9264826f9}{Error\+\_\+\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em This function is executed in case of error occurrence. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_af7b2c26e44dadaaa798a5c3d82914ba7}\label{main_8c_af7b2c26e44dadaaa798a5c3d82914ba7}} 
+I2\+C\+\_\+\+Handle\+Type\+Def {\bfseries hi2c1}
+\item 
+\mbox{\Hypertarget{main_8c_aac2dceb5bba58c53cf7a0be6934c4df6}\label{main_8c_aac2dceb5bba58c53cf7a0be6934c4df6}} 
+RNG\+\_\+\+Handle\+Type\+Def {\bfseries hrng}
+\item 
+\mbox{\Hypertarget{main_8c_aa0c7fca836406ade332e1e3f1039d8ab}\label{main_8c_aa0c7fca836406ade332e1e3f1039d8ab}} 
+RTC\+\_\+\+Handle\+Type\+Def {\bfseries hrtc}
+\item 
+\mbox{\Hypertarget{main_8c_ab7c63c1b0f65db92b6a4ea19edf957e1}\label{main_8c_ab7c63c1b0f65db92b6a4ea19edf957e1}} 
+UART\+\_\+\+Handle\+Type\+Def {\bfseries huart3}
+\item 
+\mbox{\Hypertarget{main_8c_a3ec0d70a6cb9406d997fb3d006cc940d}\label{main_8c_a3ec0d70a6cb9406d997fb3d006cc940d}} 
+PCD\+\_\+\+Handle\+Type\+Def {\bfseries hpcd\+\_\+\+USB\+\_\+\+OTG\+\_\+\+FS}
+\item 
+\mbox{\Hypertarget{main_8c_a3367f4d39eb563401e0d809dc11b9655}\label{main_8c_a3367f4d39eb563401e0d809dc11b9655}} 
+os\+Thread\+Id\+\_\+t {\bfseries event\+Gen\+Task\+Handle}
+\item 
+\mbox{\Hypertarget{main_8c_a6e01eb02d48412135f7649a3adda554f}\label{main_8c_a6e01eb02d48412135f7649a3adda554f}} 
+uint32\+\_\+t {\bfseries event\+Gen\+Task\+Buffer} \mbox{[}128\mbox{]}
+\item 
+\mbox{\Hypertarget{main_8c_afe2de154962e9b7635ae7f85d30a5554}\label{main_8c_afe2de154962e9b7635ae7f85d30a5554}} 
+os\+Static\+Thread\+Def\+\_\+t {\bfseries event\+Gen\+Task\+Control\+Block}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries event\+Gen\+Task\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{main_8c_a73c0584c9a0db2c0b7504839139f6388}\label{main_8c_a73c0584c9a0db2c0b7504839139f6388}} 
+os\+Thread\+Id\+\_\+t {\bfseries dispatcher\+Task\+Handle}
+\item 
+\mbox{\Hypertarget{main_8c_ad0307327f59edd302a9fb70b5feca699}\label{main_8c_ad0307327f59edd302a9fb70b5feca699}} 
+uint32\+\_\+t {\bfseries dispatcher\+Task\+Buffer} \mbox{[}128\mbox{]}
+\item 
+\mbox{\Hypertarget{main_8c_acd6454f74359ac27aea1dea7d239e12f}\label{main_8c_acd6454f74359ac27aea1dea7d239e12f}} 
+os\+Static\+Thread\+Def\+\_\+t {\bfseries dispatcher\+Task\+Control\+Block}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries dispatcher\+Task\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{main_8c_a2e388479fe5c044beb8e4881c6346122}\label{main_8c_a2e388479fe5c044beb8e4881c6346122}} 
+os\+Thread\+Id\+\_\+t {\bfseries logger\+Task\+Handle}
+\item 
+\mbox{\Hypertarget{main_8c_a64c77ec82238fecbb15b75d5305551ae}\label{main_8c_a64c77ec82238fecbb15b75d5305551ae}} 
+uint32\+\_\+t {\bfseries logger\+Task\+Buffer} \mbox{[}128\mbox{]}
+\item 
+\mbox{\Hypertarget{main_8c_a2631d86b7bd12b570cf2b9b55c150daf}\label{main_8c_a2631d86b7bd12b570cf2b9b55c150daf}} 
+os\+Static\+Thread\+Def\+\_\+t {\bfseries logger\+Task\+Control\+Block}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries logger\+Task\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{main_8c_ac728d0856a9248edd3378e1d90cfb6e4}\label{main_8c_ac728d0856a9248edd3378e1d90cfb6e4}} 
+os\+Thread\+Id\+\_\+t {\bfseries user\+Input\+Task\+Handle}
+\item 
+\mbox{\Hypertarget{main_8c_ab5edcb63a28b6286a96ed50c3e70054a}\label{main_8c_ab5edcb63a28b6286a96ed50c3e70054a}} 
+uint32\+\_\+t {\bfseries user\+Input\+Task\+Buffer} \mbox{[}128\mbox{]}
+\item 
+\mbox{\Hypertarget{main_8c_a320b96a627cd43467141168b7c3988df}\label{main_8c_a320b96a627cd43467141168b7c3988df}} 
+os\+Static\+Thread\+Def\+\_\+t {\bfseries user\+Input\+Task\+Control\+Block}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries user\+Input\+Task\+\_\+attributes}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\+: Main program body 
+
+\begin{DoxyAttention}{Attention}
+
+\end{DoxyAttention}
+Copyright (c) 2024 STMicroelectronics. All rights reserved.
+
+This software is licensed under terms that can be found in the LICENSE file in the root directory of this software component. If no LICENSE file comes with this software, it is provided AS-\/\+IS. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8c_a76fd42ab5eea65dfe446816f0beb1595}\label{main_8c_a76fd42ab5eea65dfe446816f0beb1595}} 
+\index{main.c@{main.c}!DispatcherTask@{DispatcherTask}}
+\index{DispatcherTask@{DispatcherTask}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{DispatcherTask()}{DispatcherTask()}}
+{\footnotesize\ttfamily void Dispatcher\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{argument }\end{DoxyParamCaption})}
+
+
+
+Function implementing the dispatcher\+Task thread. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argument} & Not used \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_a1730ffe1e560465665eb47d9264826f9}\label{main_8c_a1730ffe1e560465665eb47d9264826f9}} 
+\index{main.c@{main.c}!Error\_Handler@{Error\_Handler}}
+\index{Error\_Handler@{Error\_Handler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{Error\_Handler()}{Error\_Handler()}}
+{\footnotesize\ttfamily void Error\+\_\+\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+This function is executed in case of error occurrence. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_af475b2bcffc8ac53bc8e5eb934fc1c88}\label{main_8c_af475b2bcffc8ac53bc8e5eb934fc1c88}} 
+\index{main.c@{main.c}!EventGenTask@{EventGenTask}}
+\index{EventGenTask@{EventGenTask}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{EventGenTask()}{EventGenTask()}}
+{\footnotesize\ttfamily void Event\+Gen\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{argument }\end{DoxyParamCaption})}
+
+
+
+Function implementing the event\+Gen\+Task thread. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argument} & Not used \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_a8a3b0ad512a6e6c6157440b68d395eac}\label{main_8c_a8a3b0ad512a6e6c6157440b68d395eac}} 
+\index{main.c@{main.c}!HAL\_TIM\_PeriodElapsedCallback@{HAL\_TIM\_PeriodElapsedCallback}}
+\index{HAL\_TIM\_PeriodElapsedCallback@{HAL\_TIM\_PeriodElapsedCallback}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_TIM\_PeriodElapsedCallback()}{HAL\_TIM\_PeriodElapsedCallback()}}
+{\footnotesize\ttfamily void HAL\+\_\+\+TIM\+\_\+\+Period\+Elapsed\+Callback (\begin{DoxyParamCaption}\item[{TIM\+\_\+\+Handle\+Type\+Def $\ast$}]{htim }\end{DoxyParamCaption})}
+
+
+
+Period elapsed callback in non blocking mode. 
+
+\begin{DoxyNote}{Note}
+This function is called when TIM1 interrupt took place, inside HAL\+\_\+\+TIM\+\_\+\+IRQHandler(). It makes a direct call to HAL\+\_\+\+Inc\+Tick() to increment a global variable \char`\"{}uw\+Tick\char`\"{} used as application time base. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em htim} & \+: TIM handle \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_a2abd7613d2a0ed87b890f90473043d4a}\label{main_8c_a2abd7613d2a0ed87b890f90473043d4a}} 
+\index{main.c@{main.c}!LoggerTask@{LoggerTask}}
+\index{LoggerTask@{LoggerTask}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{LoggerTask()}{LoggerTask()}}
+{\footnotesize\ttfamily void Logger\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{argument }\end{DoxyParamCaption})}
+
+
+
+Function implementing the logger\+Task thread. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argument} & Not used \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_a840291bc02cba5474a4cb46a9b9566fe}\label{main_8c_a840291bc02cba5474a4cb46a9b9566fe}} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+The application entry point. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em int} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{main_8c_a70af21c671abfcc773614a9a4f63d920}\label{main_8c_a70af21c671abfcc773614a9a4f63d920}} 
+\index{main.c@{main.c}!SystemClock\_Config@{SystemClock\_Config}}
+\index{SystemClock\_Config@{SystemClock\_Config}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{SystemClock\_Config()}{SystemClock\_Config()}}
+{\footnotesize\ttfamily void System\+Clock\+\_\+\+Config (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+System Clock Configuration. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+Configure LSE Drive Capability
+
+Configure the main internal regulator output voltage
+
+Initializes the RCC Oscillators according to the specified parameters in the RCC\+\_\+\+Osc\+Init\+Type\+Def structure.
+
+Initializes the CPU, AHB and APB buses clocks\mbox{\Hypertarget{main_8c_aa6c52cdee7e7dcebc89d6c59e2746413}\label{main_8c_aa6c52cdee7e7dcebc89d6c59e2746413}} 
+\index{main.c@{main.c}!UserInputTask@{UserInputTask}}
+\index{UserInputTask@{UserInputTask}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{UserInputTask()}{UserInputTask()}}
+{\footnotesize\ttfamily void User\+Input\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{argument }\end{DoxyParamCaption})}
+
+
+
+Function implementing the user\+Input\+Task thread. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argument} & Not used \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{main_8c_a11bb5110b251f4265f06d3e59252359a}\label{main_8c_a11bb5110b251f4265f06d3e59252359a}} 
+\index{main.c@{main.c}!dispatcherTask\_attributes@{dispatcherTask\_attributes}}
+\index{dispatcherTask\_attributes@{dispatcherTask\_attributes}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{dispatcherTask\_attributes}{dispatcherTask\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t dispatcher\+Task\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}dispatcherTask"{}},}
+\DoxyCodeLine{  .cb\_mem = \&dispatcherTaskControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(dispatcherTaskControlBlock),}
+\DoxyCodeLine{  .stack\_mem = \&dispatcherTaskBuffer[0],}
+\DoxyCodeLine{  .stack\_size = \textcolor{keyword}{sizeof}(dispatcherTaskBuffer),}
+\DoxyCodeLine{  .priority = (osPriority\_t) osPriorityNormal,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{main_8c_ab56c561d6aebf1268b0448dc1f2d6c17}\label{main_8c_ab56c561d6aebf1268b0448dc1f2d6c17}} 
+\index{main.c@{main.c}!eventGenTask\_attributes@{eventGenTask\_attributes}}
+\index{eventGenTask\_attributes@{eventGenTask\_attributes}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{eventGenTask\_attributes}{eventGenTask\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t event\+Gen\+Task\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}eventGenTask"{}},}
+\DoxyCodeLine{  .cb\_mem = \&eventGenTaskControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(eventGenTaskControlBlock),}
+\DoxyCodeLine{  .stack\_mem = \&eventGenTaskBuffer[0],}
+\DoxyCodeLine{  .stack\_size = \textcolor{keyword}{sizeof}(eventGenTaskBuffer),}
+\DoxyCodeLine{  .priority = (osPriority\_t) osPriorityNormal,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{main_8c_a4490fa52f97a3b348bf5e4c6995e41f1}\label{main_8c_a4490fa52f97a3b348bf5e4c6995e41f1}} 
+\index{main.c@{main.c}!loggerTask\_attributes@{loggerTask\_attributes}}
+\index{loggerTask\_attributes@{loggerTask\_attributes}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{loggerTask\_attributes}{loggerTask\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t logger\+Task\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}loggerTask"{}},}
+\DoxyCodeLine{  .cb\_mem = \&loggerTaskControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(loggerTaskControlBlock),}
+\DoxyCodeLine{  .stack\_mem = \&loggerTaskBuffer[0],}
+\DoxyCodeLine{  .stack\_size = \textcolor{keyword}{sizeof}(loggerTaskBuffer),}
+\DoxyCodeLine{  .priority = (osPriority\_t) osPriorityNormal,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{main_8c_a82e0f338a0535b8208c4ddc7874109ab}\label{main_8c_a82e0f338a0535b8208c4ddc7874109ab}} 
+\index{main.c@{main.c}!userInputTask\_attributes@{userInputTask\_attributes}}
+\index{userInputTask\_attributes@{userInputTask\_attributes}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{userInputTask\_attributes}{userInputTask\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t user\+Input\+Task\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}userInputTask"{}},}
+\DoxyCodeLine{  .cb\_mem = \&userInputTaskControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(userInputTaskControlBlock),}
+\DoxyCodeLine{  .stack\_mem = \&userInputTaskBuffer[0],}
+\DoxyCodeLine{  .stack\_size = \textcolor{keyword}{sizeof}(userInputTaskBuffer),}
+\DoxyCodeLine{  .priority = (osPriority\_t) osPriorityNormal,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
