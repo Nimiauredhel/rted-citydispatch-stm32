@@ -22,11 +22,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "city_dispatch/simulation_control.h"
 
-#include "city_dispatch/simulation_output.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -55,9 +56,14 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
+uint32_t defaultTaskBuffer[ 128 ];
+osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .cb_mem = &defaultTaskControlBlock,
+  .cb_size = sizeof(defaultTaskControlBlock),
+  .stack_mem = &defaultTaskBuffer[0],
+  .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
@@ -146,6 +152,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  //simulation_start_control_task();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -551,12 +558,14 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  output_print_blocking("Initialized.\n\r", 14);
+  osDelay(pdMS_TO_TICKS(1000));
+  simulation_start_control_task();
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    output_print_blocking("hello\n\r", 7);
-    osDelay(pdMS_TO_TICKS(1000));
+    osDelay(pdMS_TO_TICKS(10000));
   }
   /* USER CODE END 5 */
 }
