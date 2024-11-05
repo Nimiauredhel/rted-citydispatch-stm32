@@ -23,10 +23,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "city_dispatch/simulation_output.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -53,52 +53,11 @@ UART_HandleTypeDef huart3;
 
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
-/* Definitions for eventGenTask */
-osThreadId_t eventGenTaskHandle;
-uint32_t eventGenTaskBuffer[ 128 ];
-osStaticThreadDef_t eventGenTaskControlBlock;
-const osThreadAttr_t eventGenTask_attributes = {
-  .name = "eventGenTask",
-  .cb_mem = &eventGenTaskControlBlock,
-  .cb_size = sizeof(eventGenTaskControlBlock),
-  .stack_mem = &eventGenTaskBuffer[0],
-  .stack_size = sizeof(eventGenTaskBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for dispatcherTask */
-osThreadId_t dispatcherTaskHandle;
-uint32_t dispatcherTaskBuffer[ 128 ];
-osStaticThreadDef_t dispatcherTaskControlBlock;
-const osThreadAttr_t dispatcherTask_attributes = {
-  .name = "dispatcherTask",
-  .cb_mem = &dispatcherTaskControlBlock,
-  .cb_size = sizeof(dispatcherTaskControlBlock),
-  .stack_mem = &dispatcherTaskBuffer[0],
-  .stack_size = sizeof(dispatcherTaskBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for loggerTask */
-osThreadId_t loggerTaskHandle;
-uint32_t loggerTaskBuffer[ 128 ];
-osStaticThreadDef_t loggerTaskControlBlock;
-const osThreadAttr_t loggerTask_attributes = {
-  .name = "loggerTask",
-  .cb_mem = &loggerTaskControlBlock,
-  .cb_size = sizeof(loggerTaskControlBlock),
-  .stack_mem = &loggerTaskBuffer[0],
-  .stack_size = sizeof(loggerTaskBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for userInputTask */
-osThreadId_t userInputTaskHandle;
-uint32_t userInputTaskBuffer[ 128 ];
-osStaticThreadDef_t userInputTaskControlBlock;
-const osThreadAttr_t userInputTask_attributes = {
-  .name = "userInputTask",
-  .cb_mem = &userInputTaskControlBlock,
-  .cb_size = sizeof(userInputTaskControlBlock),
-  .stack_mem = &userInputTaskBuffer[0],
-  .stack_size = sizeof(userInputTaskBuffer),
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
@@ -113,10 +72,7 @@ static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_RNG_Init(void);
-void EventGenTask(void *argument);
-void DispatcherTask(void *argument);
-void LoggerTask(void *argument);
-void UserInputTask(void *argument);
+void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -185,17 +141,8 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of eventGenTask */
-  eventGenTaskHandle = osThreadNew(EventGenTask, NULL, &eventGenTask_attributes);
-
-  /* creation of dispatcherTask */
-  dispatcherTaskHandle = osThreadNew(DispatcherTask, NULL, &dispatcherTask_attributes);
-
-  /* creation of loggerTask */
-  loggerTaskHandle = osThreadNew(LoggerTask, NULL, &loggerTask_attributes);
-
-  /* creation of userInputTask */
-  userInputTaskHandle = osThreadNew(UserInputTask, NULL, &userInputTask_attributes);
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -595,76 +542,23 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_EventGenTask */
+/* USER CODE BEGIN Header_StartDefaultTask */
 /**
-  * @brief  Function implementing the eventGenTask thread.
+  * @brief  Function implementing the defaultTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_EventGenTask */
-void EventGenTask(void *argument)
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    output_print_blocking("hello\n\r", 7);
+    osDelay(pdMS_TO_TICKS(1000));
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_DispatcherTask */
-/**
-* @brief Function implementing the dispatcherTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_DispatcherTask */
-void DispatcherTask(void *argument)
-{
-  /* USER CODE BEGIN DispatcherTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END DispatcherTask */
-}
-
-/* USER CODE BEGIN Header_LoggerTask */
-/**
-* @brief Function implementing the loggerTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_LoggerTask */
-void LoggerTask(void *argument)
-{
-  /* USER CODE BEGIN LoggerTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END LoggerTask */
-}
-
-/* USER CODE BEGIN Header_UserInputTask */
-/**
-* @brief Function implementing the userInputTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_UserInputTask */
-void UserInputTask(void *argument)
-{
-  /* USER CODE BEGIN UserInputTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END UserInputTask */
 }
 
 /**
