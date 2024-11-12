@@ -28,6 +28,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
+typedef StaticQueue_t osStaticMessageQDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -65,6 +66,22 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_mem = &defaultTaskBuffer[0],
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for staticQueue */
+osMessageQueueId_t staticQueueHandle;
+uint8_t myQueue01Buffer[ 16 * sizeof( uint16_t ) ];
+osStaticMessageQDef_t myQueue01ControlBlock;
+const osMessageQueueAttr_t staticQueue_attributes = {
+  .name = "staticQueue",
+  .cb_mem = &myQueue01ControlBlock,
+  .cb_size = sizeof(myQueue01ControlBlock),
+  .mq_mem = &myQueue01Buffer,
+  .mq_size = sizeof(myQueue01Buffer)
+};
+/* Definitions for dynamicQueue */
+osMessageQueueId_t dynamicQueueHandle;
+const osMessageQueueAttr_t dynamicQueue_attributes = {
+  .name = "dynamicQueue"
 };
 /* USER CODE BEGIN PV */
 
@@ -142,6 +159,13 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of staticQueue */
+  staticQueueHandle = osMessageQueueNew (16, sizeof(uint16_t), &staticQueue_attributes);
+
+  /* creation of dynamicQueue */
+  dynamicQueueHandle = osMessageQueueNew (16, sizeof(uint16_t), &dynamicQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -152,7 +176,6 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  //simulation_start_control_task();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -558,10 +581,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  output_print_blocking("Initialized.\n\r", 14);
-  osDelay(pdMS_TO_TICKS(1000));
-  simulation_start_control_task();
   /* USER CODE BEGIN 5 */
+
+  simulation_start_control_task();
+
   /* Infinite loop */
   for(;;)
   {
