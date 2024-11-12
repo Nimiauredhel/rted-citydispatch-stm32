@@ -7,9 +7,9 @@
 
 #include "city_inbox.h"
 
-uint8_t inboxLowPriorityQueueBuffer[ 16 * sizeof( uint16_t ) ];
-uint8_t inboxMediumPriorityQueueBuffer[ 16 * sizeof( uint16_t ) ];
-uint8_t inboxHighPriorityQueueBuffer[ 16 * sizeof( uint16_t ) ];
+uint8_t inboxLowPriorityQueueBuffer[ INCOMING_QUEUE_LENGTH * sizeof( CityEvent_t ) ];
+uint8_t inboxMediumPriorityQueueBuffer[ INCOMING_QUEUE_LENGTH * sizeof( CityEvent_t ) ];
+uint8_t inboxHighPriorityQueueBuffer[ INCOMING_QUEUE_LENGTH * sizeof( CityEvent_t ) ];
 
 StaticQueue_t inboxLowPriorityQueueControlBlock;
 StaticQueue_t inboxMediumPriorityQueueControlBlock;
@@ -38,3 +38,12 @@ const osMessageQueueAttr_t inboxHighPriorityQueue_attributes = {
   .mq_mem = &inboxHighPriorityQueueBuffer,
   .mq_size = sizeof(inboxHighPriorityQueueBuffer)
 };
+
+CityInbox_t city_inbox;
+
+void city_inbox_initialize()
+{
+  city_inbox.inboxLowPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxLowPriorityQueue_attributes);
+  city_inbox.inboxMediumPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxMediumPriorityQueue_attributes);
+  city_inbox.inboxHighPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxHighPriorityQueue_attributes);
+}

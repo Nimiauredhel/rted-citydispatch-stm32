@@ -9,7 +9,7 @@
 
 /* Definitions for event gen task */
 osThreadId_t eventGenTaskHandle;
-const osThreadAttr_t eventGenTask_attributes = {
+const static osThreadAttr_t eventGenTask_attributes = {
   .name = "eventGenTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
@@ -17,10 +17,18 @@ const osThreadAttr_t eventGenTask_attributes = {
 
 static void event_gen_task();
 
-void event_gen_create_task()
+CityEvent_t test_event;
+char *test_event_message = "This is a test event.\n\r";
+
+
+void event_gen_initialize()
 {
+  test_event.code = 1;
+  test_event.description = test_event_message;
+  test_event.ticks = pdMS_TO_TICKS(1000);
   eventGenTaskHandle = osThreadNew(event_gen_task, NULL, &eventGenTask_attributes);
 }
+
 
 static void event_gen_task()
 {
@@ -28,7 +36,8 @@ static void event_gen_task()
 
 	for(;;)
 	{
-		osDelay(pdMS_TO_TICKS(1000));
+		osDelay(pdMS_TO_TICKS(2000));
 		output_print_blocking("Event generation.\n\r", 19);
+		osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &test_event, 0, pdMS_TO_TICKS(250));
 	}
 }

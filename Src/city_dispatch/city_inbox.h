@@ -9,9 +9,17 @@
 #define CITY_INBOX_H_
 
 #include "cmsis_os.h"
+#include "simulation_defs.h"
 
-//osMessageQueueId_t inboxLowPriorityQueueHandle;
-//osMessageQueueId_t inboxMediumPriorityQueueHandle;
-//osMessageQueueId_t inboxHighPriorityQueueHandle;
+typedef struct CityInbox
+{
+	osMessageQueueId_t inboxLowPriorityQueueHandle;
+	osMessageQueueId_t inboxMediumPriorityQueueHandle;
+	osMessageQueueId_t inboxHighPriorityQueueHandle;
+} CityInbox_t;
+
+extern CityInbox_t city_inbox;
+
+void city_inbox_initialize();
 
 #endif /* CITY_INBOX_H_ */

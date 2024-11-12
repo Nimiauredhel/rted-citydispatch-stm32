@@ -46,7 +46,9 @@ static void simulation_control_task(void *argument)
 static void simulation_start()
 {
   output_print_blocking("Simulation start.\n\r", 19);
-  event_gen_create_task();
+  city_inbox_initialize();
+  city_dispatcher_initialize();
+  event_gen_initialize();
 }
 
 static void simulation_stop()
