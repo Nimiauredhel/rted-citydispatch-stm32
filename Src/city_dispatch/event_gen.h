@@ -9,7 +9,6 @@
 #define EVENT_GEN_H_
 
 #include <stdio.h>
-#include <string.h>
 #include "stm32f7xx_hal.h"
 #include "FreeRTOSConfig.h"
 #include "event_config.h"

@@ -11,7 +11,6 @@
 extern RNG_HandleTypeDef hrng;
 
 /* Definitions for event gen task */
-osThreadId_t eventGenTaskHandle;
 
 const static osThreadAttr_t eventGenTask_attributes = {
   .name = "eventGenTask",
@@ -19,10 +18,10 @@ const static osThreadAttr_t eventGenTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 
+static osThreadId_t eventGenTaskHandle;
 static EventGenState_t eventGenState;
 
 static void event_gen_task();
-
 
 void event_gen_initialize()
 {
@@ -32,10 +31,9 @@ void event_gen_initialize()
   eventGenTaskHandle = osThreadNew(event_gen_task, NULL, &eventGenTask_attributes);
 }
 
-
 static void event_gen_task()
 {
-	output_print_blocking("Event generation init.\n\r", 24);
+	output_print_blocking_autosize("Event generation init.\n\r");
 
 	for(;;)
 	{
@@ -46,11 +44,11 @@ static void event_gen_task()
              & (EVENT_GENERATOR_SLEEP_MAX - EVENT_GENERATOR_SLEEP_MIN))
             + EVENT_GENERATOR_SLEEP_MIN;
         sprintf(eventGenState.output_buffer, "Next event in %lums\n\r", eventGenState.next_delay);
-        output_print_blocking(eventGenState.output_buffer, strlen(eventGenState.output_buffer) + 1);
+        output_print_blocking_autosize(eventGenState.output_buffer);
 		osDelay(eventGenState.next_delay);
-		output_print_blocking("Event generated.\n\r", 18);
+		output_print_blocking_autosize("Event generated, ");
 		osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &eventGenState.test_event, 0, osWaitForever);
         sprintf(eventGenState.output_buffer, "%lu events in queue.\n\r", osMessageQueueGetCount(city_inbox.inboxMediumPriorityQueueHandle));
-        output_print_blocking(eventGenState.output_buffer, strlen(eventGenState.output_buffer) + 1);
+        output_print_blocking_autosize(eventGenState.output_buffer);
 	}
 }
