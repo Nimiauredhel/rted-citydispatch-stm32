@@ -26,7 +26,56 @@
 #define EVENT_GENERATOR_SLEEP_MIN (pdMS_TO_TICKS(2000))
 #define LOGGER_SLEEP (pdMS_TO_TICKS(200))
 
-/* Type defs */
+/* Hard-coded structured string structs.
+ * felt smart might delete later
+ */
+typedef struct String
+{
+	uint8_t size;
+	char text[];
+} String_t;
+typedef struct String6
+{
+	uint8_t size;
+	char text[7];
+} String6_t;
+typedef struct String14
+{
+	uint8_t size;
+	char text[15];
+} String14_t;
+typedef struct String22
+{
+	uint8_t size;
+	char text[23];
+} String22_t;
+typedef struct String30
+{
+	uint8_t size;
+	char text[31];
+} String30_t;
+typedef struct String38
+{
+	uint8_t size;
+	char text[39];
+} String38_t;
+typedef struct String46
+{
+	uint8_t size;
+	char text[47];
+} String46_t;
+typedef struct String54
+{
+	uint8_t size;
+	char text[55];
+} String54_t;
+typedef struct String62
+{
+	uint8_t size;
+	char text[63];
+} String62_t;
+
+/* Simulation type defs */
 typedef enum DepartmentCode
 {
     MEDICAL = 0,
@@ -38,7 +87,7 @@ typedef struct CityEvent
 {
     TickType_t ticks;
     DepartmentCode_t code;
-    char *description;
+    String46_t description;
 } CityEvent_t;
 typedef struct CityDepartmentAgentState
 {
@@ -46,20 +95,6 @@ typedef struct CityDepartmentAgentState
     char name[16];
     CityEvent_t currentEvent;
 } CityDepartmentAgentState_t;
-typedef struct CityDepartment
-{
-    DepartmentCode_t code;
-    BaseType_t status;
-    StaticQueue_t jobQueue;
-    uint8_t agentCount;
-    CityDepartmentAgentState_t *agentStates;
-} CityDepartment_t;
-typedef struct CityData
-{
-    BaseType_t dispatcherStatus;
-    StaticQueue_t incomingQueue;
-    CityDepartment_t departments[NUM_DEPARTMENTS];
-} CityData_t;
 typedef struct CityEventTemplate
 {
     TickType_t minTicks;
@@ -67,4 +102,6 @@ typedef struct CityEventTemplate
     DepartmentCode_t code;
     char *description;
 } CityEventTemplate_t;
+
+
 #endif /* SIMULATION_DEFS_H_ */

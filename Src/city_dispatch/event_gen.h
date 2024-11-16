@@ -13,9 +13,10 @@
 #include "FreeRTOSConfig.h"
 #include "event_config.h"
 #include "city_inbox.h"
-#include "simulation_output.h"
 #include "simulation_defs.h"
+#include "utils.h"
 #include "cmsis_os.h"
+#include "serial_output.h"
 
 typedef struct EventGenState
 {

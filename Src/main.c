@@ -67,16 +67,23 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for dynamicTask */
+osThreadId_t dynamicTaskHandle;
+const osThreadAttr_t dynamicTask_attributes = {
+  .name = "dynamicTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for staticQueue */
 osMessageQueueId_t staticQueueHandle;
-uint8_t myQueue01Buffer[ 16 * sizeof( uint16_t ) ];
-osStaticMessageQDef_t myQueue01ControlBlock;
+uint8_t staticQueueBuffer[ 16 * sizeof( uint16_t ) ];
+osStaticMessageQDef_t staticQueueControlBlock;
 const osMessageQueueAttr_t staticQueue_attributes = {
   .name = "staticQueue",
-  .cb_mem = &myQueue01ControlBlock,
-  .cb_size = sizeof(myQueue01ControlBlock),
-  .mq_mem = &myQueue01Buffer,
-  .mq_size = sizeof(myQueue01Buffer)
+  .cb_mem = &staticQueueControlBlock,
+  .cb_size = sizeof(staticQueueControlBlock),
+  .mq_mem = &staticQueueBuffer,
+  .mq_size = sizeof(staticQueueBuffer)
 };
 /* Definitions for dynamicQueue */
 osMessageQueueId_t dynamicQueueHandle;
@@ -96,6 +103,7 @@ static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_RNG_Init(void);
 void StartDefaultTask(void *argument);
+void StartDynamicTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -173,6 +181,9 @@ int main(void)
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of dynamicTask */
+  dynamicTaskHandle = osThreadNew(StartDynamicTask, NULL, &dynamicTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -591,6 +602,24 @@ void StartDefaultTask(void *argument)
     osDelay(pdMS_TO_TICKS(10000));
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StartDynamicTask */
+/**
+* @brief Function implementing the dynamicTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartDynamicTask */
+void StartDynamicTask(void *argument)
+{
+  /* USER CODE BEGIN StartDynamicTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartDynamicTask */
 }
 
 /**

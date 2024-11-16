@@ -9,9 +9,10 @@
 #define CITY_DISPATCHER_H_
 
 #include <stdio.h>
+#include "utils.h"
 #include "simulation_defs.h"
-#include "simulation_output.h"
 #include "city_inbox.h"
+#include "serial_output.h"
 
 typedef struct DispatcherState
 {

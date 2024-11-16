@@ -12,9 +12,9 @@
 
 #include "city_dispatcher.h"
 #include "simulation_state.h"
-#include "simulation_output.h"
 #include "event_gen.h"
 #include "city_inbox.h"
+#include "serial_output.h"
 
 void simulation_start_control_task();
 
