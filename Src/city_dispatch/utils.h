@@ -8,6 +8,7 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#include <stdlib.h>
 #include <string.h>
 #include "simulation_defs.h"
 
@@ -22,5 +23,6 @@ String38_t utils_structure_string38(char *string);
 String46_t utils_structure_string46(char *string);
 String54_t utils_structure_string54(char *string);
 String62_t utils_structure_string62(char *string);
+String_t *utils_structure_string_alloc(char *string);
 
 #endif /* UTILS_H_ */

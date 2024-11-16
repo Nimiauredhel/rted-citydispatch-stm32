@@ -151,3 +151,48 @@ String62_t utils_structure_string62(char *string)
 
 	return new_string;
 }
+
+String_t *utils_structure_string_alloc(char *string)
+{
+	uint8_t length = strlen(string);
+	void *ptr;
+
+	switch (length) {
+		case 0 ... 6:
+			ptr = malloc(sizeof(String6_t));
+			*(String6_t *)ptr = utils_structure_string6(string);
+			break;
+		case 7 ... 14:
+			ptr = malloc(sizeof(String14_t));
+			*(String14_t *)ptr = utils_structure_string14(string);
+			break;
+		case 15 ... 22:
+			ptr = malloc(sizeof(String22_t));
+			*(String22_t *)ptr = utils_structure_string22(string);
+			break;
+		case 23 ... 30:
+			ptr = malloc(sizeof(String30_t));
+			*(String30_t *)ptr = utils_structure_string30(string);
+			break;
+		case 31 ... 38:
+			ptr = malloc(sizeof(String38_t));
+			*(String38_t *)ptr = utils_structure_string38(string);
+			break;
+		case 39 ... 46:
+			ptr = malloc(sizeof(String46_t));
+			*(String46_t *)ptr = utils_structure_string46(string);
+			break;
+		case 47 ... 54:
+			ptr = malloc(sizeof(String54_t));
+			*(String54_t *)ptr = utils_structure_string54(string);
+			break;
+		case 55 ... 62:
+			ptr = malloc(sizeof(String62_t));
+			*(String62_t *)ptr = utils_structure_string62(string);
+			break;
+		default:
+			return NULL;
+	}
+
+	return (String_t *)ptr;
+}

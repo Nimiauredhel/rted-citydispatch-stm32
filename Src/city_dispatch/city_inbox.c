@@ -47,7 +47,6 @@ const osMessageQueueAttr_t inboxHighPriorityQueue_attributes = {
  */
 CityInbox_t city_inbox;
 
-
 /*
  * Public City Inbox Initialization Function
  */

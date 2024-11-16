@@ -43,9 +43,12 @@ static void simulation_control_task(void *argument)
   }
 }
 
+String22_t msg_sim_start = {.size = 19, .text = "Simulation start.\n\r"};
+
 static void simulation_start()
 {
-  output_print_blocking("Simulation start.\n\r", 19);
+  serial_printer_initialize();
+  serial_printer_spool_string((String_t *)&msg_sim_start);
   city_inbox_initialize();
   city_dispatcher_initialize();
   event_gen_initialize();
