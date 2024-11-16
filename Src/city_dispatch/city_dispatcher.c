@@ -24,20 +24,31 @@ void city_dispatcher_initialize()
 
 osStatus_t queue_read_status;
 CityEvent_t current_event_buffer;
-size_t desc_length = 0;
+uint16_t timeoutMs = 5000;
+char output_buffer[48];
 
 static void city_dispatcher_task()
 {
-	output_print_blocking("City dispatcher init.\n\r", 24);
+	sprintf(output_buffer, "City dispatcher init.\n\r");
+	output_print_blocking(output_buffer, strlen(output_buffer) + 1);
 	osDelay(pdMS_TO_TICKS(2000));
 
 	for(;;)
 	{
 		output_print_blocking("City dispatcher awaiting message.\n\r", 36);
-		queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &current_event_buffer, NULL, osWaitForever);
-		output_print_blocking("Message received!\n\r", 20);
-		desc_length = strlen(current_event_buffer.description) + 1;
-		output_print_blocking(current_event_buffer.description, desc_length);
+		queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &current_event_buffer, NULL, pdMS_TO_TICKS(timeoutMs));
+
+		if (queue_read_status == osErrorTimeout)
+		{
+			sprintf(output_buffer, "Dispatcher timed out after %hums\n\r", timeoutMs);
+			output_print_blocking(output_buffer, strlen(output_buffer) + 1);
+		}
+		else
+		{
+			sprintf(output_buffer, "Message received: ");
+			output_print_blocking(output_buffer, strlen(output_buffer) + 1);
+			output_print_blocking(current_event_buffer.description, strlen(current_event_buffer.description) + 1);
+		}
 	}
 }
 

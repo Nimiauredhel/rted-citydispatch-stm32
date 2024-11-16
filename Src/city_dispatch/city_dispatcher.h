@@ -8,6 +8,7 @@
 #ifndef CITY_DISPATCHER_H_
 #define CITY_DISPATCHER_H_
 
+#include <stdio.h>
 #include <string.h>
 #include "simulation_defs.h"
 #include "simulation_output.h"
