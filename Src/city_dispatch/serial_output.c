@@ -65,7 +65,7 @@ void serial_printer_spool_string(String_t *string)
 	osMessageQueuePut(serialPrinterQueueHandle, &string, 0, osWaitForever);
 }
 
-void output_print_blocking_autosize(char *string)
+static void output_print_blocking_autosize(char *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -74,7 +74,7 @@ void output_print_blocking_autosize(char *string)
 	}
 }
 
-void output_print_irq(char *string, uint16_t size)
+static void output_print_irq(char *string, uint16_t size)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -83,7 +83,7 @@ void output_print_irq(char *string, uint16_t size)
 	}
 }
 
-void output_print_string_irq(String_t *string)
+static void output_print_string_irq(String_t *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -92,7 +92,7 @@ void output_print_string_irq(String_t *string)
 	}
 }
 
-void output_print_irq_autosize(char *string)
+static void output_print_irq_autosize(char *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -101,7 +101,7 @@ void output_print_irq_autosize(char *string)
 	}
 }
 
-void output_print_blocking(char *string, uint16_t size)
+static void output_print_blocking(char *string, uint16_t size)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -110,7 +110,7 @@ void output_print_blocking(char *string, uint16_t size)
 	}
 }
 
-void output_print_string_blocking(String_t *string)
+static void output_print_string_blocking(String_t *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)

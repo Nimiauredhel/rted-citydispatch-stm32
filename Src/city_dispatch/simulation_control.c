@@ -33,7 +33,6 @@ void simulation_start_control_task()
   */
 static void simulation_control_task(void *argument)
 {
-  output_print_blocking("Control task.\n\r", 15);
   osDelay(pdMS_TO_TICKS(1000));
   simulation_start();
 
@@ -56,5 +55,5 @@ static void simulation_start()
 
 static void simulation_stop()
 {
-  output_print_blocking("Simulation stop.\n\r", 18);
+  serial_printer_spool_chars("Simulation stop.\n\r");
 }

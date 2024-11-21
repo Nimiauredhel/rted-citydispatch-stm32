@@ -33,7 +33,7 @@ void event_gen_initialize()
 
 static void event_gen_task()
 {
-	output_print_blocking_autosize("Event generation init.\n\r");
+	serial_printer_spool_chars("Event generation init.\n\r");
 
 	for(;;)
 	{
@@ -44,11 +44,11 @@ static void event_gen_task()
              & (EVENT_GENERATOR_SLEEP_MAX - EVENT_GENERATOR_SLEEP_MIN))
             + EVENT_GENERATOR_SLEEP_MIN;
         sprintf(eventGenState.output_buffer, "Next event in %lums\n\r", eventGenState.next_delay);
-        output_print_blocking_autosize(eventGenState.output_buffer);
+        serial_printer_spool_chars(eventGenState.output_buffer);
 		osDelay(eventGenState.next_delay);
-		output_print_blocking_autosize("Event generated, ");
+		serial_printer_spool_chars("Event generated, ");
 		osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &eventGenState.test_event, 0, osWaitForever);
         sprintf(eventGenState.output_buffer, "%lu events in queue.\n\r", osMessageQueueGetCount(city_inbox.inboxMediumPriorityQueueHandle));
-        output_print_blocking_autosize(eventGenState.output_buffer);
+        serial_printer_spool_chars(eventGenState.output_buffer);
 	}
 }

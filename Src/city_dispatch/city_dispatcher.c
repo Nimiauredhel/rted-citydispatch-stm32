@@ -44,23 +44,23 @@ void city_dispatcher_initialize()
 
 static void city_dispatcher_task()
 {
-	output_print_string_blocking((String_t *)&msg_task_init);
+	serial_printer_spool_string((String_t *)&msg_task_init);
 	osDelay(pdMS_TO_TICKS(2000));
 
 	for(;;)
 	{
-		output_print_string_blocking((String_t *)&msg_task_waiting);
+		serial_printer_spool_string((String_t *)&msg_task_waiting);
 		dispatcherState.queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &dispatcherState.current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
 
 		if (dispatcherState.queue_read_status == osErrorTimeout)
 		{
 			sprintf(dispatcherState.output_buffer, "Dispatcher timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
-			output_print_blocking_autosize(dispatcherState.output_buffer);
+			serial_printer_spool_chars(dispatcherState.output_buffer);
 		}
 		else
 		{
-			output_print_string_blocking((String_t *)&msg_task_received);
-			output_print_string_blocking((String_t *)&(dispatcherState.current_event_buffer.description));
+			serial_printer_spool_string((String_t *)&msg_task_received);
+			serial_printer_spool_string((String_t *)&(dispatcherState.current_event_buffer.description));
 		}
 	}
 }
