@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#include "serial_output.h"
+#include "serial_printer.h"
 #include "simulation_defs.h"
 
 typedef struct DepartmentState

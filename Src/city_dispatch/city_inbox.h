@@ -21,5 +21,6 @@ typedef struct CityInbox
 extern CityInbox_t city_inbox;
 
 void city_inbox_initialize();
+void city_inbox_clear();
 
 #endif /* CITY_INBOX_H_ */

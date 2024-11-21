@@ -12,7 +12,7 @@
 #include "utils.h"
 #include "simulation_defs.h"
 #include "city_inbox.h"
-#include "serial_output.h"
+#include "serial_printer.h"
 
 typedef struct DispatcherState
 {
@@ -22,5 +22,7 @@ typedef struct DispatcherState
 } DispatcherState_t;
 
 void city_dispatcher_initialize(void);
+void city_dispatcher_start();
+void city_dispatcher_stop();
 
 #endif /* CITY_DISPATCHER_H_ */

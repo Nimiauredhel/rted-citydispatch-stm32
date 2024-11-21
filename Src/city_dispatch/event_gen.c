@@ -29,6 +29,17 @@ void event_gen_initialize()
   eventGenState.test_event.description = utils_structure_string46("This is a test event.\n\r");
   eventGenState.test_event.ticks = pdMS_TO_TICKS(1000);
   eventGenTaskHandle = osThreadNew(event_gen_task, NULL, &eventGenTask_attributes);
+  event_gen_stop();
+}
+
+void event_gen_start()
+{
+	osThreadResume(eventGenTaskHandle);
+}
+
+void event_gen_stop()
+{
+	osThreadSuspend(eventGenTaskHandle);
 }
 
 static void event_gen_task()

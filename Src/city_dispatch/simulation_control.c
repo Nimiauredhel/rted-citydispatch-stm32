@@ -8,8 +8,13 @@
 #include "simulation_control.h"
 
 static void simulation_control_task(void *argument);
+static void simulation_initialize();
 static void simulation_start();
 static void simulation_stop();
+
+extern UART_HandleTypeDef huart3;
+static char input[1];
+bool running = false;
 
 /* Definitions for control task */
 osThreadId_t controlTaskHandle;
@@ -33,27 +38,58 @@ void simulation_start_control_task()
   */
 static void simulation_control_task(void *argument)
 {
-  osDelay(pdMS_TO_TICKS(1000));
-  simulation_start();
+	osDelay(pdMS_TO_TICKS(1000));
+	simulation_initialize();
+	serial_printer_spool_chars("Input any key to start, then any key to stop.\n\r");
 
-  for(;;)
-  {
-    osDelay(pdMS_TO_TICKS(1000));
-  }
+	for(;;)
+	{
+		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, pdMS_TO_TICKS(10)))
+		{
+			if (running)
+			{
+				running = false;
+				simulation_stop();
+				osDelay(pdMS_TO_TICKS(100));
+			}
+			else
+			{
+				running = true;
+				simulation_start();
+				osDelay(pdMS_TO_TICKS(100));
+			}
+		}
+		else
+		{
+				osDelay(pdMS_TO_TICKS(100));
+		}
+	}
 }
 
-String22_t msg_sim_start = {.size = 19, .text = "Simulation start.\n\r"};
+String22_t msg_sim_start = {.size = 23, .text = "Simulation starting.\n\r"};
+String22_t msg_sim_stop = {.size = 22, .text = "Simulation stopped.\n\r"};
+
+static void simulation_initialize()
+{
+	serial_printer_initialize();
+	city_inbox_initialize();
+	city_dispatcher_initialize();
+	event_gen_initialize();
+	serial_printer_spool_chars("Simulation initialized.\n\r");
+}
 
 static void simulation_start()
 {
-  serial_printer_initialize();
-  serial_printer_spool_string((String_t *)&msg_sim_start);
-  city_inbox_initialize();
-  city_dispatcher_initialize();
-  event_gen_initialize();
+	serial_printer_spool_string((String_t *)&msg_sim_start);
+	city_inbox_clear();
+	city_dispatcher_start();
+	event_gen_start();
 }
 
 static void simulation_stop()
 {
-  serial_printer_spool_chars("Simulation stop.\n\r");
+	city_dispatcher_stop();
+	event_gen_stop();
+	city_inbox_clear();
+	serial_printer_spool_string((String_t *)&msg_sim_stop);
 }

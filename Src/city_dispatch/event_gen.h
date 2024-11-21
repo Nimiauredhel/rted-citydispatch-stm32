@@ -16,7 +16,8 @@
 #include "simulation_defs.h"
 #include "utils.h"
 #include "cmsis_os.h"
-#include "serial_output.h"
+
+#include "serial_printer.h"
 
 typedef struct EventGenState
 {
@@ -27,5 +28,7 @@ typedef struct EventGenState
 } EventGenState_t;
 
 void event_gen_initialize();
+void event_gen_start();
+void event_gen_stop();
 
 #endif /* EVENT_GEN_H_ */

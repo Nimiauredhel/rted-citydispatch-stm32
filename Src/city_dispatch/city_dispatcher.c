@@ -40,6 +40,17 @@ static void city_dispatcher_task();
 void city_dispatcher_initialize()
 {
   cityDispatcherTaskHandle = osThreadNew(city_dispatcher_task, NULL, &cityDispatcherTask_attributes);
+  city_dispatcher_stop();
+}
+
+void city_dispatcher_start()
+{
+	osThreadResume(cityDispatcherTaskHandle);
+}
+
+void city_dispatcher_stop()
+{
+  osThreadSuspend(cityDispatcherTaskHandle);
 }
 
 static void city_dispatcher_task()
