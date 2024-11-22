@@ -65,3 +65,26 @@ void output_print_string_blocking(String_t *string)
 		transmitStatus = HAL_UART_Transmit(&huart3, (uint8_t *)string->text, string->size, 0xFFFF);
 	}
 }
+
+/* Retargets the C library printf function to the USART. */
+#include <stdio.h>
+#ifdef __GNUC__
+int __io_putchar(int ch)
+#else
+int fputc(int ch, FILE *f)
+#endif
+{
+    HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+
+    return ch;
+}
+#ifdef __GNUC__
+int _write(int file,char *ptr, int len)
+{
+    int DataIdx;
+    for (DataIdx= 0; DataIdx< len; DataIdx++) {
+        __io_putchar(*ptr++);
+    }
+    return len;
+}
+#endif

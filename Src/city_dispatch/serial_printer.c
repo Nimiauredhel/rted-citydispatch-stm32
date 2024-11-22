@@ -74,8 +74,8 @@ static void serial_printer_task()
 
 		if (queue_read_status == osErrorTimeout)
 		{
-			sprintf(output_buffer, "Printer timed out after %hums\n\r", PRINTER_TIMEOUT_MS);
-			output_print_blocking_autosize(output_buffer);
+			//sprintf(output_buffer, "Printer timed out after %hums\n\r", PRINTER_TIMEOUT_MS);
+			//output_print_blocking_autosize(output_buffer);
 		}
 		else
 		{

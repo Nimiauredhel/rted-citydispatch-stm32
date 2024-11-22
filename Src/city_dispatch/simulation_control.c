@@ -40,7 +40,7 @@ static void simulation_control_task(void *argument)
 {
 	osDelay(pdMS_TO_TICKS(1000));
 	simulation_initialize();
-	serial_printer_spool_chars("Input 's' to start, 'h' to stop, 'r' to restart.\n\r");
+	serial_printer_spool_chars("Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r");
 
 	for(;;)
 	{
@@ -59,6 +59,10 @@ static void simulation_control_task(void *argument)
 				running = true;
 				simulation_start();
 				osDelay(pdMS_TO_TICKS(100));
+			}
+			else if (input[0] == 't')
+			{
+				date_time_set();
 			}
 			else if (input[0] == 'r')
 			{
