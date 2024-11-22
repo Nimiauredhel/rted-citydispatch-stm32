@@ -40,23 +40,29 @@ static void simulation_control_task(void *argument)
 {
 	osDelay(pdMS_TO_TICKS(1000));
 	simulation_initialize();
-	serial_printer_spool_chars("Input any key to start, then any key to stop.\n\r");
+	serial_printer_spool_chars("Input 's' to start, 'h' to stop, 'r' to restart.\n\r");
 
 	for(;;)
 	{
 		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, pdMS_TO_TICKS(10)))
 		{
-			if (running)
+			if (running
+				&& input[0] == 'h')
 			{
 				running = false;
 				simulation_stop();
 				osDelay(pdMS_TO_TICKS(100));
 			}
-			else
+			else if (!running
+				&& input[0] == 's')
 			{
 				running = true;
 				simulation_start();
 				osDelay(pdMS_TO_TICKS(100));
+			}
+			else if (input[0] == 'r')
+			{
+				HAL_NVIC_SystemReset();
 			}
 		}
 		else
