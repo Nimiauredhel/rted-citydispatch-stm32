@@ -12,7 +12,7 @@ static const uint16_t DISPATCHER_TIMEOUT_MS = 5000;
 
 const static osThreadAttr_t cityDispatcherTask_attributes = {
   .name = "cityDispatcherTask",
-  .stack_size = 128 * 4,
+  .stack_size = TASK_STACK_SIZE,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
