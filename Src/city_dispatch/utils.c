@@ -194,5 +194,5 @@ String_t *utils_structure_string_alloc(char *string)
 			return NULL;
 	}
 
-	return (String_t *)ptr;
+	return ptr;
 }

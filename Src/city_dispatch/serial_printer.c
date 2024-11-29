@@ -15,14 +15,14 @@ static const uint16_t PRINTER_TIMEOUT_MS = 5000;
 
 static const osThreadAttr_t serialPrinterTask_attributes = {
   .name = "serialPrinterTask",
-  .stack_size = 128 * 4,
+  .stack_size = TASK_STACK_SIZE,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
 static osThreadId_t serialPrinterTaskHandle;
 
 static osMessageQueueId_t serialPrinterQueueHandle;
-static uint8_t serialPrinterQueueBuffer[ INCOMING_QUEUE_LENGTH * sizeof( CityEvent_t ) ];
+static uint8_t serialPrinterQueueBuffer[ OUTPUT_QUEUE_LENGTH * sizeof(String_t *) ];
 static StaticQueue_t serialPrinterQueueControlBlock;
 
 static const osMessageQueueAttr_t serialPrinterQueue_attributes = {
@@ -53,15 +53,16 @@ void serial_printer_initialize()
 
 void serial_printer_spool_chars(char *string)
 {
-	String_t *new_string = utils_structure_string_alloc(string);
-	osMessageQueuePut(serialPrinterQueueHandle, &new_string, 0, osWaitForever);
+	// TODO: change later to actually spool the dynamic string.
+	// for now we will print it immediately.
+	output_print_blocking_autosize(string);
+	//String_t *new_string = utils_structure_string_alloc(string);
+	//osMessageQueuePut(serialPrinterQueueHandle, &new_string, 0, osWaitForever);
 }
 void serial_printer_spool_string(String_t *string)
 {
 	osMessageQueuePut(serialPrinterQueueHandle, &string, 0, osWaitForever);
 }
-
-
 
 static void serial_printer_task()
 {
