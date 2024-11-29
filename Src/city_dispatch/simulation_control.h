@@ -12,10 +12,12 @@
 #include "cmsis_os.h"
 
 #include "city_dispatcher.h"
+#include "city_departments.h"
 #include "simulation_state.h"
 #include "event_gen.h"
 #include "city_inbox.h"
 #include "serial_printer.h"
+#include "date_time.h"
 
 void simulation_start_control_task();
 

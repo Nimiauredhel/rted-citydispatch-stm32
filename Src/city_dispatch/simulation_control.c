@@ -84,6 +84,7 @@ static void simulation_initialize()
 	serial_printer_initialize();
 	city_inbox_initialize();
 	city_dispatcher_initialize();
+	city_departments_initialize();
 	event_gen_initialize();
 	serial_printer_spool_chars("Simulation initialized.\n\r");
 }
@@ -93,13 +94,15 @@ static void simulation_start()
 	serial_printer_spool_string((String_t *)&msg_sim_start);
 	city_inbox_clear();
 	city_dispatcher_start();
+	city_departments_start();
 	event_gen_start();
 }
 
 static void simulation_stop()
 {
-	city_dispatcher_stop();
 	event_gen_stop();
+	city_dispatcher_stop();
+	city_departments_stop();
 	city_inbox_clear();
 	serial_printer_spool_string((String_t *)&msg_sim_stop);
 }

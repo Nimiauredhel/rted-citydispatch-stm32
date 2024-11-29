@@ -12,24 +12,30 @@
 
 #include "serial_printer.h"
 #include "simulation_defs.h"
+#include "simulation_constants.h"
 
 /*
  * Department typedefs
  */
-typedef struct DepartmentState
+
+typedef struct DepartmentInfo
 {
     DepartmentCode_t code;
-    BaseType_t status;
+    osThreadId_t taskHandle;
     osMessageQueueId_t inbox;
     uint8_t agentCount;
-    CityDepartmentAgentState_t *agentStates;
+    CityDepartmentAgentState_t *agents;
+} DepartmentInfo_t;
+
+typedef struct DepartmentState
+{
+    BaseType_t status;
 } DepartmentState_t;
 
 /*
  * Department variables
  */
-osThreadId_t department_tasks[NUM_DEPARTMENTS];
-osMessageQueueId_t department_inboxes[NUM_DEPARTMENTS];
+extern osMessageQueueId_t *department_inboxes[NUM_DEPARTMENTS];
 
 void city_departments_initialize(void);
 void city_departments_start(void);
