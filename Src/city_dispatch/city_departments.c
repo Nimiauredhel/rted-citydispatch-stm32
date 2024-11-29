@@ -82,7 +82,7 @@ static void city_department_task(void *param)
 	for(;;)
 	{
 		osDelay(1000);
-		serial_printer_spool_chars(departmentNames[info->code]);
-		serial_printer_spool_chars(" Department task hello.\n\r");
+		//serial_printer_spool_chars(departmentNames[info->code]);
+		//serial_printer_spool_chars(" Department task hello.\n\r");
 	}
 }

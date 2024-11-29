@@ -23,7 +23,8 @@ typedef struct EventGenState
 {
     uint32_t random_number;
 	uint32_t next_delay;
-	CityEvent_t test_event;
+	uint8_t next_idx;
+	CityEvent_t generated_event;
     char output_buffer[32];
 } EventGenState_t;
 

@@ -48,12 +48,5 @@ typedef struct CityDepartmentAgentState
     char name[16];
     CityEvent_t currentEvent;
 } CityDepartmentAgentState_t;
-typedef struct CityEventTemplate
-{
-    TickType_t minTicks;
-    TickType_t maxTicks;
-    DepartmentCode_t code;
-    char *description;
-} CityEventTemplate_t;
 
 #endif /* SIMULATION_DEFS_H_ */
