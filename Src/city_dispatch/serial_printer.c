@@ -51,7 +51,7 @@ void serial_printer_initialize()
   serialPrinterTaskHandle = osThreadNew(serial_printer_task, NULL, &serialPrinterTask_attributes);
 }
 
-void serial_printer_spool_chars(char *string)
+void serial_printer_spool_chars(const char *string)
 {
 	// TODO: change later to actually spool the dynamic string.
 	// for now we will print it immediately.
@@ -59,9 +59,10 @@ void serial_printer_spool_chars(char *string)
 	//String_t *new_string = utils_structure_string_alloc(string);
 	//osMessageQueuePut(serialPrinterQueueHandle, &new_string, 0, osWaitForever);
 }
-void serial_printer_spool_string(String_t *string)
+void serial_printer_spool_string(const String_t *string)
 {
-	osMessageQueuePut(serialPrinterQueueHandle, &string, 0, osWaitForever);
+	output_print_string_blocking(string);
+	//osMessageQueuePut(serialPrinterQueueHandle, &string, 0, osWaitForever);
 }
 
 static void serial_printer_task()

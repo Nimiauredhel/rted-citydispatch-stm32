@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "simulation_defs.h"
 #include "city_inbox.h"
+#include "city_departments.h"
 #include "serial_printer.h"
 
 typedef struct DispatcherState

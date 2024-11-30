@@ -7,6 +7,8 @@
 
 #include "city_departments.h"
 
+static const uint16_t DISPATCHER_TIMEOUT_MS = 30000;
+
 osMessageQueueId_t *department_inboxes[NUM_DEPARTMENTS];
 
 const static osMessageQueueAttr_t city_department_inbox_attributes = {
@@ -19,7 +21,23 @@ const static osThreadAttr_t city_department_task_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 
-static DepartmentInfo_t departments[NUM_DEPARTMENTS] = {0};
+static DepartmentState_t departments[NUM_DEPARTMENTS] = {0};
+
+static const String30_t msg_task_init =
+{
+	.size = 28,
+	.text = " department task started.\n\r"
+};
+static const String38_t msg_task_waiting =
+{
+	.size = 32,
+	.text = " department awaiting message.\n\r"
+};
+static const String30_t msg_task_received =
+{
+	.size = 29,
+	.text = " department received event: "
+};
 
 static void city_department_task(void *param);
 
@@ -74,15 +92,40 @@ void city_departments_stop()
 
 static void city_department_task(void *param)
 {
-	DepartmentInfo_t *info = (DepartmentInfo_t *)param;
+	DepartmentState_t *department = (DepartmentState_t *)param;
 
-	serial_printer_spool_chars(departmentNames[info->code]);
-	serial_printer_spool_chars(" Department task started.\n\r");
+	serial_printer_spool_chars(departmentNames[department->code]);
+	serial_printer_spool_string((String_t *)&msg_task_init);
+	osDelay(pdMS_TO_TICKS(1000));
+
+	serial_printer_spool_chars(departmentNames[department->code]);
+	serial_printer_spool_string((String_t *)&msg_task_waiting);
 
 	for(;;)
 	{
-		osDelay(1000);
-		//serial_printer_spool_chars(departmentNames[info->code]);
-		//serial_printer_spool_chars(" Department task hello.\n\r");
+		department->queue_read_status = osMessageQueueGet(department->inbox, &department->current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+
+		if (department->queue_read_status == osErrorTimeout)
+		{
+/*			sprintf(department->output_buffer, " department timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
+			serial_printer_spool_chars(departmentNames[department->code]);
+			serial_printer_spool_chars(department->output_buffer);
+			*/
+		}
+		else if (department->queue_read_status == osOK)
+		{
+			serial_printer_spool_chars(departmentNames[department->code]);
+			serial_printer_spool_string((String_t *)&msg_task_received);
+			serial_printer_spool_string((String_t *)&(department->current_event_buffer.description));
+			// TODO: assign the event to a resource if one is available
+		}
+		else
+		{
+			osDelay(pdMS_TO_TICKS(200));
+			continue;
+		}
+
+		serial_printer_spool_chars(departmentNames[department->code]);
+		serial_printer_spool_string((String_t *)&msg_task_waiting);
 	}
 }

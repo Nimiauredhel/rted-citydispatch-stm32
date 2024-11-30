@@ -8,7 +8,7 @@
 #include "city_dispatcher.h"
 
 /* Definitions for city dispatcher task */
-static const uint16_t DISPATCHER_TIMEOUT_MS = 5000;
+static const uint16_t DISPATCHER_TIMEOUT_MS = 30000;
 
 const static osThreadAttr_t cityDispatcherTask_attributes = {
   .name = "cityDispatcherTask",
@@ -58,21 +58,30 @@ static void city_dispatcher_task()
 	serial_printer_spool_string((String_t *)&msg_task_init);
 	osDelay(pdMS_TO_TICKS(2000));
 
+	serial_printer_spool_string((String_t *)&msg_task_waiting);
+
 	for(;;)
 	{
-		serial_printer_spool_string((String_t *)&msg_task_waiting);
 		dispatcherState.queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &dispatcherState.current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
 
 		if (dispatcherState.queue_read_status == osErrorTimeout)
 		{
-			sprintf(dispatcherState.output_buffer, "Dispatcher timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
+/*			sprintf(dispatcherState.output_buffer, "Dispatcher timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
 			serial_printer_spool_chars(dispatcherState.output_buffer);
+			*/
 		}
-		else
+		else if (dispatcherState.queue_read_status == osOK)
 		{
 			serial_printer_spool_string((String_t *)&msg_task_received);
 			serial_printer_spool_string((String_t *)&(dispatcherState.current_event_buffer.description));
+			osMessageQueuePut(*(department_inboxes[dispatcherState.current_event_buffer.code]), &dispatcherState.current_event_buffer, 0, osWaitForever);
 		}
+		else
+		{
+			osDelay(pdMS_TO_TICKS(200));
+			continue;
+		}
+		serial_printer_spool_string((String_t *)&msg_task_waiting);
 	}
 }
 

@@ -18,18 +18,16 @@
  * Department typedefs
  */
 
-typedef struct DepartmentInfo
+typedef struct DepartmentState
 {
+	osStatus_t queue_read_status;
+	CityEvent_t current_event_buffer;
     DepartmentCode_t code;
     osThreadId_t taskHandle;
     osMessageQueueId_t inbox;
     uint8_t agentCount;
+	char output_buffer[48];
     CityDepartmentAgentState_t *agents;
-} DepartmentInfo_t;
-
-typedef struct DepartmentState
-{
-    BaseType_t status;
 } DepartmentState_t;
 
 /*

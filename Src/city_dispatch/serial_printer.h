@@ -11,7 +11,7 @@
 #include "serial_output.h"
 
 void serial_printer_initialize(void);
-void serial_printer_spool_chars(char *string);
-void serial_printer_spool_string(String_t *string);
+void serial_printer_spool_chars(const char *string);
+void serial_printer_spool_string(const String_t *string);
 
 #endif /* SERIAL_PRINTER_H_ */
