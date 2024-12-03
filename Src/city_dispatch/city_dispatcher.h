@@ -9,7 +9,7 @@
 #define CITY_DISPATCHER_H_
 
 #include <stdio.h>
-#include "utils.h"
+#include "utils/string_utils.h"
 #include "simulation_defs.h"
 #include "city_inbox.h"
 #include "city_departments.h"

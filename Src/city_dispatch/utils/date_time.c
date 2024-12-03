@@ -14,6 +14,16 @@ RTC_DateTypeDef date_now;
 
 // TODO: fix all the damn printfs here
 
+RTC_TimeTypeDef time_get()
+{
+    return time_now;
+}
+
+RTC_DateTypeDef date_get()
+{
+    return date_now;
+}
+
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	static uint8_t index = 0;

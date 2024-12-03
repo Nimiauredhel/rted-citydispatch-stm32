@@ -12,7 +12,7 @@
 #include <string.h>
 #include "stm32f7xx_hal.h"
 #include "cmsis_os.h"
-#include "simulation_defs.h"
+#include "string_defs.h"
 
 void output_print_blocking_autosize(char *string);
 void output_print_irq(char *string, uint16_t size);

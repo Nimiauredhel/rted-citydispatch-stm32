@@ -9,8 +9,11 @@
 #define SIMULATION_DEFS_H_
 
 #include <stdbool.h>
-#include "string_defs.h"
 #include "cmsis_os.h"
+#include "stm32f7xx_hal.h"
+
+#include "city_events.h"
+#include "utils/string_defs.h"
 
 /* Value defs */
 #define NUM_DEPARTMENTS (4)
@@ -29,19 +32,6 @@
 #define LOGGER_SLEEP (pdMS_TO_TICKS(200))
 
 /* Simulation typedefs */
-typedef enum DepartmentCode
-{
-    MEDICAL = 0,
-    POLICE = 1,
-    FIRE = 2,
-    COVID = 3
-} DepartmentCode_t;
-typedef struct CityEvent
-{
-    TickType_t ticks;
-    DepartmentCode_t code;
-    String46_t description;
-} CityEvent_t;
 typedef struct CityDepartmentAgentState
 {
     bool busy;

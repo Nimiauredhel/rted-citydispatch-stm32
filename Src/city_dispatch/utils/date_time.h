@@ -13,6 +13,8 @@
 #include "serial_output.h"
 #include <stdlib.h>
 
+RTC_TimeTypeDef time_get();
+RTC_DateTypeDef date_get();
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc);
 void date_time_alarm_reset();
 void date_time_print();

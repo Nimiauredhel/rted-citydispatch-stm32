@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "simulation_defs.h"
+#include "string_defs.h"
 
 /* Functions to generate the hard-coded structured string structs.
  * felt smart might delete later

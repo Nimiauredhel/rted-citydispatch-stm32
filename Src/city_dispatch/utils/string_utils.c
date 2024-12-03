@@ -5,7 +5,7 @@
  *      Author: mickey
  */
 
-#include "utils.h"
+#include "string_utils.h"
 
 String6_t utils_structure_string6(char *string)
 {

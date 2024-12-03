@@ -8,7 +8,8 @@
 #ifndef SERIAL_PRINTER_H_
 #define SERIAL_PRINTER_H_
 
-#include "serial_output.h"
+#include "simulation_defs.h"
+#include "utils/serial_output.h"
 
 void serial_printer_initialize(void);
 void serial_printer_spool_chars(const char *string);
