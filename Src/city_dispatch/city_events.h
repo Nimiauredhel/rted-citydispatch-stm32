@@ -26,13 +26,15 @@ typedef enum DepartmentCode
 } DepartmentCode_t;
 typedef enum JobStatus
 {
+    // greater than zero: alive, track
+    // less than zero: dead, dispose
     JOB_NONE = 0,
     JOB_PENDING = 1,
     JOB_ONGOING = 2,
-    JOB_HANDLED = 3,
-    JOB_FAILED = 4,
-    JOB_OVERDUE = 5,
-    JOB_DISMISSED = 6,
+    JOB_OVERDUE = 3,
+    JOB_HANDLED = -1,
+    JOB_FAILED = -2,
+    JOB_DISMISSED = -3,
 } JobStatus_t;
 typedef enum EventPriority
 {
