@@ -68,7 +68,6 @@ void serial_printer_spool_string(const String_t *string)
 static void serial_printer_task()
 {
 	output_print_string_blocking((String_t *)&msg_task_init);
-	osDelay(pdMS_TO_TICKS(500));
 
 	for(;;)
 	{

@@ -1,4 +1,5 @@
- *
+/*
+*
  *  Created on: Nov 2, 2024
  *      Author: mickey
  */
@@ -6,7 +7,7 @@
 #include "city_dispatcher.h"
 
 /* Definitions for city dispatcher task */
-static const uint16_t DISPATCHER_TIMEOUT_MS = 30000;
+static const uint16_t DISPATCHER_TIMEOUT_MS = 300;
 
 const static osThreadAttr_t cityDispatcherTask_attributes = {
   .name = "cityDispatcherTask",
@@ -17,7 +18,9 @@ const static osThreadAttr_t cityDispatcherTask_attributes = {
 static osThreadId_t cityDispatcherTaskHandle;
 static osStatus_t queue_read_status;
 static CityEvent_t current_event_buffer;
-static char output_buffer[48];
+static CityEvent_t *trackedEvent;
+static CityJob_t *trackedJob;
+static char output_buffer[64];
 
 static const String22_t msg_task_init =
 {
@@ -91,13 +94,14 @@ static void city_dispatcher_task()
                 event_tracker_refresh();
             }
 
-            CityEvent_t *trackedEvent = event_tracker_add(current_event_buffer);
+            trackedEvent = event_tracker_add(current_event_buffer);
 
             for (uint8_t idx = 0; idx < NUM_EVENT_JOBS; idx++)
             {
-                if (trackedEvent->jobs[idx].status == JOB_PENDING)
+				trackedJob = &(trackedEvent->jobs[idx]);
+                if (trackedJob->code != DEPT_EMPTY && trackedJob->status == JOB_PENDING)
                 {
-                    osMessageQueuePut(*(department_inboxes[trackedEvent->jobs[idx].code), &&(trackedEvent->jobs[idx]), 0, osWaitForever);
+                    osMessageQueuePut(*(department_inboxes[trackedJob->code]), &trackedJob, 0, osWaitForever);
                 }
             }
 		}

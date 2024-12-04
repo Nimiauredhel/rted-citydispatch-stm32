@@ -12,7 +12,7 @@
  */
 extern UART_HandleTypeDef huart3;
 
-void output_print_blocking_autosize(char *string)
+void output_print_blocking_autosize(const char *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -21,7 +21,7 @@ void output_print_blocking_autosize(char *string)
 	}
 }
 
-void output_print_irq(char *string, uint16_t size)
+void output_print_irq(const char *string, uint16_t size)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -30,7 +30,7 @@ void output_print_irq(char *string, uint16_t size)
 	}
 }
 
-void output_print_string_irq(String_t *string)
+void output_print_string_irq(const String_t *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -39,7 +39,7 @@ void output_print_string_irq(String_t *string)
 	}
 }
 
-void output_print_irq_autosize(char *string)
+void output_print_irq_autosize(const char *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -48,7 +48,7 @@ void output_print_irq_autosize(char *string)
 	}
 }
 
-void output_print_blocking(char *string, uint16_t size)
+void output_print_blocking(const char *string, uint16_t size)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
@@ -57,7 +57,7 @@ void output_print_blocking(char *string, uint16_t size)
 	}
 }
 
-void output_print_string_blocking(String_t *string)
+void output_print_string_blocking(const String_t *string)
 {
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)

@@ -47,6 +47,8 @@ void event_tracker_initialize()
         nodeBuffer[idx].next = NULL;
         nodeBuffer[idx].used = false;
     }
+
+	serial_printer_spool_chars("Event Tracker initialized.\n\r");
 }
 
 // if successful, returns pointer to stored address
@@ -55,19 +57,22 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 {
     if (length >= EVENT_TRACKER_CAPACITY)
     {
+		serial_printer_spool_chars("Event Tracker failed to add event.\n\r");
         return NULL;
     }
+
+    serial_printer_spool_chars("Event Tracker adding event.\n\r");
 
     EventTrackerNode_t *targetNode;
 
     if (length == 0)
     {
-        targetNode = nodeBuffer;
+        targetNode = &nodeBuffer[0];
         head = targetNode;
     }
     else
     {
-        targetNode = nodeBuffer + nextFreeIdx;
+        targetNode = &nodeBuffer[nextFreeIdx];
         tail->next = targetNode;
     }
 
@@ -88,6 +93,8 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 void event_tracker_refresh()
 {
     if (length == 0) return;
+
+    serial_printer_spool_chars("Event Tracker Refresh.\n\r");
 
     // this function invokes CRITICAL mode
     // due to "job status" being used as IPC

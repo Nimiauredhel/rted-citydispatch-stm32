@@ -20,15 +20,6 @@
 #include "city_events.h"
 #include "serial_printer.h"
 
-typedef struct EventGenState
-{
-    uint32_t random_number;
-	uint32_t next_delay;
-	uint8_t next_idx;
-	CityEvent_t generated_event;
-    char output_buffer[32];
-} EventGenState_t;
-
 void event_gen_initialize();
 void event_gen_start();
 void event_gen_stop();

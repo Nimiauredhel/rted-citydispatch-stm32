@@ -37,6 +37,6 @@ const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES] =
     { EVENT_HIGH,   10,  40,  { 19, "Serial Arsonist.\n\r" },  {4, 7, 7, 9} },
     { EVENT_HIGH,   60,  100, { 16, "Factory Fire.\n\r" },     {2, 3, 8, 9} },
     { EVENT_NORMAL, 80,  100, { 17, "Covid-19 Case.\n\r" },    {2, 3, 0, 0} },
-    { EVENT_HIGH,   160, 200, { 20, "Covid-19 Outbreak\n\r" }, {2, 3, 0, 0} },
+    { EVENT_HIGH,   160, 200, { 21, "Covid-19 Outbreak.\n\r" }, {2, 3, 0, 0} },
 };
 

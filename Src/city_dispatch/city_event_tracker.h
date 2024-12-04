@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "simulation_defs.h"
 #include "city_events.h"
+#include "serial_printer.h"
 
 // the city event tracker is an array backed linked-list
 // with a fixed capacity. the logic is such that the tracker

@@ -11,14 +11,18 @@ static const uint16_t DISPATCHER_TIMEOUT_MS = 30000;
 
 osMessageQueueId_t *department_inboxes[NUM_DEPARTMENTS];
 
-const static osMessageQueueAttr_t city_department_inbox_attributes = {
-  .name = "cityDeptQueue"
+const static osMessageQueueAttr_t city_department_inbox_attributes[NUM_DEPARTMENTS] = {
+	{ .name = "medicalDeptQueue" },
+	{ .name = "policeDeptQueue" },
+	{ .name = "fireDeptQueue" },
+	{ .name = "covidDeptQueue" },
 };
 
-const static osThreadAttr_t city_department_task_attributes = {
-  .name = "cityDeptTask",
-  .stack_size = TASK_STACK_SIZE,
-  .priority = (osPriority_t) osPriorityNormal,
+const static osThreadAttr_t city_department_task_attributes[NUM_DEPARTMENTS] = {
+	{ .name = "medicalDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "policeDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "fireDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "covidDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
 };
 
 static DepartmentState_t departments[NUM_DEPARTMENTS] = {0};
@@ -49,7 +53,7 @@ void city_departments_initialize(void)
 	{
 		departments[idx].code = (DepartmentCode_t)idx;
 		departments[idx].agentCount = departmentAgentCounts[idx];
-		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes);
+		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes[idx]);
 
 		// TODO: create department agents
 		/*
@@ -62,7 +66,7 @@ void city_departments_initialize(void)
 
 		}*/
 
-		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes);
+		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
 		department_inboxes[idx] = &departments[idx].inbox;
 		osThreadSuspend(departments[idx].taskHandle);
 
@@ -103,20 +107,16 @@ static void city_department_task(void *param)
 
 	for(;;)
 	{
-		department->queue_read_status = osMessageQueueGet(department->inbox, &department->current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+		department->queue_read_status = osMessageQueueGet(department->inbox, &department->current_job_pointer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
 
-		if (department->queue_read_status == osErrorTimeout)
-		{
-/*			sprintf(department->output_buffer, " department timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
-			serial_printer_spool_chars(departmentNames[department->code]);
-			serial_printer_spool_chars(department->output_buffer);
-			*/
-		}
-		else if (department->queue_read_status == osOK)
+		if (department->queue_read_status == osOK)
 		{
 			serial_printer_spool_chars(departmentNames[department->code]);
 			serial_printer_spool_string((String_t *)&msg_task_received);
-			serial_printer_spool_string((String_t *)&(department->current_event_buffer.description));
+			serial_printer_spool_string((String_t *)&(jobTemplates[department->current_job_pointer->jobTemplateIndex].description));
+            taskENTER_CRITICAL();
+            department->current_job_pointer->status = JOB_HANDLED;
+            taskEXIT_CRITICAL();
 			// TODO: assign the event to a resource if one is available
 		}
 		else

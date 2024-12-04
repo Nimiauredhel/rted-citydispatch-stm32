@@ -21,12 +21,12 @@
 typedef struct DepartmentState
 {
 	osStatus_t queue_read_status;
-	CityEvent_t current_event_buffer;
+	CityJob_t *current_job_pointer;
     DepartmentCode_t code;
     osThreadId_t taskHandle;
     osMessageQueueId_t inbox;
     uint8_t agentCount;
-	char output_buffer[48];
+	char output_buffer[64];
     CityDepartmentAgentState_t *agents;
 } DepartmentState_t;
 

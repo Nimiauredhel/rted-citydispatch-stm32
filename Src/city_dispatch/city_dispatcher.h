@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "utils/string_utils.h"
 #include "simulation_defs.h"
+#include "city_events.h"
 #include "city_inbox.h"
 #include "city_event_tracker.h"
 #include "city_departments.h"

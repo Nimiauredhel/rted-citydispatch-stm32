@@ -73,7 +73,7 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t dynamicTaskHandle;
 const osThreadAttr_t dynamicTask_attributes = {
   .name = "dynamicTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for staticQueue */

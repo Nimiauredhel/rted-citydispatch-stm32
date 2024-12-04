@@ -62,6 +62,7 @@ typedef struct CityEventTemplate
 
 typedef struct CityJob
 {
+    uint8_t jobTemplateIndex;
 	JobStatus_t status;
     DepartmentCode_t code;
     uint16_t secsToHandle;
