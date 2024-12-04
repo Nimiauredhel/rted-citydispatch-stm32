@@ -12,15 +12,9 @@
 #include "utils/string_utils.h"
 #include "simulation_defs.h"
 #include "city_inbox.h"
+#include "city_event_tracker.h"
 #include "city_departments.h"
 #include "serial_printer.h"
-
-typedef struct DispatcherState
-{
-	osStatus_t queue_read_status;
-	CityEvent_t current_event_buffer;
-	char output_buffer[48];
-} DispatcherState_t;
 
 void city_dispatcher_initialize(void);
 void city_dispatcher_start();

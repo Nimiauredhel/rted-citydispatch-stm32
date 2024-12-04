@@ -29,7 +29,7 @@ typedef struct EventTrackerNode
 } EventTrackerNode_t;
 
 void event_tracker_initialize();
-int16_t event_tracker_add(CityEvent_t newEvent);
+CityEvent_t *event_tracker_add(CityEvent_t newEvent);
 void event_tracker_refresh();
 uint8_t event_tracker_get_remaining_storage();
 

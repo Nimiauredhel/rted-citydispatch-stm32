@@ -1,5 +1,3 @@
-/*
- * city_dispatch.c
  *
  *  Created on: Nov 2, 2024
  *      Author: mickey
@@ -17,7 +15,9 @@ const static osThreadAttr_t cityDispatcherTask_attributes = {
 };
 
 static osThreadId_t cityDispatcherTaskHandle;
-static DispatcherState_t dispatcherState;
+static osStatus_t queue_read_status;
+static CityEvent_t current_event_buffer;
+static char output_buffer[48];
 
 static const String22_t msg_task_init =
 {
@@ -39,8 +39,9 @@ static void city_dispatcher_task();
 
 void city_dispatcher_initialize()
 {
-  cityDispatcherTaskHandle = osThreadNew(city_dispatcher_task, NULL, &cityDispatcherTask_attributes);
-  city_dispatcher_stop();
+    event_tracker_initialize();
+    cityDispatcherTaskHandle = osThreadNew(city_dispatcher_task, NULL, &cityDispatcherTask_attributes);
+    city_dispatcher_stop();
 }
 
 void city_dispatcher_start()
@@ -50,7 +51,7 @@ void city_dispatcher_start()
 
 void city_dispatcher_stop()
 {
-  osThreadSuspend(cityDispatcherTaskHandle);
+    osThreadSuspend(cityDispatcherTaskHandle);
 }
 
 static void city_dispatcher_task()
@@ -62,19 +63,43 @@ static void city_dispatcher_task()
 
 	for(;;)
 	{
-		dispatcherState.queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &dispatcherState.current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+        // first check the high priority inbox
+		queue_read_status = osMessageQueueGet(city_inbox.inboxHighPriorityQueueHandle, &current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
 
-		if (dispatcherState.queue_read_status == osErrorTimeout)
-		{
-/*			sprintf(dispatcherState.output_buffer, "Dispatcher timed out after %hums\n\r", DISPATCHER_TIMEOUT_MS);
-			serial_printer_spool_chars(dispatcherState.output_buffer);
-			*/
-		}
-		else if (dispatcherState.queue_read_status == osOK)
+        // then medium
+        if (queue_read_status != osOK)
+        {
+            queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+        }
+
+        // then low
+        if (queue_read_status != osOK)
+        {
+            queue_read_status = osMessageQueueGet(city_inbox.inboxLowPriorityQueueHandle, &current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+        }
+
+		if (queue_read_status == osOK)
 		{
 			serial_printer_spool_string((String_t *)&msg_task_received);
-			serial_printer_spool_string((String_t *)&(dispatcherState.current_event_buffer.description));
-			osMessageQueuePut(*(department_inboxes[dispatcherState.current_event_buffer.code]), &dispatcherState.current_event_buffer, 0, osWaitForever);
+			serial_printer_spool_string((String_t *)&(eventTemplates[current_event_buffer.eventTemplateIndex].description));
+
+            // stalls dispatcher until event tracker space clears
+            // TODO: implement disposing of lower priority events
+            while(event_tracker_get_remaining_storage() < 1)
+            {
+                osDelay(pdMS_TO_TICKS(100));
+                event_tracker_refresh();
+            }
+
+            CityEvent_t *trackedEvent = event_tracker_add(current_event_buffer);
+
+            for (uint8_t idx = 0; idx < NUM_EVENT_JOBS; idx++)
+            {
+                if (trackedEvent->jobs[idx].status == JOB_PENDING)
+                {
+                    osMessageQueuePut(*(department_inboxes[trackedEvent->jobs[idx].code), &&(trackedEvent->jobs[idx]), 0, osWaitForever);
+                }
+            }
 		}
 		else
 		{

@@ -49,31 +49,31 @@ void event_tracker_initialize()
     }
 }
 
-// if successful, returns remaining space
-// if failed, returns -1
-int16_t event_tracker_add(CityEvent_t newEvent)
+// if successful, returns pointer to stored address
+// if failed, returns NULL
+CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 {
     if (length >= EVENT_TRACKER_CAPACITY)
     {
-        return -1;
+        return NULL;
     }
 
-    EventTrackerNode_t targetNode;
+    EventTrackerNode_t *targetNode;
 
     if (length == 0)
     {
-        targetNode = nodeBuffer[0];
-        head = &targetNode;
+        targetNode = nodeBuffer;
+        head = targetNode;
     }
     else
     {
-        targetNode = nodeBuffer[nextFreeIdx];
-        tail->next = &targetNode;
+        targetNode = nodeBuffer + nextFreeIdx;
+        tail->next = targetNode;
     }
 
-    targetNode.event = newEvent;
-    targetNode.next = NULL;
-    tail = &targetNode;
+    targetNode->event = newEvent;
+    targetNode->next = NULL;
+    tail = targetNode;
 
     length++;
 
@@ -82,12 +82,18 @@ int16_t event_tracker_add(CityEvent_t newEvent)
         set_next_free_idx();
     }
 
-    return event_tracker_get_remaining_storage();
+    return &(targetNode->event);
 }
 
 void event_tracker_refresh()
 {
     if (length == 0) return;
+
+    // this function invokes CRITICAL mode
+    // due to "job status" being used as IPC
+    // between dispatcher & agents.
+    // TODO: use mutex instead (to only lock individual resources when required, rather than whole system every time)
+    taskENTER_CRITICAL();
 
     bool active = false;
     uint8_t jobIdx = 0;
@@ -136,6 +142,8 @@ void event_tracker_refresh()
 
         current = current->next;
     } while (current != NULL);
+
+    taskEXIT_CRITICAL();
 }
 
 uint8_t event_tracker_get_remaining_storage()

@@ -49,7 +49,7 @@ void city_departments_initialize(void)
 	{
 		departments[idx].code = (DepartmentCode_t)idx;
 		departments[idx].agentCount = departmentAgentCounts[idx];
-		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityEvent_t), &city_department_inbox_attributes);
+		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes);
 
 		// TODO: create department agents
 		/*
