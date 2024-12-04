@@ -13,6 +13,7 @@
 #include "serial_printer.h"
 #include "simulation_defs.h"
 #include "simulation_constants.h"
+#include "city_agents.h"
 
 /*
  * Department typedefs
@@ -27,7 +28,7 @@ typedef struct DepartmentState
     osMessageQueueId_t inbox;
     uint8_t agentCount;
 	char output_buffer[64];
-    CityDepartmentAgentState_t *agents;
+    AgentState_t *agents;
 } DepartmentState_t;
 
 /*

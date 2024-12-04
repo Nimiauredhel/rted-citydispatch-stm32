@@ -40,7 +40,7 @@ static const String38_t msg_task_waiting =
 static const String30_t msg_task_received =
 {
 	.size = 29,
-	.text = " department received job: "
+	.text = " department received event: "
 };
 
 static void city_department_task(void *param);
@@ -55,16 +55,8 @@ void city_departments_initialize(void)
 		departments[idx].agentCount = departmentAgentCounts[idx];
 		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes[idx]);
 
-		// TODO: create department agents
-		/*
-		departments[idx].agents = pvPortMalloc(departments[idx].agentCount
-				* sizeof(CityDepartmentAgentState_t));
-		uint8_t aidx;
-
-		for (aidx = 0; aidx < departments[idx].agentCount; aidx++)
-		{
-
-		}*/
+		// create department agenst
+		departments[idx].agents = city_agents_initialize(departments[idx].agentCount, departments[idx].code);
 
 		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
 		department_inboxes[idx] = &departments[idx].inbox;
@@ -76,21 +68,33 @@ void city_departments_initialize(void)
 
 void city_departments_start()
 {
-	uint8_t idx;
+	uint8_t deptIdx;
+	uint8_t agentIdx;
 
-	for (idx = 0; idx < NUM_DEPARTMENTS; idx++)
+	for (deptIdx = 0; deptIdx < NUM_DEPARTMENTS; deptIdx++)
 	{
-		osThreadResume(departments[idx].taskHandle);
+		osThreadResume(departments[deptIdx].taskHandle);
+
+        for (agentIdx = 0; agentIdx < departments[deptIdx].agentCount; agentIdx++)
+        {
+            osThreadResume(departments[deptIdx].agents[agentIdx].taskHandle);
+        }
 	}
 }
 
 void city_departments_stop()
 {
-	uint8_t idx;
+	uint8_t deptIdx;
+	uint8_t agentIdx;
 
-	for (idx = 0; idx < NUM_DEPARTMENTS; idx++)
+	for (deptIdx = 0; deptIdx < NUM_DEPARTMENTS; deptIdx++)
 	{
-		osThreadSuspend(departments[idx].taskHandle);
+		osThreadSuspend(departments[deptIdx].taskHandle);
+
+        for (agentIdx = 0; agentIdx < departments[deptIdx].agentCount; agentIdx++)
+        {
+            osThreadSuspend(departments[deptIdx].agents[agentIdx].taskHandle);
+        }
 	}
 }
 
