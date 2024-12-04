@@ -40,7 +40,7 @@ static const String38_t msg_task_waiting =
 static const String30_t msg_task_received =
 {
 	.size = 29,
-	.text = " department received event: "
+	.text = " department received job: "
 };
 
 static void city_department_task(void *param);
