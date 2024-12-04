@@ -13,8 +13,8 @@
 #include "utils/string_defs.h"
 
 #define NUM_JOB_TEMPLATES 12
-#define NUM_EVENT_TEMPLATES 8
-#define NUM_EVENT_JOBS 4
+#define NUM_EVENT_TEMPLATES 9
+#define NUM_EVENT_JOBS 8
 
 typedef enum DepartmentCode
 {

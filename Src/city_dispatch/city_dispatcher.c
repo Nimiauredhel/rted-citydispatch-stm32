@@ -66,6 +66,12 @@ static void city_dispatcher_task()
 
 	for(;;)
 	{
+		// periodically refresh the event tracker if not empty
+		if (event_tracker_get_length() > 0)
+		{
+			event_tracker_refresh();
+		}
+
         // first check the high priority inbox
 		queue_read_status = osMessageQueueGet(city_inbox.inboxHighPriorityQueueHandle, &current_event_buffer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
 

@@ -33,5 +33,6 @@ void event_tracker_initialize();
 CityEvent_t *event_tracker_add(CityEvent_t newEvent);
 void event_tracker_refresh();
 uint8_t event_tracker_get_remaining_storage();
+uint8_t event_tracker_get_length();
 
 #endif /* CITY_DISPATCH_CITY_EVENT_TRACKER_H_ */

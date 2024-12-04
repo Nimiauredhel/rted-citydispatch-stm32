@@ -30,13 +30,14 @@ const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES] =
 // from this pool of event templates
 const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES] =
 {
-    { EVENT_NORMAL, 20,  50,  { 17, "Work Accident.\n\r" },    {2, 3, 0, 0} },
-    { EVENT_HIGH,   60,  120, { 17, "Violent Crime.\n\r" },    {3, 4, 6, 0} },
-    { EVENT_LOW,    20,  40,  { 27, "Noise Complaint.\n\r" },  {5, 0, 0, 0} },
-    { EVENT_HIGH,   50,  100, { 27, "Vehicle Crash.\n\r" },    {2, 3, 3, 5} },
-    { EVENT_HIGH,   10,  40,  { 19, "Serial Arsonist.\n\r" },  {4, 7, 7, 9} },
-    { EVENT_HIGH,   60,  100, { 16, "Factory Fire.\n\r" },     {2, 3, 8, 9} },
-    { EVENT_NORMAL, 80,  100, { 17, "Covid-19 Case.\n\r" },    {2, 3, 0, 0} },
-    { EVENT_HIGH,   160, 200, { 21, "Covid-19 Outbreak.\n\r" }, {2, 3, 0, 0} },
+    { EVENT_LOW,    600, 1200, { 15, "Stubbed Toe.\n\r" },       {1, 0, 0, 0, 0, 0, 0, 0} },
+    { EVENT_NORMAL, 20,  50,   { 17, "Work Accident.\n\r" },     {2, 3, 0, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   60,  120,  { 17, "Violent Crime.\n\r" },     {3, 3, 4, 4, 6, 0, 0, 0} },
+    { EVENT_LOW,    20,  40,   { 27, "Noise Complaint.\n\r" },   {5, 0, 0, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   50,  100,  { 27, "Vehicle Crash.\n\r" },     {2, 2, 3, 3, 5, 0, 0, 0} },
+    { EVENT_HIGH,   10,  40,   { 19, "Serial Arsonist.\n\r" },   {4, 4, 7, 7, 9, 0, 0, 0} },
+    { EVENT_HIGH,   60,  100,  { 16, "Factory Fire.\n\r" },      {2, 3, 3, 3, 8, 8, 9, 9} },
+    { EVENT_NORMAL, 80,  100,  { 17, "Covid-19 Case.\n\r" },     {2, 10, 11, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   80,  100,  { 21, "Covid-19 Outbreak.\n\r" }, {2, 2, 2, 10, 10, 10, 11, 11} },
 };
 

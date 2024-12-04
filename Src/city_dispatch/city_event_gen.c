@@ -23,7 +23,7 @@ static uint32_t random_number;
 static uint32_t next_delay;
 static uint8_t next_idx;
 static CityEvent_t generated_event;
-static char output_buffer[32];
+static char output_buffer[64];
 static uint8_t jobTemplateIdx;
 static uint16_t expirationSecs;
 
@@ -50,7 +50,7 @@ static void generate_event()
 {
     // randomly select event template index
 	HAL_RNG_GenerateRandomNumber(&hrng, &random_number);
-	next_idx = (random_number & (NUM_EVENT_TEMPLATES-1));
+	next_idx = (random_number % NUM_EVENT_TEMPLATES);
 	sprintf(output_buffer, "Generating event from template #%u.\n\r", next_idx);
 	serial_printer_spool_chars(output_buffer);
 
