@@ -118,10 +118,27 @@ static void city_department_task(void *param)
 			serial_printer_spool_chars(departmentNames[department->code]);
 			serial_printer_spool_string((String_t *)&msg_task_received);
 			serial_printer_spool_string((String_t *)&(jobTemplates[department->current_job_pointer->jobTemplateIndex].description));
-            taskENTER_CRITICAL();
-            department->current_job_pointer->status = JOB_HANDLED;
-            taskEXIT_CRITICAL();
-			// TODO: assign the event to a resource if one is available
+
+            bool assigned = false;
+
+            while (!assigned)
+            {
+				for (uint8_t agentIdx = 0; agentIdx < department->agentCount; agentIdx++)
+				{
+					if (department->agents[agentIdx].status == AGENT_FREE)
+					{
+						taskENTER_CRITICAL();
+						assigned = true;
+						department->agents[agentIdx].currentJob = department->current_job_pointer;
+						department->agents[agentIdx].status = AGENT_ASSIGNED;
+						department->current_job_pointer = NULL;
+						taskEXIT_CRITICAL();
+						break;
+					}
+				}
+
+				osDelay(pdMS_TO_TICKS(100));
+            }
 		}
 		else
 		{

@@ -32,6 +32,18 @@ static const String30_t msg_task_received =
 	.text = " agent received job: "
 };
 
+static const String30_t msg_task_handled =
+{
+	.size = 23,
+	.text = " agent handled job: "
+};
+
+static const String30_t msg_task_failed =
+{
+	.size = 22,
+	.text = " agent failed job: "
+};
+
 static AgentState_t *head = NULL;
 static AgentState_t *tail = NULL;
 
@@ -107,5 +119,45 @@ static void city_agent_task(void *param)
 	for(;;)
 	{
 		osDelay(pdMS_TO_TICKS(AGENTS_TIMEOUT_MS));
+
+		if (agent->status == AGENT_ASSIGNED)
+		{
+			taskENTER_CRITICAL();
+			if (agent->currentJob->status == JOB_PENDING)
+			{
+				agent->status = AGENT_BUSY;
+				agent->currentJob->status = JOB_ONGOING;
+				serial_printer_spool_chars(agent->name);
+				serial_printer_spool_string((String_t *)&msg_task_received);
+				serial_printer_spool_chars(&jobTemplates[agent->currentJob->jobTemplateIndex].description);
+			}
+			else if (agent->currentJob->status == JOB_OVERDUE)
+			{
+				agent->currentJob->status = JOB_FAILED;
+			}
+			taskEXIT_CRITICAL();
+
+			// wait the job handling duration
+			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
+
+			// TODO: improve the job status handling between the agent and tracker
+			serial_printer_spool_chars(agent->name);
+
+			if (agent->currentJob->status == JOB_OVERDUE)
+			{
+				agent->currentJob->status = JOB_FAILED;
+				serial_printer_spool_string((String_t *)&msg_task_failed);
+			}
+			else
+			{
+				agent->currentJob->status = JOB_HANDLED;
+				serial_printer_spool_string((String_t *)&msg_task_handled);
+			}
+
+			serial_printer_spool_chars(&jobTemplates[agent->currentJob->jobTemplateIndex].description);
+
+			agent->status = AGENT_FREE;
+			agent->currentJob = NULL;
+		}
 	}
 }
