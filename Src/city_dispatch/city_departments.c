@@ -119,6 +119,11 @@ static void city_department_task(void *param)
 			serial_printer_spool_string((String_t *)&msg_task_received);
 			serial_printer_spool_string((String_t *)&(jobTemplates[department->current_job_pointer->jobTemplateIndex].description));
 
+			if (department->current_job_pointer->jobTemplateIndex == 0)
+			{
+				serial_printer_spool_chars("wtf");
+			}
+
             bool assigned = false;
 
             while (!assigned)

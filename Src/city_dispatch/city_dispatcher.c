@@ -105,10 +105,10 @@ static void city_dispatcher_task()
             for (uint8_t idx = 0; idx < NUM_EVENT_JOBS; idx++)
             {
 				trackedJob = &(trackedEvent->jobs[idx]);
-                if (trackedJob->code != DEPT_EMPTY && trackedJob->status == JOB_PENDING)
-                {
-                    osMessageQueuePut(*(department_inboxes[trackedJob->code]), &trackedJob, 0, osWaitForever);
-                }
+				if (trackedJob->code < 0
+					|| trackedJob->status != JOB_PENDING) continue;
+
+				osMessageQueuePut(*(department_inboxes[trackedJob->code]), &trackedJob, 0, osWaitForever);
             }
 		}
 		else

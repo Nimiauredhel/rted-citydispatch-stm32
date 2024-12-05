@@ -20,19 +20,20 @@
 // if the dispatcher finds that the tracker is full while
 // trying to add an event, it should either stall until more
 // space is freed, or dismiss a lower priority event.
+// the array is fixed & small so I use int8 indices rather than pointers.
 
 typedef struct EventTrackerNode
 {
     bool used;
-    uint8_t storageIdx;
-    struct EventTrackerNode *next;
+    int8_t thisIdx;
+    int8_t nextIdx;
     CityEvent_t event;
 } EventTrackerNode_t;
 
 void event_tracker_initialize();
 CityEvent_t *event_tracker_add(CityEvent_t newEvent);
 void event_tracker_refresh();
-uint8_t event_tracker_get_remaining_storage();
-uint8_t event_tracker_get_length();
+int8_t event_tracker_get_remaining_storage();
+int8_t event_tracker_get_length();
 
 #endif /* CITY_DISPATCH_CITY_EVENT_TRACKER_H_ */
