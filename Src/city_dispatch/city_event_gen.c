@@ -15,7 +15,7 @@ extern RNG_HandleTypeDef hrng;
 const static osThreadAttr_t eventGenTask_attributes = {
   .name = "eventGenTask",
   .stack_size = TASK_STACK_SIZE,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) EVENT_GENERATOR_PRIORITY,
 };
 
 static osThreadId_t eventGenTaskHandle;
@@ -123,7 +123,17 @@ static void event_gen_task()
         generate_event();
 
         // place event in city dispatcher inbox
-		osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &generated_event, 0, osWaitForever);
+        switch (eventTemplates[generated_event.eventTemplateIndex].priority)
+        {
+			case EVENT_HIGH:
+				osMessageQueuePut(city_inbox.inboxHighPriorityQueueHandle, &generated_event, 0, osWaitForever);
+			case EVENT_NORMAL:
+				osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &generated_event, 0, osWaitForever);
+				break;
+			default:
+				osMessageQueuePut(city_inbox.inboxLowPriorityQueueHandle, &generated_event, 0, osWaitForever);
+				break;
+		}
 
         //sprintf(output_buffer, "%lu events in queue.\n\r", osMessageQueueGetCount(city_inbox.inboxMediumPriorityQueueHandle));
         //serial_printer_spool_chars(output_buffer);

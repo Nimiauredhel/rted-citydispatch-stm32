@@ -107,10 +107,11 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 
 void event_tracker_refresh()
 {
-    if (length < EVENT_TRACKER_CAPACITY / 2) return;
+    if (length == 0) return;
+    if (headIdx == -1 || tailIdx == -1) return;
 
-    log_buffer.format = LOGFMT_REFRESHING;
-    serial_printer_spool_log(&log_buffer);
+    //log_buffer.format = LOGFMT_REFRESHING;
+    //serial_printer_spool_log(&log_buffer);
 
     // this function invokes CRITICAL mode
     // due to "job status" being used as IPC
@@ -122,11 +123,13 @@ void event_tracker_refresh()
     uint8_t jobIdx = 0;
     int8_t currentIdx = headIdx;
     int8_t prevIdx = -1;
+    int8_t temp = -1;
 
     do
     {
-        dismissed = DISMISSAL_PENDING;
+		dismissed = DISMISSAL_SUCCESS;
 
+        // determine if event should be dismissed
         for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
         {
             if (nodeBuffer[currentIdx].event.jobs[jobIdx].status > 0)
@@ -135,31 +138,33 @@ void event_tracker_refresh()
             }
             else
             {
+            	// in case of failure or deprioritization,
+            	// one failed/dismissed job is enough
+            	// to invalidate the whole event.
 				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_FAILED)
 				{
 					dismissed = DISMISSAL_FAILURE;
 					break;
 				}
 
-				if (dismissed < 2 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_DISMISSED)
+				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_DISMISSED)
 				{
 					dismissed = DISMISSAL_DEPRIORITIZED;
 					break;
 				}
 
-				if (dismissed < 1 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_HANDLED)
+				// in case of success, all job of the event must have been handled
+				// for the event to count as successfully cleared.
+				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status != JOB_HANDLED
+					&& nodeBuffer[currentIdx].event.jobs[jobIdx].code != DEPT_EMPTY)
 				{
-					dismissed = DISMISSAL_SUCCESS;
-					break;
+					dismissed = DISMISSAL_PENDING;
 				}
             }
         }
 
-        if (dismissed == 0)
-        {
-            prevIdx = currentIdx;
-        }
-        else
+        // dismiss if required
+        if (dismissed > 0)
         {
 			log_buffer.format = LOGFMT_DONE_WITH;
 			log_buffer.subject_0 = LOGSBJ_EVENT;
@@ -189,9 +194,17 @@ void event_tracker_refresh()
             {
                 nodeBuffer[prevIdx].nextIdx = nodeBuffer[currentIdx].nextIdx;
             }
+
+            temp = currentIdx;
+            currentIdx = nodeBuffer[currentIdx].nextIdx;
+            nodeBuffer[temp].nextIdx = -1;
+        }
+        else
+        {
+            prevIdx = currentIdx;
+            currentIdx = nodeBuffer[currentIdx].nextIdx;
         }
 
-        currentIdx = nodeBuffer[currentIdx].nextIdx;
     } while (currentIdx >= 0);
 
     taskEXIT_CRITICAL();

@@ -17,18 +17,18 @@ osThreadId_t controlTaskHandle;
 const osThreadAttr_t controlTask_attributes = {
   .name = "controlTask",
   .stack_size = TASK_STACK_SIZE*2,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) CONTROL_PRIORITY,
 };
 
 /* Consts for control task */
-uint8_t brief_delay_ticks = pdMS_TO_TICKS(10);
+static const uint8_t brief_delay_ticks = pdMS_TO_TICKS(10);
 static const char *sim_separator = "\n\r\n\r--------------------------------\n\r\n\r";
 static const char *control_prompt = "Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r";
 
 /* Variables */
 extern UART_HandleTypeDef huart3;
 
-static char input[1];
+static char input[1] = {'~'};
 static bool running = false;
 static CityLog_t log_buffer;
 
@@ -60,21 +60,21 @@ static void simulation_control_task(void *argument)
 	{
 		osDelay(brief_delay_ticks);
 
-		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, pdMS_TO_TICKS(10)))
+		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, brief_delay_ticks))
 		{
 			if (running
 				&& input[0] == 'h')
 			{
+				running = false;
 				simulation_stop();
 				osDelay(brief_delay_ticks);
-				running = false;
 			}
 			else if (!running
 				&& input[0] == 's')
 			{
+				running = true;
 				simulation_start();
 				osDelay(brief_delay_ticks);
-				running = true;
 			}
 			else if (input[0] == 't')
 			{
@@ -84,6 +84,9 @@ static void simulation_control_task(void *argument)
 			{
 				HAL_NVIC_SystemReset();
 			}
+
+            osDelay(brief_delay_ticks);
+            input[0] = '~';
 		}
 		else
 		{

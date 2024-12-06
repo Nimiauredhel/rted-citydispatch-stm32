@@ -69,7 +69,7 @@ static const uint16_t PRINTER_TIMEOUT_MS = 5000;
 static const osThreadAttr_t serialPrinterTask_attributes = {
   .name = "serialPrinterTask",
   .stack_size = TASK_STACK_SIZE,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) LOGGER_PRIORITY,
 };
 
 static osThreadId_t serialPrinterTaskHandle;

@@ -19,10 +19,10 @@ const static osMessageQueueAttr_t city_department_inbox_attributes[NUM_DEPARTMEN
 };
 
 const static osThreadAttr_t city_department_task_attributes[NUM_DEPARTMENTS] = {
-	{ .name = "medicalDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "policeDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "fireDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "covidDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "medicalDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) CITY_DEPARTMENT_PRIORITY, },
+	{ .name = "policeDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) CITY_DEPARTMENT_PRIORITY, },
+	{ .name = "fireDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) CITY_DEPARTMENT_PRIORITY, },
+	{ .name = "covidDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) CITY_DEPARTMENT_PRIORITY, },
 };
 
 static DepartmentState_t departments[NUM_DEPARTMENTS] = {0};

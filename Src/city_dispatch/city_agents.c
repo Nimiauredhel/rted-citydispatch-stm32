@@ -123,6 +123,7 @@ static void city_agent_task(void *param)
 
 			// TODO: improve the job status handling between the agent and tracker
 
+			taskENTER_CRITICAL();
 			agent->log_buffer.format = LOGFMT_DONE_WITH;
 			agent->log_buffer.subject_0 = LOGSBJ_JOB;
 			agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
@@ -138,10 +139,10 @@ static void city_agent_task(void *param)
 				agent->log_buffer.subject_2 = LOGSBJ_COMPLETE;
 			}
 
-			serial_printer_spool_log(&agent->log_buffer);
-
 			agent->status = AGENT_FREE;
 			agent->currentJob = NULL;
+			taskEXIT_CRITICAL();
+			serial_printer_spool_log(&agent->log_buffer);
 		}
 	}
 }
