@@ -57,6 +57,7 @@ static void generate_event()
 	log_buffer.format = LOGFMT_GENERATING_EVENT;
 	log_buffer.subject_0 = LOGSBJ_EVENT;
 	log_buffer.subject_1 = next_idx;
+	log_buffer.subject_2 = next_idx;
 	serial_printer_spool_log(&log_buffer);
 
     // apply event template to generated event

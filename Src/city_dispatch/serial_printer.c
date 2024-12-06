@@ -23,10 +23,10 @@ static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 	"%s awaiting work.",
 	"%s received %s: %s.",
 	"%s processing %s: %s.",
-	"%s registered %s: %s.",
+	"%s registered %s: %s. Index #%u",
 	"%s borrowing resource from %s.",
 	"%s returning resource to %s.",
-	"%s generating %s: %s.",
+	"%s generating %s: %s. Index #%u",
 	"%s refreshing.",
 	"%s cleared.",
 	"%s done with %s: %s.\n\rOutcome: %s.",
@@ -152,7 +152,8 @@ void print_city_log(CityLog_t log)
 		case LOGFMT_GENERATING_EVENT:
 			sprintf(output_buffer, log_formats[log.format], identifier_buffer, log_subjects[log.subject_0],
 					log.subject_0 == LOGSBJ_EVENT ? eventTemplates[log.subject_1].description
-					: jobTemplates[log.subject_1].description);
+					: jobTemplates[log.subject_1].description,
+					 log.subject_2);
 			break;
 		case LOGFMT_DONE_WITH:
 		case LOGFMT_DISMISSING:

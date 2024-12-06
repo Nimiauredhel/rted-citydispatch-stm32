@@ -26,6 +26,8 @@ static void set_next_free_idx()
         return;
     }
 
+    nextFreeIdx = -1;
+
     int8_t idx = 0;
 
     for (idx = 0; idx < EVENT_TRACKER_CAPACITY; idx++)
@@ -66,7 +68,7 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     log_buffer.subject_0 = LOGSBJ_EVENT;
     log_buffer.subject_1 = newEvent.eventTemplateIndex;
 
-    if (length >= EVENT_TRACKER_CAPACITY)
+    if (nextFreeIdx < 0 || length >= EVENT_TRACKER_CAPACITY)
     {
 		log_buffer.format = LOGFMT_DISMISSING;
 		log_buffer.subject_2 = LOGSBJ_INSUFFICIENT_SPACE;
@@ -74,40 +76,38 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
         return NULL;
     }
 
-    log_buffer.format = LOGFMT_REGISTERED;
-	serial_printer_spool_log(&log_buffer);
-
     int8_t targetIdx;
 
     if (length == 0)
     {
-    	length = 1;
         targetIdx = 0;
         headIdx = 0;
     }
     else
     {
-		length++;
         targetIdx = nextFreeIdx;
         nodeBuffer[tailIdx].nextIdx = targetIdx;
-
-		if (length < EVENT_TRACKER_CAPACITY)
-		{
-			set_next_free_idx();
-		}
     }
+
+	length++;
 
     nodeBuffer[targetIdx].event = newEvent;
     nodeBuffer[targetIdx].nextIdx = -1;
     nodeBuffer[targetIdx].used = true;
     tailIdx = targetIdx;
 
+    log_buffer.subject_2 = targetIdx;
+    log_buffer.format = LOGFMT_REGISTERED;
+	serial_printer_spool_log(&log_buffer);
+
+	set_next_free_idx();
+
     return &(nodeBuffer[targetIdx].event);
 }
 
 void event_tracker_refresh()
 {
-    if (length == 0) return;
+    if (length < EVENT_TRACKER_CAPACITY / 2) return;
 
     log_buffer.format = LOGFMT_REFRESHING;
     serial_printer_spool_log(&log_buffer);
@@ -129,7 +129,7 @@ void event_tracker_refresh()
 
         for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
         {
-            if (nodeBuffer[currentIdx].event.jobs[jobIdx].status >= 0)
+            if (nodeBuffer[currentIdx].event.jobs[jobIdx].status > 0)
             {
             	continue;
             }
@@ -144,10 +144,13 @@ void event_tracker_refresh()
 				if (dismissed < 2 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_DISMISSED)
 				{
 					dismissed = DISMISSAL_DEPRIORITIZED;
+					break;
 				}
-				else if (dismissed < 1 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_HANDLED)
+
+				if (dismissed < 1 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_HANDLED)
 				{
 					dismissed = DISMISSAL_SUCCESS;
+					break;
 				}
             }
         }
