@@ -46,13 +46,13 @@ void city_dispatcher_stop()
 
 static void city_dispatcher_task()
 {
+	osDelay(pdMS_TO_TICKS(100));
 	log_buffer.format = LOGFMT_INITIALIZED;
 	serial_printer_spool_log(&log_buffer);
 
-	osDelay(pdMS_TO_TICKS(2000));
-
-	log_buffer.format = LOGFMT_WAITING;
-	serial_printer_spool_log(&log_buffer);
+	//osDelay(pdMS_TO_TICKS(100));
+	//log_buffer.format = LOGFMT_WAITING;
+	//serial_printer_spool_log(&log_buffer);
 
 	for(;;)
 	{
@@ -103,12 +103,12 @@ static void city_dispatcher_task()
 		}
 		else
 		{
-			osDelay(pdMS_TO_TICKS(200));
+			osDelay(pdMS_TO_TICKS(100));
 			continue;
 		}
 
-		log_buffer.format = LOGFMT_WAITING;
-		serial_printer_spool_log(&log_buffer);
+		//log_buffer.format = LOGFMT_WAITING;
+		//serial_printer_spool_log(&log_buffer);
 	}
 }
 

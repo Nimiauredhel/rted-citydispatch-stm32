@@ -35,6 +35,11 @@ void city_departments_initialize(void)
 
 	for (idx = 0; idx < NUM_DEPARTMENTS; idx++)
 	{
+		departments[idx].log_buffer.identifier_0 = LOGID_DEPARTMENT;
+		departments[idx].log_buffer.identifier_1 = idx;
+		departments[idx].log_buffer.format = LOGFMT_INITIALIZING;
+		serial_printer_spool_log(&departments[idx].log_buffer);
+
 		departments[idx].code = (DepartmentCode_t)idx;
 		departments[idx].agentCount = departmentAgentCounts[idx];
 		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes[idx]);
@@ -43,13 +48,12 @@ void city_departments_initialize(void)
 		departments[idx].agents = city_agents_initialize(departments[idx].agentCount, departments[idx].code);
 		department_inboxes[idx] = &departments[idx].inbox;
 
-		departments[idx].log_buffer.identifier_0 = LOGID_DEPARTMENT;
-		departments[idx].log_buffer.identifier_1 = idx;
 		departments[idx].log_buffer.format = LOGFMT_INITIALIZED;
 		serial_printer_spool_log(&departments[idx].log_buffer);
 
 		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
 		osThreadSuspend(departments[idx].taskHandle);
+		osDelay(100);
 	}
 }
 
@@ -87,17 +91,17 @@ void city_departments_stop()
 
 static void city_department_task(void *param)
 {
+	osDelay(pdMS_TO_TICKS(100));
 	DepartmentState_t *department = (DepartmentState_t *)param;
 	department->log_buffer.identifier_0 = LOGID_DEPARTMENT;
 	department->log_buffer.identifier_1 = department->code;
 
-	department->log_buffer.format = LOGFMT_STARTING;
+	department->log_buffer.format = LOGFMT_TASK_STARTING;
 	serial_printer_spool_log(&department->log_buffer);
 
-	osDelay(pdMS_TO_TICKS(1000));
-
-	department->log_buffer.format = LOGFMT_WAITING;
-	serial_printer_spool_log(&department->log_buffer);
+	//osDelay(pdMS_TO_TICKS(100));
+	//department->log_buffer.format = LOGFMT_WAITING;
+	//serial_printer_spool_log(&department->log_buffer);
 
 	for(;;)
 	{
@@ -133,11 +137,11 @@ static void city_department_task(void *param)
 		}
 		else
 		{
-			osDelay(pdMS_TO_TICKS(200));
+			osDelay(pdMS_TO_TICKS(100));
 			continue;
 		}
 
-		department->log_buffer.format = LOGFMT_WAITING;
-		serial_printer_spool_log(&department->log_buffer);
+		//department->log_buffer.format = LOGFMT_WAITING;
+		//serial_printer_spool_log(&department->log_buffer);
 	}
 }

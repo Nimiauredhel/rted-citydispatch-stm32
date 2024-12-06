@@ -51,6 +51,7 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
 
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
+		osDelay(100);
 	}
 
 	return newAgents;
@@ -87,13 +88,12 @@ static void city_agent_task(void *param)
 	osDelay(pdMS_TO_TICKS(100));
 	AgentState_t *agent = (AgentState_t *)param;
 
-	agent->log_buffer.format = LOGFMT_STARTING;
+	agent->log_buffer.format = LOGFMT_TASK_STARTING;
 	serial_printer_spool_log(&agent->log_buffer);
 
-	osDelay(pdMS_TO_TICKS(1000));
-
-	agent->log_buffer.format = LOGFMT_WAITING;
-	serial_printer_spool_log(&agent->log_buffer);
+	//osDelay(pdMS_TO_TICKS(100));
+	//agent->log_buffer.format = LOGFMT_WAITING;
+	//serial_printer_spool_log(&agent->log_buffer);
 
 	for(;;)
 	{
