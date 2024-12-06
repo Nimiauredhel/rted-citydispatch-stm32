@@ -26,9 +26,10 @@ typedef struct AgentState
 {
     AgentStatus_t status;
     osThreadId_t taskHandle;
+    uint8_t index;
+	CityLog_t log_buffer;
     CityJob_t *currentJob;
     struct AgentState *next;
-    char name[16];
 } AgentState_t;
 
 AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code);

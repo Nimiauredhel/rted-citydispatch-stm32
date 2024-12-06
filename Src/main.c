@@ -29,7 +29,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
-typedef StaticQueue_t osStaticMessageQDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -69,29 +68,6 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for dynamicTask */
-osThreadId_t dynamicTaskHandle;
-const osThreadAttr_t dynamicTask_attributes = {
-  .name = "dynamicTask",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for staticQueue */
-osMessageQueueId_t staticQueueHandle;
-uint8_t staticQueueBuffer[ 16 * sizeof( uint16_t ) ];
-osStaticMessageQDef_t staticQueueControlBlock;
-const osMessageQueueAttr_t staticQueue_attributes = {
-  .name = "staticQueue",
-  .cb_mem = &staticQueueControlBlock,
-  .cb_size = sizeof(staticQueueControlBlock),
-  .mq_mem = &staticQueueBuffer,
-  .mq_size = sizeof(staticQueueBuffer)
-};
-/* Definitions for dynamicQueue */
-osMessageQueueId_t dynamicQueueHandle;
-const osMessageQueueAttr_t dynamicQueue_attributes = {
-  .name = "dynamicQueue"
-};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -105,7 +81,6 @@ static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_RNG_Init(void);
 void StartDefaultTask(void *argument);
-void StartDynamicTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -185,13 +160,6 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of staticQueue */
-  staticQueueHandle = osMessageQueueNew (16, sizeof(uint16_t), &staticQueue_attributes);
-
-  /* creation of dynamicQueue */
-  dynamicQueueHandle = osMessageQueueNew (16, sizeof(uint16_t), &dynamicQueue_attributes);
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -199,9 +167,6 @@ int main(void)
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* creation of dynamicTask */
-  dynamicTaskHandle = osThreadNew(StartDynamicTask, NULL, &dynamicTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -629,24 +594,6 @@ void StartDefaultTask(void *argument)
     osDelay(pdMS_TO_TICKS(10000));
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_StartDynamicTask */
-/**
-* @brief Function implementing the dynamicTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartDynamicTask */
-void StartDynamicTask(void *argument)
-{
-  /* USER CODE BEGIN StartDynamicTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartDynamicTask */
 }
 
 /**

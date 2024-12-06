@@ -19,29 +19,13 @@ const static osMessageQueueAttr_t city_department_inbox_attributes[NUM_DEPARTMEN
 };
 
 const static osThreadAttr_t city_department_task_attributes[NUM_DEPARTMENTS] = {
-	{ .name = "medicalDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "policeDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "fireDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "covidDeptTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "medicalDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "policeDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "fireDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "covidDeptTask", .stack_size = DEPARTMENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
 };
 
 static DepartmentState_t departments[NUM_DEPARTMENTS] = {0};
-
-static const String30_t msg_task_init =
-{
-	.size = 28,
-	.text = " department task started.\n\r"
-};
-static const String38_t msg_task_waiting =
-{
-	.size = 32,
-	.text = " department awaiting message.\n\r"
-};
-static const String30_t msg_task_received =
-{
-	.size = 29,
-	.text = " department received event: "
-};
 
 static void city_department_task(void *param);
 
@@ -55,14 +39,17 @@ void city_departments_initialize(void)
 		departments[idx].agentCount = departmentAgentCounts[idx];
 		departments[idx].inbox = osMessageQueueNew(DEPARTMENT_QUEUE_LENGTH, sizeof(CityJob_t**), &city_department_inbox_attributes[idx]);
 
-		// create department agenst
+		// create department agents
 		departments[idx].agents = city_agents_initialize(departments[idx].agentCount, departments[idx].code);
+		department_inboxes[idx] = &departments[idx].inbox;
+
+		departments[idx].log_buffer.identifier_0 = LOGID_DEPARTMENT;
+		departments[idx].log_buffer.identifier_1 = idx;
+		departments[idx].log_buffer.format = LOGFMT_INITIALIZED;
+		serial_printer_spool_log(&departments[idx].log_buffer);
 
 		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
-		department_inboxes[idx] = &departments[idx].inbox;
 		osThreadSuspend(departments[idx].taskHandle);
-
-		serial_printer_spool_chars("Department task initialized.\n\r");
 	}
 }
 
@@ -101,13 +88,16 @@ void city_departments_stop()
 static void city_department_task(void *param)
 {
 	DepartmentState_t *department = (DepartmentState_t *)param;
+	department->log_buffer.identifier_0 = LOGID_DEPARTMENT;
+	department->log_buffer.identifier_1 = department->code;
 
-	serial_printer_spool_chars(departmentNames[department->code]);
-	serial_printer_spool_string((String_t *)&msg_task_init);
+	department->log_buffer.format = LOGFMT_STARTING;
+	serial_printer_spool_log(&department->log_buffer);
+
 	osDelay(pdMS_TO_TICKS(1000));
 
-	serial_printer_spool_chars(departmentNames[department->code]);
-	serial_printer_spool_string((String_t *)&msg_task_waiting);
+	department->log_buffer.format = LOGFMT_WAITING;
+	serial_printer_spool_log(&department->log_buffer);
 
 	for(;;)
 	{
@@ -115,14 +105,10 @@ static void city_department_task(void *param)
 
 		if (department->queue_read_status == osOK)
 		{
-			serial_printer_spool_chars(departmentNames[department->code]);
-			serial_printer_spool_string((String_t *)&msg_task_received);
-			serial_printer_spool_string((String_t *)&(jobTemplates[department->current_job_pointer->jobTemplateIndex].description));
-
-			if (department->current_job_pointer->jobTemplateIndex == 0)
-			{
-				serial_printer_spool_chars("wtf");
-			}
+			department->log_buffer.format = LOGFMT_RECEIVED;
+			department->log_buffer.subject_0 = LOGSBJ_JOB;
+			department->log_buffer.subject_1 = department->current_job_pointer->jobTemplateIndex;
+			serial_printer_spool_log(&department->log_buffer);
 
             bool assigned = false;
 
@@ -151,7 +137,7 @@ static void city_department_task(void *param)
 			continue;
 		}
 
-		serial_printer_spool_chars(departmentNames[department->code]);
-		serial_printer_spool_string((String_t *)&msg_task_waiting);
+		department->log_buffer.format = LOGFMT_WAITING;
+		serial_printer_spool_log(&department->log_buffer);
 	}
 }

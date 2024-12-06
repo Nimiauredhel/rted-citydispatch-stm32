@@ -42,6 +42,8 @@ const osMessageQueueAttr_t inboxHighPriorityQueue_attributes = {
   .mq_size = sizeof(inboxHighPriorityQueueBuffer)
 };
 
+static CityLog_t log_buffer;
+
 /*
  * Public City Inbox Instance
  */
@@ -55,7 +57,10 @@ void city_inbox_initialize()
 	city_inbox.inboxLowPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxLowPriorityQueue_attributes);
 	city_inbox.inboxMediumPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxMediumPriorityQueue_attributes);
 	city_inbox.inboxHighPriorityQueueHandle = osMessageQueueNew (INCOMING_QUEUE_LENGTH, sizeof(CityEvent_t), &inboxHighPriorityQueue_attributes);
-	serial_printer_spool_chars("City inbox initialized.\n\r");
+
+	log_buffer.identifier_0 = LOGID_CITY_INBOX;
+	log_buffer.format = LOGFMT_INITIALIZED;
+	serial_printer_spool_log(&log_buffer);
 }
 
 void city_inbox_clear()
@@ -63,5 +68,7 @@ void city_inbox_clear()
 	osMessageQueueReset(city_inbox.inboxLowPriorityQueueHandle);
 	osMessageQueueReset(city_inbox.inboxMediumPriorityQueueHandle);
 	osMessageQueueReset(city_inbox.inboxHighPriorityQueueHandle);
-	serial_printer_spool_chars("City inbox cleared.\n\r");
+
+	log_buffer.format = LOGFMT_CLEARED;
+	serial_printer_spool_log(&log_buffer);
 }

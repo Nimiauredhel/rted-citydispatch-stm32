@@ -10,7 +10,6 @@
 
 #include "cmsis_os.h"
 #include "stm32f7xx_hal.h"
-#include "utils/string_defs.h"
 
 #define NUM_JOB_TEMPLATES 12
 #define NUM_EVENT_TEMPLATES 9
@@ -48,7 +47,7 @@ typedef struct CityJobTemplate
     DepartmentCode_t code;
     uint16_t minSecsToHandle;
     uint16_t maxSecsToHandle;
-    String30_t description;
+    char description[32];
 } CityJobTemplate_t;
 
 typedef struct CityEventTemplate
@@ -56,7 +55,7 @@ typedef struct CityEventTemplate
     EventPriority_t priority;
     uint16_t minSecsToExpire;
     uint16_t maxSecsToExpire;
-    String30_t description;
+    char description[32];
     uint8_t jobTemplateIndices[NUM_EVENT_JOBS];
 } CityEventTemplate_t;
 

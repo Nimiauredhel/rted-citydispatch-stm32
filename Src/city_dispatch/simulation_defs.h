@@ -18,7 +18,9 @@
 // TODO: set correct priorities with CMSIS enums
 // TODO: remove unused defines
 #define NUM_DEPARTMENTS (4)
-#define TASK_STACK_SIZE (configMINIMAL_STACK_SIZE)
+#define TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 4)
+#define DEPARTMENT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
+#define AGENT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
 #define EVENT_TRACKER_CAPACITY (16)
 #define INCOMING_QUEUE_LENGTH (32)
 #define OUTPUT_QUEUE_LENGTH (64)

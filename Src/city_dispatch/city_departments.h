@@ -27,7 +27,7 @@ typedef struct DepartmentState
     osThreadId_t taskHandle;
     osMessageQueueId_t inbox;
     uint8_t agentCount;
-	char output_buffer[64];
+    CityLog_t log_buffer;
     AgentState_t *agents;
 } DepartmentState_t;
 

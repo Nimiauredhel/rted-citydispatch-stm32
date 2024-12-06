@@ -13,31 +13,31 @@
 // index 0 holds the "null job"
 const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES] =
 {
-    { DEPT_EMPTY, 0, 0, { 12, "NULL JOB.\n\r"} },
-    { MEDICAL, 2,  5,   { 18, "Ambulance Ride.\n\r" } },
-    { MEDICAL, 4,  8,   { 22, "Medical Evacuation.\n\r" } },
-    { MEDICAL, 6,  12,  { 19, "Field Treatment.\n\r"} },
-    { POLICE,  2,  4,   { 18, "Suspect Arrest.\n\r"} },
-    { POLICE,  2,  4,   { 29, "Low Stakes Enforcement.\n\r"} },
-    { POLICE,  5,  10,  { 28, "High Stakes Enforcement.\n\r"} },
-    { FIRE,    1,  4,   { 26, "Minor Fire Suppression.\n\r"} },
-    { FIRE,    4,  8,   { 10, "Rescue.\n\r"} },
-    { FIRE,    6,  16,  { 26, "Major Fire Suppression.\n\r"} },
-    { COVID,   7,  14,  { 23, "Covid-19 Quarantine.\n\r"} },
-    { COVID,   14, 28,  { 22, "Covid-19 Treatment.\n\r"} },
+    { DEPT_EMPTY, 0, 0, "NULL JOB" },
+    { MEDICAL, 2,  5,   "Ambulance Ride" },
+    { MEDICAL, 4,  8,   "Medical Evacuation" },
+    { MEDICAL, 6,  12,  "Field Treatment" },
+    { POLICE,  2,  4,   "Suspect Arrest" },
+    { POLICE,  2,  4,   "Low Stakes Enforcement" },
+    { POLICE,  5,  10,  "High Stakes Enforcement" },
+    { FIRE,    1,  4,   "Minor Fire Suppression" },
+    { FIRE,    4,  8,   "Rescue" },
+    { FIRE,    6,  16,  "Major Fire Suppression" },
+    { COVID,   7,  14,  "Covid-19 Quarantine" },
+    { COVID,   14, 28,  "Covid-19 Treatment" },
 };
 // Events will be generated, randomly or otherwise,
 // from this pool of event templates
 const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES] =
 {
-    { EVENT_LOW,    600, 1200, { 15, "Stubbed Toe.\n\r" },       {1, 0, 0, 0, 0, 0, 0, 0} },
-    { EVENT_NORMAL, 20,  50,   { 17, "Work Accident.\n\r" },     {2, 3, 0, 0, 0, 0, 0, 0} },
-    { EVENT_HIGH,   60,  120,  { 17, "Violent Crime.\n\r" },     {3, 3, 4, 4, 6, 0, 0, 0} },
-    { EVENT_LOW,    20,  40,   { 27, "Noise Complaint.\n\r" },   {5, 0, 0, 0, 0, 0, 0, 0} },
-    { EVENT_HIGH,   50,  100,  { 27, "Vehicle Crash.\n\r" },     {2, 2, 3, 3, 5, 0, 0, 0} },
-    { EVENT_HIGH,   10,  40,   { 19, "Serial Arsonist.\n\r" },   {4, 4, 7, 7, 9, 0, 0, 0} },
-    { EVENT_HIGH,   60,  100,  { 16, "Factory Fire.\n\r" },      {2, 3, 3, 3, 8, 8, 9, 9} },
-    { EVENT_NORMAL, 80,  100,  { 17, "Covid-19 Case.\n\r" },     {2, 10, 11, 0, 0, 0, 0, 0} },
-    { EVENT_HIGH,   80,  100,  { 21, "Covid-19 Outbreak.\n\r" }, {2, 2, 2, 10, 10, 10, 11, 11} },
+    { EVENT_LOW,    600, 1200, "Stubbed Toe",       {1, 0, 0, 0, 0, 0, 0, 0} },
+    { EVENT_NORMAL, 20,  50,   "Work Accident",     {2, 3, 0, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   60,  120,  "Violent Crime",     {3, 3, 4, 4, 6, 0, 0, 0} },
+    { EVENT_LOW,    20,  40,   "Noise Complaint",   {5, 0, 0, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   50,  100,  "Vehicle Crash",     {2, 2, 3, 3, 5, 0, 0, 0} },
+    { EVENT_HIGH,   10,  40,   "Serial Arsonist",   {4, 4, 7, 7, 9, 0, 0, 0} },
+    { EVENT_HIGH,   60,  100,  "Factory Fire",      {2, 3, 3, 3, 8, 8, 9, 9} },
+    { EVENT_NORMAL, 80,  100,  "Covid-19 Case",     {2, 10, 11, 0, 0, 0, 0, 0} },
+    { EVENT_HIGH,   80,  100,  "Covid-19 Outbreak", {2, 2, 2, 10, 10, 10, 11, 11} },
 };
 

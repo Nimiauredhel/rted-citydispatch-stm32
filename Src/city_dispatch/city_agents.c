@@ -10,38 +10,10 @@
 static const uint16_t AGENTS_TIMEOUT_MS = 300;
 
 const osThreadAttr_t city_agent_task_attributes[NUM_DEPARTMENTS] = {
-	{ .name = "medicalAgentTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "policeAgentTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "fireAgentTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-	{ .name = "covidAgentTask", .stack_size = TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
-};
-
-static const String30_t msg_task_init =
-{
-	.size = 23,
-	.text = " agent task started.\n\r"
-};
-static const String38_t msg_task_waiting =
-{
-	.size = 24,
-	.text = " agent awaiting work.\n\r"
-};
-static const String30_t msg_task_received =
-{
-	.size = 24,
-	.text = " agent received job: "
-};
-
-static const String30_t msg_task_handled =
-{
-	.size = 23,
-	.text = " agent handled job: "
-};
-
-static const String30_t msg_task_failed =
-{
-	.size = 22,
-	.text = " agent failed job: "
+	{ .name = "medicalAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "policeAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "fireAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
+	{ .name = "covidAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
 };
 
 static AgentState_t *head = NULL;
@@ -67,9 +39,15 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
             tail = &newAgents[idx];
         }
 
-        sprintf(newAgents[idx].name, "%s-%u", departmentNames[code], idx+1);
+        newAgents[idx].index = idx;
         newAgents[idx].status = AGENT_FREE;
         newAgents[idx].currentJob = NULL;
+
+		newAgents[idx].log_buffer.identifier_0 = LOGID_AGENT;
+		newAgents[idx].log_buffer.identifier_1 = code;
+		newAgents[idx].log_buffer.identifier_2 = idx;
+        newAgents[idx].log_buffer.format = LOGFMT_INITIALIZED;
+		serial_printer_spool_log(&newAgents[idx].log_buffer);
 
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
@@ -109,12 +87,13 @@ static void city_agent_task(void *param)
 	osDelay(pdMS_TO_TICKS(100));
 	AgentState_t *agent = (AgentState_t *)param;
 
-	serial_printer_spool_chars(agent->name);
-	serial_printer_spool_string((String_t *)&msg_task_init);
+	agent->log_buffer.format = LOGFMT_STARTING;
+	serial_printer_spool_log(&agent->log_buffer);
+
 	osDelay(pdMS_TO_TICKS(1000));
 
-	serial_printer_spool_chars(agent->name);
-	serial_printer_spool_string((String_t *)&msg_task_waiting);
+	agent->log_buffer.format = LOGFMT_WAITING;
+	serial_printer_spool_log(&agent->log_buffer);
 
 	for(;;)
 	{
@@ -127,9 +106,11 @@ static void city_agent_task(void *param)
 			{
 				agent->status = AGENT_BUSY;
 				agent->currentJob->status = JOB_ONGOING;
-				serial_printer_spool_chars(agent->name);
-				serial_printer_spool_string((String_t *)&msg_task_received);
-				serial_printer_spool_chars(&jobTemplates[agent->currentJob->jobTemplateIndex].description);
+
+				agent->log_buffer.format = LOGFMT_RECEIVED;
+				agent->log_buffer.subject_0 = LOGSBJ_JOB;
+				agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
+				serial_printer_spool_log(&agent->log_buffer);
 			}
 			else if (agent->currentJob->status == JOB_OVERDUE)
 			{
@@ -141,20 +122,23 @@ static void city_agent_task(void *param)
 			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
 
 			// TODO: improve the job status handling between the agent and tracker
-			serial_printer_spool_chars(agent->name);
+
+			agent->log_buffer.format = LOGFMT_DONE_WITH;
+			agent->log_buffer.subject_0 = LOGSBJ_JOB;
+			agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
 
 			if (agent->currentJob->status == JOB_OVERDUE)
 			{
 				agent->currentJob->status = JOB_FAILED;
-				serial_printer_spool_string((String_t *)&msg_task_failed);
+				agent->log_buffer.subject_2 = LOGSBJ_OVERDUE;
 			}
 			else
 			{
 				agent->currentJob->status = JOB_HANDLED;
-				serial_printer_spool_string((String_t *)&msg_task_handled);
+				agent->log_buffer.subject_2 = LOGSBJ_COMPLETE;
 			}
 
-			serial_printer_spool_chars(&jobTemplates[agent->currentJob->jobTemplateIndex].description);
+			serial_printer_spool_log(&agent->log_buffer);
 
 			agent->status = AGENT_FREE;
 			agent->currentJob = NULL;

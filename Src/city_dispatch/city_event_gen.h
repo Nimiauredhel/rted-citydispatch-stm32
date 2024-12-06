@@ -13,7 +13,6 @@
 #include "FreeRTOSConfig.h"
 #include "city_inbox.h"
 #include "simulation_defs.h"
-#include "utils/string_utils.h"
 #include "utils/date_time.h"
 #include "cmsis_os.h"
 

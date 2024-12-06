@@ -27,15 +27,6 @@ void output_print_irq(const char *string, uint16_t size)
 	}
 }
 
-void output_print_string_irq(const String_t *string)
-{
-	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
-	while (transmitStatus == HAL_BUSY)
-	{
-		transmitStatus = HAL_UART_Transmit_IT(&huart3, (uint8_t *)string->text, string->size);
-	}
-}
-
 void output_print_irq_autosize(const char *string)
 {
 	uint16_t size = strlen(string)+1;
@@ -48,15 +39,6 @@ void output_print_blocking(const char *string, uint16_t size)
 	while (transmitStatus == HAL_BUSY)
 	{
 		transmitStatus = HAL_UART_Transmit(&huart3, (uint8_t *)string, size, 0xFFFF);
-	}
-}
-
-void output_print_string_blocking(const String_t *string)
-{
-	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
-	while (transmitStatus == HAL_BUSY)
-	{
-		transmitStatus = HAL_UART_Transmit(&huart3, (uint8_t *)string->text, string->size, 0xFFFF);
 	}
 }
 

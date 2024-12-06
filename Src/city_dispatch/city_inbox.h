@@ -10,6 +10,7 @@
 
 #include "cmsis_os.h"
 #include "simulation_defs.h"
+#include "serial_printer.h"
 
 typedef struct CityInbox
 {

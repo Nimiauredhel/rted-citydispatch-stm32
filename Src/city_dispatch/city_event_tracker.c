@@ -6,18 +6,16 @@
 
 #include "city_event_tracker.h"
 
-static const char dismissal_reasons[4][17] =
-{
-	"Not Dismissed.\n\r",
-	"Success.\n\r",
-	"Deprioritized.\n\r",
-	"Failure.\n\r",
-};
+#define DISMISSAL_PENDING 0
+#define DISMISSAL_SUCCESS 1
+#define DISMISSAL_DEPRIORITIZED 2
+#define DISMISSAL_FAILURE 3
 
 static int8_t length = 0;
 static int8_t nextFreeIdx = 0;
 static int8_t headIdx;
 static int8_t tailIdx;
+static CityLog_t log_buffer;
 static EventTrackerNode_t nodeBuffer[EVENT_TRACKER_CAPACITY] = {0};
 
 static void set_next_free_idx()
@@ -46,6 +44,7 @@ void event_tracker_initialize()
     tailIdx = -1;
     length = 0;
     nextFreeIdx = 0;
+    log_buffer.identifier_0 = LOGID_EVENT_TRACKER;
 
     int8_t idx = 0;
 
@@ -56,20 +55,27 @@ void event_tracker_initialize()
         nodeBuffer[idx].used = false;
     }
 
-	serial_printer_spool_chars("Event Tracker initialized.\n\r");
+    log_buffer.format = LOGFMT_INITIALIZED;
+    serial_printer_spool_log(&log_buffer);
 }
 
 // if successful, returns pointer to stored address
 // if failed, returns NULL
 CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 {
+    log_buffer.subject_0 = LOGSBJ_EVENT;
+    log_buffer.subject_1 = newEvent.eventTemplateIndex;
+
     if (length >= EVENT_TRACKER_CAPACITY)
     {
-		serial_printer_spool_chars("Event Tracker failed to add event.\n\r");
+		log_buffer.format = LOGFMT_DISMISSING;
+		log_buffer.subject_2 = LOGSBJ_INSUFFICIENT_SPACE;
+		serial_printer_spool_log(&log_buffer);
         return NULL;
     }
 
-    serial_printer_spool_chars("Event Tracker adding event.\n\r");
+    log_buffer.format = LOGFMT_REGISTERED;
+	serial_printer_spool_log(&log_buffer);
 
     int8_t targetIdx;
 
@@ -103,7 +109,8 @@ void event_tracker_refresh()
 {
     if (length == 0) return;
 
-    serial_printer_spool_chars("Event Tracker Refresh.\n\r");
+    log_buffer.format = LOGFMT_REFRESHING;
+    serial_printer_spool_log(&log_buffer);
 
     // this function invokes CRITICAL mode
     // due to "job status" being used as IPC
@@ -111,14 +118,14 @@ void event_tracker_refresh()
     // TODO: use mutex instead (to only lock individual resources when required, rather than whole system every time)
     taskENTER_CRITICAL();
 
-    int8_t dismissed = 0;
+    int8_t dismissed = DISMISSAL_PENDING;
     uint8_t jobIdx = 0;
     int8_t currentIdx = headIdx;
     int8_t prevIdx = -1;
 
     do
     {
-        dismissed = 0;
+        dismissed = DISMISSAL_PENDING;
 
         for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
         {
@@ -130,17 +137,17 @@ void event_tracker_refresh()
             {
 				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_FAILED)
 				{
-					dismissed = 3;
+					dismissed = DISMISSAL_FAILURE;
 					break;
 				}
 
 				if (dismissed < 2 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_DISMISSED)
 				{
-					dismissed = 2;
+					dismissed = DISMISSAL_DEPRIORITIZED;
 				}
 				else if (dismissed < 1 && nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_HANDLED)
 				{
-					dismissed = 1;
+					dismissed = DISMISSAL_SUCCESS;
 				}
             }
         }
@@ -151,10 +158,15 @@ void event_tracker_refresh()
         }
         else
         {
-			serial_printer_spool_chars("Event Tracker: freeing event ");
-			serial_printer_spool_string((String_t *)&eventTemplates[nodeBuffer[currentIdx].event.eventTemplateIndex].description);
-			serial_printer_spool_chars("Cause: ");
-			serial_printer_spool_chars(dismissal_reasons[dismissed]);
+			log_buffer.format = LOGFMT_DONE_WITH;
+			log_buffer.subject_0 = LOGSBJ_EVENT;
+			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
+			log_buffer.subject_2 =
+					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_COMPLETE
+					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_OVERDUE
+					: LOGSBJ_DEPRIORITIZED;
+			serial_printer_spool_log(&log_buffer);
+
             // freeing a node
             nodeBuffer[currentIdx].used = false;
             length--;

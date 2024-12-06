@@ -12,17 +12,19 @@ static void simulation_initialize();
 static void simulation_start();
 static void simulation_stop();
 
-extern UART_HandleTypeDef huart3;
-static char input[1];
-bool running = false;
-
 /* Definitions for control task */
 osThreadId_t controlTaskHandle;
 const osThreadAttr_t controlTask_attributes = {
   .name = "controlTask",
-  .stack_size = 128 * 4,
+  .stack_size = TASK_STACK_SIZE*2,
   .priority = (osPriority_t) osPriorityNormal,
 };
+
+/* Variables */
+extern UART_HandleTypeDef huart3;
+
+static char input[1];
+static bool running = false;
 
 void simulation_start_control_task()
 {
@@ -40,10 +42,13 @@ static void simulation_control_task(void *argument)
 {
 	osDelay(pdMS_TO_TICKS(1000));
 	simulation_initialize();
-	serial_printer_spool_chars("Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r");
+	osDelay(pdMS_TO_TICKS(100));
+	output_print_blocking_autosize("Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r");
 
 	for(;;)
 	{
+		osDelay(pdMS_TO_TICKS(100));
+
 		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, pdMS_TO_TICKS(10)))
 		{
 			if (running
@@ -76,22 +81,19 @@ static void simulation_control_task(void *argument)
 	}
 }
 
-String22_t msg_sim_start = {.size = 23, .text = "Simulation starting.\n\r"};
-String22_t msg_sim_stop = {.size = 22, .text = "Simulation stopped.\n\r"};
-
 static void simulation_initialize()
 {
 	serial_printer_initialize();
+	event_gen_initialize();
 	city_inbox_initialize();
 	city_dispatcher_initialize();
 	city_departments_initialize();
-	event_gen_initialize();
-	serial_printer_spool_chars("Simulation initialized.\n\r");
+	output_print_blocking_autosize("Simulation initialized.\n\r");
 }
 
 static void simulation_start()
 {
-	serial_printer_spool_string((String_t *)&msg_sim_start);
+	output_print_blocking_autosize("Simulation starting.\n\r");
 	city_inbox_clear();
 	city_dispatcher_start();
 	city_departments_start();
@@ -104,5 +106,5 @@ static void simulation_stop()
 	city_dispatcher_stop();
 	city_departments_stop();
 	city_inbox_clear();
-	serial_printer_spool_string((String_t *)&msg_sim_stop);
+	output_print_blocking_autosize("Simulation stopped.\n\r");
 }

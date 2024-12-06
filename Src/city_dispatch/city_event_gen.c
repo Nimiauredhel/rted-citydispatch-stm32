@@ -14,7 +14,7 @@ extern RNG_HandleTypeDef hrng;
 
 const static osThreadAttr_t eventGenTask_attributes = {
   .name = "eventGenTask",
-  .stack_size = 128 * 4,
+  .stack_size = TASK_STACK_SIZE,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -23,7 +23,7 @@ static uint32_t random_number;
 static uint32_t next_delay;
 static uint8_t next_idx;
 static CityEvent_t generated_event;
-static char output_buffer[64];
+static CityLog_t log_buffer;
 static uint8_t jobTemplateIdx;
 static uint16_t expirationSecs;
 
@@ -33,7 +33,9 @@ void event_gen_initialize()
 {
 	eventGenTaskHandle = osThreadNew(event_gen_task, NULL, &eventGenTask_attributes);
 	event_gen_stop();
-	serial_printer_spool_chars("Event generation init.\n\r");
+	log_buffer.identifier_0 = LOGID_EVENT_GEN;
+	log_buffer.format = LOGFMT_INITIALIZED;
+	serial_printer_spool_log(&log_buffer);
 }
 
 void event_gen_start()
@@ -51,8 +53,11 @@ static void generate_event()
     // randomly select event template index
 	HAL_RNG_GenerateRandomNumber(&hrng, &random_number);
 	next_idx = (random_number % NUM_EVENT_TEMPLATES);
-	sprintf(output_buffer, "Generating event from template #%u.\n\r", next_idx);
-	serial_printer_spool_chars(output_buffer);
+
+	log_buffer.format = LOGFMT_GENERATING_EVENT;
+	log_buffer.subject_0 = LOGSBJ_EVENT;
+	log_buffer.subject_1 = next_idx;
+	serial_printer_spool_log(&log_buffer);
 
     // apply event template to generated event
     generated_event.eventTemplateIndex = next_idx;
@@ -99,7 +104,6 @@ static void generate_event()
 
 static void event_gen_task()
 {
-
 	for(;;)
 	{
         // generate random delay in ms between min & max
@@ -108,8 +112,10 @@ static void event_gen_task()
             (random_number
              & (EVENT_GENERATOR_SLEEP_MAX - EVENT_GENERATOR_SLEEP_MIN))
             + EVENT_GENERATOR_SLEEP_MIN;
-        sprintf(output_buffer, "Next event in %lums.\n\r", next_delay);
-        serial_printer_spool_chars(output_buffer);
+
+        //sprintf(output_buffer, "Next event in %lums.\n\r", next_delay);
+        //serial_printer_spool_chars(output_buffer);
+
 		osDelay(pdMS_TO_TICKS(next_delay));
 
 		// generate event randomly from pool of templates
@@ -117,7 +123,8 @@ static void event_gen_task()
 
         // place event in city dispatcher inbox
 		osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &generated_event, 0, osWaitForever);
-        sprintf(output_buffer, "%lu events in queue.\n\r", osMessageQueueGetCount(city_inbox.inboxMediumPriorityQueueHandle));
-        serial_printer_spool_chars(output_buffer);
+
+        //sprintf(output_buffer, "%lu events in queue.\n\r", osMessageQueueGetCount(city_inbox.inboxMediumPriorityQueueHandle));
+        //serial_printer_spool_chars(output_buffer);
 	}
 }
