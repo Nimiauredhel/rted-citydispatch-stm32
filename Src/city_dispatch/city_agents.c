@@ -7,7 +7,7 @@
 
 #include "city_agents.h"
 
-static const uint16_t AGENTS_TIMEOUT_MS = 300;
+static const TickType_t AGENTS_TIMEOUT_TICKS = pdMS_TO_TICKS(300);
 
 const osThreadAttr_t city_agent_task_attributes[NUM_DEPARTMENTS] = {
 	{ .name = "medicalAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
@@ -51,7 +51,7 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
 
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
-		osDelay(100);
+		osDelay(AGENTS_TIMEOUT_TICKS);
 	}
 
 	return newAgents;
@@ -85,7 +85,7 @@ void city_agents_stop()
 
 static void city_agent_task(void *param)
 {
-	osDelay(pdMS_TO_TICKS(100));
+	osDelay(AGENTS_TIMEOUT_TICKS);
 	AgentState_t *agent = (AgentState_t *)param;
 
 	agent->log_buffer.format = LOGFMT_TASK_STARTING;
@@ -97,7 +97,7 @@ static void city_agent_task(void *param)
 
 	for(;;)
 	{
-		osDelay(pdMS_TO_TICKS(AGENTS_TIMEOUT_MS));
+		osDelay(AGENTS_TIMEOUT_TICKS);
 
 		if (agent->status == AGENT_ASSIGNED)
 		{

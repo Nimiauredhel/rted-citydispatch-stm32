@@ -7,7 +7,7 @@
 
 #include "city_departments.h"
 
-static const uint16_t DISPATCHER_TIMEOUT_MS = 30000;
+static const TickType_t DEPARTMENT_TIMEOUT_TICKS = pdMS_TO_TICKS(300);
 
 osMessageQueueId_t *department_inboxes[NUM_DEPARTMENTS];
 
@@ -53,7 +53,7 @@ void city_departments_initialize(void)
 
 		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
 		osThreadSuspend(departments[idx].taskHandle);
-		osDelay(100);
+		osDelay(DEPARTMENT_TIMEOUT_TICKS);
 	}
 }
 
@@ -91,7 +91,7 @@ void city_departments_stop()
 
 static void city_department_task(void *param)
 {
-	osDelay(pdMS_TO_TICKS(100));
+	osDelay(DEPARTMENT_TIMEOUT_TICKS);
 	DepartmentState_t *department = (DepartmentState_t *)param;
 	department->log_buffer.identifier_0 = LOGID_DEPARTMENT;
 	department->log_buffer.identifier_1 = department->code;
@@ -105,7 +105,7 @@ static void city_department_task(void *param)
 
 	for(;;)
 	{
-		department->queue_read_status = osMessageQueueGet(department->inbox, &department->current_job_pointer, NULL, pdMS_TO_TICKS(DISPATCHER_TIMEOUT_MS));
+		department->queue_read_status = osMessageQueueGet(department->inbox, &department->current_job_pointer, NULL, DEPARTMENT_TIMEOUT_TICKS);
 
 		if (department->queue_read_status == osOK)
 		{
@@ -132,12 +132,12 @@ static void city_department_task(void *param)
 					}
 				}
 
-				osDelay(pdMS_TO_TICKS(100));
+				osDelay(DEPARTMENT_TIMEOUT_TICKS);
             }
 		}
 		else
 		{
-			osDelay(pdMS_TO_TICKS(100));
+			osDelay(DEPARTMENT_TIMEOUT_TICKS);
 			continue;
 		}
 

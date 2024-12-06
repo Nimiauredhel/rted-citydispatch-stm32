@@ -18,6 +18,8 @@ const static osThreadAttr_t eventGenTask_attributes = {
   .priority = (osPriority_t) EVENT_GENERATOR_PRIORITY,
 };
 
+const static TickType_t brief_delay = pdMS_TO_TICKS(300);
+
 static osThreadId_t eventGenTaskHandle;
 static uint32_t random_number;
 static uint32_t next_delay;
@@ -63,6 +65,8 @@ static void generate_event()
     // apply event template to generated event
     generated_event.eventTemplateIndex = next_idx;
 
+	osDelay(brief_delay);
+
     // generate random expiration time & date according to template
     // first get the current time and date
     generated_event.expirationTime = time_get();
@@ -105,6 +109,8 @@ static void generate_event()
 
 static void event_gen_task()
 {
+	osDelay(brief_delay);
+
 	for(;;)
 	{
         // generate random delay in ms between min & max
@@ -118,6 +124,12 @@ static void event_gen_task()
         //serial_printer_spool_chars(output_buffer);
 
 		osDelay(pdMS_TO_TICKS(next_delay));
+
+		// if event tracker is full, wait until it has room
+		while (event_tracker_get_remaining_storage() < 1)
+		{
+			osDelay(brief_delay);
+		}
 
 		// generate event randomly from pool of templates
         generate_event();

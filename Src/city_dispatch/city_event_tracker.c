@@ -96,11 +96,12 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     nodeBuffer[targetIdx].used = true;
     tailIdx = targetIdx;
 
+	set_next_free_idx();
+
     log_buffer.subject_2 = targetIdx;
     log_buffer.format = LOGFMT_REGISTERED;
 	serial_printer_spool_log(&log_buffer);
 
-	set_next_free_idx();
 
     return &(nodeBuffer[targetIdx].event);
 }
@@ -132,7 +133,8 @@ void event_tracker_refresh()
         // determine if event should be dismissed
         for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
         {
-            if (nodeBuffer[currentIdx].event.jobs[jobIdx].status > 0)
+            if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_NONE
+            	|| nodeBuffer[currentIdx].event.jobs[jobIdx].code == DEPT_EMPTY)
             {
             	continue;
             }
@@ -155,8 +157,7 @@ void event_tracker_refresh()
 
 				// in case of success, all job of the event must have been handled
 				// for the event to count as successfully cleared.
-				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status != JOB_HANDLED
-					&& nodeBuffer[currentIdx].event.jobs[jobIdx].code != DEPT_EMPTY)
+				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status != JOB_HANDLED)
 				{
 					dismissed = DISMISSAL_PENDING;
 				}

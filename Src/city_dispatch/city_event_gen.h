@@ -18,6 +18,7 @@
 
 #include "city_events.h"
 #include "serial_printer.h"
+#include "city_event_tracker.h"
 
 void event_gen_initialize();
 void event_gen_start();
