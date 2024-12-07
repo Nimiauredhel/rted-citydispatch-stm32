@@ -9,6 +9,7 @@
 #define CITY_DISPATCH_CITY_EVENT_TRACKER_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "simulation_defs.h"
 #include "city_events.h"
 #include "serial_printer.h"
@@ -33,6 +34,8 @@ typedef struct EventTrackerNode
 void event_tracker_initialize();
 CityEvent_t *event_tracker_add(CityEvent_t newEvent);
 void event_tracker_refresh();
+void event_tracker_set_dirty();
+bool event_tracker_get_dirty();
 int8_t event_tracker_get_remaining_storage();
 int8_t event_tracker_get_length();
 

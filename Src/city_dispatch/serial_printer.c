@@ -7,7 +7,7 @@
 
 #include "serial_printer.h"
 
-#define NUM_LOG_FORMATS 20
+#define NUM_LOG_FORMATS 21
 #define MAX_LEN_LOG_FORMATS 64
 
 /*
@@ -17,7 +17,7 @@
 static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 {
 	"~",
-	"Initializing %s.",
+	"%s initializing.",
 	"%s initialized.",
 	"%s task starting.",
 	"%s task stopping.",
@@ -30,10 +30,11 @@ static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 	"%s generating %s: %s. Index #%u",
 	"%s refreshing.",
 	"%s cleared.",
-	"%s done with %s: %s.\n\rOutcome: %s.",
-	"%s dismissing %s: %s.\n\rCause: %s.",
-	"%s: starting %s %s.\n\rCause: %s.",
-	"%s: stopping %s %s.\n\rCause: %s.",
+	"%s done with %s: %s. Outcome: %s.",
+	"%s removing %s: %s. Cause: %s.",
+	"%s dismissing %s: %s. Cause: %s.",
+	"%s: starting %s %s. Cause: %s.",
+	"%s: stopping %s %s. Cause: %s.",
 	"%s: started %s%s following %s.",
 	"%s: stopped %s%s following %s.",
 };
@@ -86,11 +87,13 @@ static const osMessageQueueAttr_t serialPrinterQueue_attributes = {
   .mq_size = sizeof(serialPrinterQueueBuffer)
 };
 
-static const char newline[3] = "\n\r";
+static const char newline[2] = "\n\r";
+static const char timestamp_format[17] = "%02u:%02u:%02u ~ ";
 
 static osStatus_t queue_read_status;
 
 static CityLog_t log_buffer;
+static char timestamp_buffer[16];
 static char identifier_buffer[32];
 static char output_buffer[64];
 
@@ -125,27 +128,31 @@ static void serial_printer_task()
 		}
 		else
 		{
-			print_city_log(log_buffer);
+			print_city_log();
 		}
 	}
 }
 
-void print_city_log(CityLog_t log)
+void print_city_log()
 {
+	// prepare timestamp buffer
+	RTC_TimeTypeDef now = time_get();
+	sprintf(timestamp_buffer, timestamp_format, now.Hours, now.Minutes, now.Seconds);
+
 	// prepare identifier buffer
-	switch (log.identifier_0) {
+	switch (log_buffer.identifier_0) {
 		case LOGID_DEPARTMENT:
-			sprintf(identifier_buffer, log_identifiers[LOGID_DEPARTMENT], departmentNames[log.identifier_1]);
+			sprintf(identifier_buffer, log_identifiers[LOGID_DEPARTMENT], departmentNames[log_buffer.identifier_1]);
 			break;
 		case LOGID_AGENT:
-			sprintf(identifier_buffer, log_identifiers[LOGID_AGENT], departmentNames[log.identifier_1], log.identifier_2);
+			sprintf(identifier_buffer, log_identifiers[LOGID_AGENT], departmentNames[log_buffer.identifier_1], log_buffer.identifier_2);
 			break;
 		default:
-			sprintf(identifier_buffer, log_identifiers[log.identifier_0]);
+			sprintf(identifier_buffer, log_identifiers[log_buffer.identifier_0]);
 			break;
 	}
 
-	switch (log.format)
+	switch (log_buffer.format)
 	{
 	// first address the exceptions
 		case LOGFMT_INITIALIZING:
@@ -154,7 +161,7 @@ void print_city_log(CityLog_t log)
 		case LOGFMT_TASK_STOPPING:
 		case LOGFMT_WAITING:
 		case LOGFMT_REFRESHING:
-			sprintf(output_buffer, log_formats[log.format], identifier_buffer);
+			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer);
 			break;
 			// log formats that use every parameter,
 			// with subject_2 being a literal index number to be printed
@@ -162,12 +169,12 @@ void print_city_log(CityLog_t log)
 		case LOGFMT_PROCESSING:
 		case LOGFMT_REGISTERED:
 		case LOGFMT_GENERATING_EVENT:
-			sprintf(output_buffer, log_formats[log.format], identifier_buffer,
-					log_subjects[log.subject_0],
-					log.subject_0 == LOGSBJ_EVENT ? eventTemplates[log.subject_1].description
-						: log.subject_0 == LOGSBJ_JOB ? jobTemplates[log.subject_1].description
-						: log_subjects[log.subject_1],
-					log.subject_2);
+			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer,
+					log_subjects[log_buffer.subject_0],
+					log_buffer.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer.subject_1].description
+						: log_buffer.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer.subject_1].description
+						: log_subjects[log_buffer.subject_1],
+					log_buffer.subject_2);
 			break;
 			// log formats that use every parameter,
 			// with subject_2 being an index for a cause/outcome/etc. text
@@ -177,12 +184,12 @@ void print_city_log(CityLog_t log)
 		case LOGFMT_STOPPING_SUBJECT:
 		case LOGFMT_STARTED_SUBJECT:
 		case LOGFMT_STOPPED_SUBJECT:
-			sprintf(output_buffer, log_formats[log.format], identifier_buffer,
-					log_subjects[log.subject_0],
-					log.subject_0 == LOGSBJ_EVENT ? eventTemplates[log.subject_1].description
-						: log.subject_0 == LOGSBJ_JOB ? jobTemplates[log.subject_1].description
-						: log_subjects[log.subject_1],
-					log_subjects[log.subject_2]);
+			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer,
+					log_subjects[log_buffer.subject_0],
+					log_buffer.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer.subject_1].description
+						: log_buffer.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer.subject_1].description
+						: log_subjects[log_buffer.subject_1],
+					log_subjects[log_buffer.subject_2]);
 			break;
 			// log formats that use the subject fields like a secondary identifier
 			// to show interactions between departments, agents etc.
@@ -193,6 +200,7 @@ void print_city_log(CityLog_t log)
 		default:
 	}
 
+	output_print_blocking(timestamp_buffer, 12);
 	output_print_blocking_autosize(output_buffer);
 	output_print_blocking(newline, 3);
 }

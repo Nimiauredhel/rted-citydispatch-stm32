@@ -11,6 +11,7 @@
 #define DISMISSAL_DEPRIORITIZED 2
 #define DISMISSAL_FAILURE 3
 
+static bool is_dirty = false;
 static int8_t length = 0;
 static int8_t nextFreeIdx = 0;
 static int8_t headIdx;
@@ -102,7 +103,6 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     log_buffer.format = LOGFMT_REGISTERED;
 	serial_printer_spool_log(&log_buffer);
 
-
     return &(nodeBuffer[targetIdx].event);
 }
 
@@ -111,14 +111,13 @@ void event_tracker_refresh()
     if (length == 0) return;
     if (headIdx == -1 || tailIdx == -1) return;
 
-    //log_buffer.format = LOGFMT_REFRESHING;
-    //serial_printer_spool_log(&log_buffer);
+    log_buffer.format = LOGFMT_REFRESHING;
+    serial_printer_spool_log(&log_buffer);
 
     // this function invokes CRITICAL mode
     // due to "job status" being used as IPC
     // between dispatcher & agents.
     // TODO: use mutex instead (to only lock individual resources when required, rather than whole system every time)
-    taskENTER_CRITICAL();
 
     int8_t dismissed = DISMISSAL_PENDING;
     uint8_t jobIdx = 0;
@@ -167,14 +166,15 @@ void event_tracker_refresh()
         // dismiss if required
         if (dismissed > 0)
         {
-			log_buffer.format = LOGFMT_DONE_WITH;
+			taskENTER_CRITICAL();
+
+			log_buffer.format = LOGFMT_REMOVING;
 			log_buffer.subject_0 = LOGSBJ_EVENT;
 			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
 			log_buffer.subject_2 =
 					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_COMPLETE
 					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_OVERDUE
 					: LOGSBJ_DEPRIORITIZED;
-			serial_printer_spool_log(&log_buffer);
 
             // freeing a node
             nodeBuffer[currentIdx].used = false;
@@ -199,6 +199,10 @@ void event_tracker_refresh()
             temp = currentIdx;
             currentIdx = nodeBuffer[currentIdx].nextIdx;
             nodeBuffer[temp].nextIdx = -1;
+
+
+			taskEXIT_CRITICAL();
+			serial_printer_spool_log(&log_buffer);
         }
         else
         {
@@ -208,7 +212,22 @@ void event_tracker_refresh()
 
     } while (currentIdx >= 0);
 
-    taskEXIT_CRITICAL();
+    if (nextFreeIdx < 0)
+    {
+		set_next_free_idx();
+    }
+
+	is_dirty = false;
+}
+
+void event_tracker_set_dirty()
+{
+	is_dirty = true;
+}
+
+bool event_tracker_get_dirty()
+{
+	return is_dirty;
 }
 
 int8_t event_tracker_get_remaining_storage()

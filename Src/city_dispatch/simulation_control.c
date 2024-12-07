@@ -21,7 +21,6 @@ const osThreadAttr_t controlTask_attributes = {
 };
 
 /* Consts for control task */
-static const uint8_t brief_delay_ticks = pdMS_TO_TICKS(10);
 static const char *sim_separator = "\n\r\n\r--------------------------------\n\r\n\r";
 static const char *control_prompt = "Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r";
 
@@ -58,23 +57,23 @@ static void simulation_control_task(void *argument)
 
 	for(;;)
 	{
-		osDelay(brief_delay_ticks);
+		osDelay(DELAY_300MS_TICKS);
 
-		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, brief_delay_ticks))
+		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, DELAY_10MS_TICKS))
 		{
 			if (running
 				&& input[0] == 'h')
 			{
 				running = false;
 				simulation_stop();
-				osDelay(brief_delay_ticks);
+				osDelay(DELAY_100MS_TICKS);
 			}
 			else if (!running
 				&& input[0] == 's')
 			{
 				running = true;
 				simulation_start();
-				osDelay(brief_delay_ticks);
+				osDelay(DELAY_100MS_TICKS);
 			}
 			else if (input[0] == 't')
 			{
@@ -85,12 +84,8 @@ static void simulation_control_task(void *argument)
 				HAL_NVIC_SystemReset();
 			}
 
-            osDelay(brief_delay_ticks);
+			osDelay(DELAY_300MS_TICKS);
             input[0] = '~';
-		}
-		else
-		{
-				osDelay(brief_delay_ticks);
 		}
 	}
 }
@@ -98,21 +93,23 @@ static void simulation_control_task(void *argument)
 static void simulation_initialize()
 {
 	serial_printer_initialize();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_100MS_TICKS);
 	log_buffer.format = LOGFMT_INITIALIZING;
 	serial_printer_spool_log(&log_buffer);
-	osDelay(brief_delay_ticks);
-	event_gen_initialize();
-	osDelay(brief_delay_ticks);
-	city_inbox_initialize();
-	osDelay(brief_delay_ticks);
-	city_dispatcher_initialize();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_100MS_TICKS);
 	city_departments_initialize();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_100MS_TICKS);
+	city_inbox_initialize();
+	osDelay(DELAY_100MS_TICKS);
+    event_tracker_initialize();
+	osDelay(DELAY_100MS_TICKS);
+	event_gen_initialize();
+	osDelay(DELAY_100MS_TICKS);
+	city_dispatcher_initialize();
+	osDelay(DELAY_100MS_TICKS);
 	log_buffer.format = LOGFMT_INITIALIZED;
 	serial_printer_spool_log(&log_buffer);
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_100MS_TICKS);
 }
 
 static void simulation_start()
@@ -120,15 +117,15 @@ static void simulation_start()
 	output_print_blocking_autosize(sim_separator);
 	log_buffer.format = LOGFMT_STARTING_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_inbox_clear();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_dispatcher_start();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_departments_start();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	event_gen_start();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	log_buffer.format = LOGFMT_STARTED_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
 }
@@ -137,15 +134,15 @@ static void simulation_stop()
 {
 	log_buffer.format = LOGFMT_STOPPING_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	event_gen_stop();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_dispatcher_stop();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_departments_stop();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	city_inbox_clear();
-	osDelay(brief_delay_ticks);
+	osDelay(DELAY_10MS_TICKS);
 	log_buffer.format = LOGFMT_STOPPED_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
 	output_print_blocking_autosize(sim_separator);

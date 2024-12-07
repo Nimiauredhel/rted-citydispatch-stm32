@@ -18,8 +18,6 @@ const static osThreadAttr_t eventGenTask_attributes = {
   .priority = (osPriority_t) EVENT_GENERATOR_PRIORITY,
 };
 
-const static TickType_t brief_delay = pdMS_TO_TICKS(300);
-
 static osThreadId_t eventGenTaskHandle;
 static uint32_t random_number;
 static uint32_t next_delay;
@@ -65,7 +63,7 @@ static void generate_event()
     // apply event template to generated event
     generated_event.eventTemplateIndex = next_idx;
 
-	osDelay(brief_delay);
+	osDelay(DELAY_100MS_TICKS);
 
     // generate random expiration time & date according to template
     // first get the current time and date
@@ -109,7 +107,7 @@ static void generate_event()
 
 static void event_gen_task()
 {
-	osDelay(brief_delay);
+	osDelay(DELAY_100MS_TICKS);
 
 	for(;;)
 	{
@@ -117,18 +115,18 @@ static void event_gen_task()
 		HAL_RNG_GenerateRandomNumber(&hrng, &random_number);
         next_delay =
             (random_number
-             & (EVENT_GENERATOR_SLEEP_MAX - EVENT_GENERATOR_SLEEP_MIN))
-            + EVENT_GENERATOR_SLEEP_MIN;
+             & (EVENT_GENERATION_DELAY_MAX - EVENT_GENERATION_DELAY_MIN))
+            + EVENT_GENERATION_DELAY_MIN;
 
         //sprintf(output_buffer, "Next event in %lums.\n\r", next_delay);
         //serial_printer_spool_chars(output_buffer);
 
-		osDelay(pdMS_TO_TICKS(next_delay));
+		osDelay(next_delay);
 
 		// if event tracker is full, wait until it has room
 		while (event_tracker_get_remaining_storage() < 1)
 		{
-			osDelay(brief_delay);
+			osDelay(DELAY_1000MS_TICKS);
 		}
 
 		// generate event randomly from pool of templates

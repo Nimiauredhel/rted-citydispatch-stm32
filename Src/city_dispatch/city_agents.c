@@ -7,8 +7,6 @@
 
 #include "city_agents.h"
 
-static const TickType_t AGENTS_TIMEOUT_TICKS = pdMS_TO_TICKS(300);
-
 const osThreadAttr_t city_agent_task_attributes[NUM_DEPARTMENTS] = {
 	{ .name = "medicalAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
 	{ .name = "policeAgentTask", .stack_size = AGENT_TASK_STACK_SIZE, .priority = (osPriority_t) osPriorityNormal, },
@@ -51,7 +49,7 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
 
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
-		osDelay(AGENTS_TIMEOUT_TICKS);
+		osDelay(DELAY_10MS_TICKS);
 	}
 
 	return newAgents;
@@ -85,7 +83,7 @@ void city_agents_stop()
 
 static void city_agent_task(void *param)
 {
-	osDelay(AGENTS_TIMEOUT_TICKS);
+	osDelay(DELAY_100MS_TICKS);
 	AgentState_t *agent = (AgentState_t *)param;
 
 	agent->log_buffer.format = LOGFMT_TASK_STARTING;
@@ -97,11 +95,12 @@ static void city_agent_task(void *param)
 
 	for(;;)
 	{
-		osDelay(AGENTS_TIMEOUT_TICKS);
+		osDelay(DELAY_100MS_TICKS);
 
 		if (agent->status == AGENT_ASSIGNED)
 		{
 			taskENTER_CRITICAL();
+
 			if (agent->currentJob->status == JOB_PENDING)
 			{
 				agent->status = AGENT_BUSY;
@@ -111,19 +110,25 @@ static void city_agent_task(void *param)
 				agent->log_buffer.subject_0 = LOGSBJ_JOB;
 				agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
 				serial_printer_spool_log(&agent->log_buffer);
+				// TODO: think about whether this action also requires
+				// setting the event tracker to dirty
 			}
 			else if (agent->currentJob->status == JOB_OVERDUE)
 			{
 				agent->currentJob->status = JOB_FAILED;
+				event_tracker_set_dirty();
 			}
+
 			taskEXIT_CRITICAL();
 
 			// wait the job handling duration
 			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
 
 			// TODO: improve the job status handling between the agent and tracker
+			// TODO: separate agent<->tracker interface from dispatcher<->tracker interface?
 
 			taskENTER_CRITICAL();
+
 			agent->log_buffer.format = LOGFMT_DONE_WITH;
 			agent->log_buffer.subject_0 = LOGSBJ_JOB;
 			agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
@@ -141,7 +146,10 @@ static void city_agent_task(void *param)
 
 			agent->status = AGENT_FREE;
 			agent->currentJob = NULL;
+			event_tracker_set_dirty();
+
 			taskEXIT_CRITICAL();
+
 			serial_printer_spool_log(&agent->log_buffer);
 		}
 	}

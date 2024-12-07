@@ -14,6 +14,7 @@
 #include "simulation_defs.h"
 #include "simulation_constants.h"
 #include "city_events.h"
+#include "city_event_tracker.h"
 
 typedef enum AgentStatus
 {

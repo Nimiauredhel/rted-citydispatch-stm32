@@ -18,9 +18,11 @@
 // TODO: set correct priorities with CMSIS enums
 // TODO: remove unused defines
 #define NUM_DEPARTMENTS (4)
+
 #define TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 4)
 #define DEPARTMENT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
 #define AGENT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
+
 #define EVENT_TRACKER_CAPACITY (4)
 #define INCOMING_QUEUE_LENGTH (32)
 #define OUTPUT_QUEUE_LENGTH (64)
@@ -33,8 +35,8 @@
 #define CITY_AGENT_PRIORITY (osPriorityRealtime4)
 #define CONTROL_PRIORITY (osPriorityRealtime5)
 
-#define EVENT_GENERATOR_SLEEP_MAX (4000)
-#define EVENT_GENERATOR_SLEEP_MIN (2000)
+#define EVENT_GENERATION_DELAY_MIN (pdMS_TO_TICKS(2000))
+#define EVENT_GENERATION_DELAY_MAX (pdMS_TO_TICKS(4000))
 
 /* Simulation typedefs */
 typedef struct CityDepartmentAgentState

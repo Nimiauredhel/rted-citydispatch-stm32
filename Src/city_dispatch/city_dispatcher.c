@@ -7,7 +7,6 @@
 #include "city_dispatcher.h"
 
 /* Definitions for city dispatcher task */
-static const TickType_t DISPATCHER_TIMEOUT_TICKS = pdMS_TO_TICKS(300);
 
 const static osThreadAttr_t cityDispatcherTask_attributes = {
   .name = "cityDispatcherTask",
@@ -29,7 +28,6 @@ void city_dispatcher_initialize()
 	log_buffer.identifier_0 = LOGID_DISPATCHER;
 	log_buffer.subject_0 = LOGSBJ_EVENT;
 
-    event_tracker_initialize();
     cityDispatcherTaskHandle = osThreadNew(city_dispatcher_task, NULL, &cityDispatcherTask_attributes);
     city_dispatcher_stop();
 }
@@ -46,7 +44,7 @@ void city_dispatcher_stop()
 
 static void city_dispatcher_task()
 {
-	osDelay(DISPATCHER_TIMEOUT_TICKS);
+	osDelay(DELAY_100MS_TICKS);
 	log_buffer.format = LOGFMT_INITIALIZED;
 	serial_printer_spool_log(&log_buffer);
 
@@ -56,25 +54,25 @@ static void city_dispatcher_task()
 
 	for(;;)
 	{
-		// periodically refresh the event tracker if not empty
-		if (event_tracker_get_length() > 0)
+		// periodically refresh the event tracker if "dirty"
+		if (event_tracker_get_dirty())
 		{
 			event_tracker_refresh();
 		}
 
         // first check the high priority inbox
-		queue_read_status = osMessageQueueGet(city_inbox.inboxHighPriorityQueueHandle, &current_event_buffer, NULL, DISPATCHER_TIMEOUT_TICKS);
+		queue_read_status = osMessageQueueGet(city_inbox.inboxHighPriorityQueueHandle, &current_event_buffer, NULL, DELAY_100MS_TICKS);
 
         // then medium
         if (queue_read_status != osOK)
         {
-            queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &current_event_buffer, NULL, DISPATCHER_TIMEOUT_TICKS);
+            queue_read_status = osMessageQueueGet(city_inbox.inboxMediumPriorityQueueHandle, &current_event_buffer, NULL, DELAY_10MS_TICKS);
         }
 
         // then low
         if (queue_read_status != osOK)
         {
-            queue_read_status = osMessageQueueGet(city_inbox.inboxLowPriorityQueueHandle, &current_event_buffer, NULL, DISPATCHER_TIMEOUT_TICKS);
+            queue_read_status = osMessageQueueGet(city_inbox.inboxLowPriorityQueueHandle, &current_event_buffer, NULL, DELAY_10MS_TICKS);
         }
 
 		if (queue_read_status == osOK)
@@ -86,7 +84,7 @@ static void city_dispatcher_task()
             // TODO: implement disposing of lower priority events
             if(event_tracker_get_remaining_storage() < 1)
             {
-                osDelay(DISPATCHER_TIMEOUT_TICKS);
+                osDelay(DELAY_100MS_TICKS);
                 event_tracker_refresh();
             }
 
@@ -95,7 +93,7 @@ static void city_dispatcher_task()
             if (trackedEvent == NULL)
             {
             	// TODO: log about dropped event
-				osDelay(DISPATCHER_TIMEOUT_TICKS);
+				osDelay(DELAY_10MS_TICKS);
 				continue;
             }
 
@@ -110,7 +108,8 @@ static void city_dispatcher_task()
 		}
 		else
 		{
-			osDelay(DISPATCHER_TIMEOUT_TICKS);
+			// TODO: maybe more sophisticated timeout behavior
+			osDelay(DELAY_10MS_TICKS);
 			continue;
 		}
 
