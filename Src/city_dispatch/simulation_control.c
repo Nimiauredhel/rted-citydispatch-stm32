@@ -27,7 +27,7 @@ static const char *control_prompt = "Input 's' to start, 'h' to stop, 't' to set
 /* Variables */
 extern UART_HandleTypeDef huart3;
 
-static char input[1] = {'~'};
+static char input = '~';
 static bool running = false;
 static CityLog_t log_buffer;
 
@@ -38,7 +38,7 @@ void simulation_start_control_task()
 	// so that they don't have to go on the task's stack at any point
 	log_buffer.identifier_0 = LOGID_CONTROL;
 	log_buffer.subject_0 = LOGSBJ_SIMULATION;
-	log_buffer.subject_1 = LOGSBJ_NULL;
+	log_buffer.subject_1 = LOGSBJ_BACKSPACE;
 	log_buffer.subject_2 = LOGSBJ_USER_INPUT;
 	controlTaskHandle = osThreadNew(simulation_control_task, NULL, &controlTask_attributes);
 }
@@ -59,33 +59,33 @@ static void simulation_control_task(void *argument)
 	{
 		osDelay(DELAY_300MS_TICKS);
 
-		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, DELAY_10MS_TICKS))
+		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input, 1, DELAY_10MS_TICKS))
 		{
 			if (running
-				&& input[0] == 'h')
+				&& input == 'h')
 			{
 				running = false;
 				simulation_stop();
 				osDelay(DELAY_100MS_TICKS);
 			}
 			else if (!running
-				&& input[0] == 's')
+				&& input == 's')
 			{
 				running = true;
 				simulation_start();
 				osDelay(DELAY_100MS_TICKS);
 			}
-			else if (input[0] == 't')
+			else if (input == 't')
 			{
 				date_time_set();
 			}
-			else if (input[0] == 'r')
+			else if (input == 'r')
 			{
 				HAL_NVIC_SystemReset();
 			}
 
 			osDelay(DELAY_300MS_TICKS);
-            input[0] = '~';
+            input = '~';
 		}
 	}
 }
@@ -114,7 +114,6 @@ static void simulation_initialize()
 
 static void simulation_start()
 {
-	output_print_blocking_autosize(sim_separator);
 	log_buffer.format = LOGFMT_STARTING_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
 	osDelay(DELAY_10MS_TICKS);
@@ -145,5 +144,4 @@ static void simulation_stop()
 	osDelay(DELAY_10MS_TICKS);
 	log_buffer.format = LOGFMT_STOPPED_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
-	output_print_blocking_autosize(sim_separator);
 }

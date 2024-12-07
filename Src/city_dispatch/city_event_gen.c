@@ -54,7 +54,7 @@ static void generate_event()
 	HAL_RNG_GenerateRandomNumber(&hrng, &random_number);
 	next_idx = (random_number % NUM_EVENT_TEMPLATES);
 
-	log_buffer.format = LOGFMT_GENERATING_EVENT;
+	log_buffer.format = LOGFMT_GENERATING_SUBJECT;
 	log_buffer.subject_0 = LOGSBJ_EVENT;
 	log_buffer.subject_1 = next_idx;
 	log_buffer.subject_2 = next_idx;

@@ -7,7 +7,7 @@
 
 #include "serial_printer.h"
 
-#define NUM_LOG_FORMATS 21
+#define NUM_LOG_FORMATS 23
 #define MAX_LEN_LOG_FORMATS 64
 
 /*
@@ -33,15 +33,18 @@ static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 	"%s done with %s: %s. Outcome: %s.",
 	"%s removing %s: %s. Cause: %s.",
 	"%s dismissing %s: %s. Cause: %s.",
+	"%s initializing %s.",
+	"%s initialized %s.",
 	"%s: starting %s %s. Cause: %s.",
 	"%s: stopping %s %s. Cause: %s.",
-	"%s: started %s%s following %s.",
-	"%s: stopped %s%s following %s.",
+	"%s: started %s %s following %s.",
+	"%s: stopped %s %s following %s.",
 };
 
-static const char log_identifiers[9][19] =
+static const char log_identifiers[10][19] =
 {
-	"",
+	"[?]",
+	"\b",
 	"Event Generator",
 	"City Dispatcher",
 	"City Inbox",
@@ -52,17 +55,18 @@ static const char log_identifiers[9][19] =
 	"Simulation Control",
 };
 
-static const char log_subjects[9][19] =
+static const char log_subjects[10][19] =
 {
-	"",
-	"simulation",
-	"event",
-	"job",
-	"success",
-	"failure",
-	"deprioritized",
-	"insufficient space",
-	"user input",
+	"[?]",
+	"\b",
+	"Simulation",
+	"Event",
+	"Job",
+	"Success",
+	"Failure",
+	"Deprioritized",
+	"Insufficient Space",
+	"User Input",
 };
 
 static const uint16_t PRINTER_TIMEOUT_MS = 5000;
@@ -87,14 +91,17 @@ static const osMessageQueueAttr_t serialPrinterQueue_attributes = {
   .mq_size = sizeof(serialPrinterQueueBuffer)
 };
 
-static const char newline[2] = "\n\r";
-static const char timestamp_format[17] = "%02u:%02u:%02u ~ ";
+static const char newline[3] = "\n\r";
+static const char timestamp_format[18] = "%02u:%02u:%02u ~ ";
 
 static osStatus_t queue_read_status;
 
-static CityLog_t log_buffer;
+static RTC_TimeTypeDef time_buffer;
+static CityLog_t log_buffer_incoming;
+static CityLog_t log_buffer_outgoing;
 static char timestamp_buffer[16];
 static char identifier_buffer[32];
+static char identifier_buffer_secondary[32];
 static char output_buffer[64];
 
 static void serial_printer_task();
@@ -108,18 +115,23 @@ void serial_printer_initialize()
 
 void serial_printer_spool_log(CityLog_t *new_log)
 {
-	osMessageQueuePut(serialPrinterQueueHandle, new_log, 0, osWaitForever);
+	time_buffer = time_get();
+	log_buffer_incoming = *new_log;
+	log_buffer_incoming.time_hour = time_buffer.Hours;
+	log_buffer_incoming.time_min = time_buffer.Minutes;
+	log_buffer_incoming.time_sec = time_buffer.Seconds;
+	osMessageQueuePut(serialPrinterQueueHandle, &log_buffer_incoming, 0, osWaitForever);
 }
 
 static void serial_printer_task()
 {
-	log_buffer.format = LOGFMT_TASK_STARTING;
-	log_buffer.identifier_0 = LOGID_LOGGER;
-	serial_printer_spool_log(&log_buffer);
+	log_buffer_outgoing.format = LOGFMT_TASK_STARTING;
+	log_buffer_outgoing.identifier_0 = LOGID_LOGGER;
+	serial_printer_spool_log(&log_buffer_outgoing);
 
 	for(;;)
 	{
-		queue_read_status = osMessageQueueGet(serialPrinterQueueHandle, &log_buffer, NULL, pdMS_TO_TICKS(PRINTER_TIMEOUT_MS));
+		queue_read_status = osMessageQueueGet(serialPrinterQueueHandle, &log_buffer_outgoing, NULL, pdMS_TO_TICKS(PRINTER_TIMEOUT_MS));
 
 		if (queue_read_status == osErrorTimeout)
 		{
@@ -136,65 +148,87 @@ static void serial_printer_task()
 void print_city_log()
 {
 	// prepare timestamp buffer
-	RTC_TimeTypeDef now = time_get();
-	sprintf(timestamp_buffer, timestamp_format, now.Hours, now.Minutes, now.Seconds);
+	sprintf(timestamp_buffer, timestamp_format,
+			log_buffer_outgoing.time_hour,
+			log_buffer_outgoing.time_min,
+			log_buffer_outgoing.time_sec);
 
 	// prepare identifier buffer
-	switch (log_buffer.identifier_0) {
+	switch (log_buffer_outgoing.identifier_0) {
 		case LOGID_DEPARTMENT:
-			sprintf(identifier_buffer, log_identifiers[LOGID_DEPARTMENT], departmentNames[log_buffer.identifier_1]);
+			sprintf(identifier_buffer, log_identifiers[LOGID_DEPARTMENT], departmentNames[log_buffer_outgoing.identifier_1]);
 			break;
 		case LOGID_AGENT:
-			sprintf(identifier_buffer, log_identifiers[LOGID_AGENT], departmentNames[log_buffer.identifier_1], log_buffer.identifier_2);
+			sprintf(identifier_buffer, log_identifiers[LOGID_AGENT], departmentNames[log_buffer_outgoing.identifier_1], log_buffer_outgoing.identifier_2);
 			break;
 		default:
-			sprintf(identifier_buffer, log_identifiers[log_buffer.identifier_0]);
+			sprintf(identifier_buffer, log_identifiers[log_buffer_outgoing.identifier_0]);
 			break;
 	}
 
-	switch (log_buffer.format)
+	switch (log_buffer_outgoing.format)
 	{
-	// first address the exceptions
+		// log formats that only use the identifier parameters
 		case LOGFMT_INITIALIZING:
 		case LOGFMT_INITIALIZED:
 		case LOGFMT_TASK_STARTING:
 		case LOGFMT_TASK_STOPPING:
 		case LOGFMT_WAITING:
 		case LOGFMT_REFRESHING:
-			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer);
+			sprintf(output_buffer, log_formats[log_buffer_outgoing.format], identifier_buffer);
 			break;
-			// log formats that use every parameter,
-			// with subject_2 being a literal index number to be printed
+		// log formats that use every parameter,
+		// with subject_2 being a literal index number to be printed
 		case LOGFMT_RECEIVED:
 		case LOGFMT_PROCESSING:
 		case LOGFMT_REGISTERED:
-		case LOGFMT_GENERATING_EVENT:
-			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer,
-					log_subjects[log_buffer.subject_0],
-					log_buffer.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer.subject_1].description
-						: log_buffer.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer.subject_1].description
-						: log_subjects[log_buffer.subject_1],
-					log_buffer.subject_2);
+		case LOGFMT_GENERATING_SUBJECT:
+			sprintf(output_buffer, log_formats[log_buffer_outgoing.format], identifier_buffer,
+					log_subjects[log_buffer_outgoing.subject_0],
+					log_buffer_outgoing.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer_outgoing.subject_1].description
+						: log_buffer_outgoing.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer_outgoing.subject_1].description
+						: log_subjects[log_buffer_outgoing.subject_1],
+					log_buffer_outgoing.subject_2);
 			break;
-			// log formats that use every parameter,
-			// with subject_2 being an index for a cause/outcome/etc. text
+		// log formats that use every parameter,
+		// with subject_2 being an index for a cause/outcome/etc. text
 		case LOGFMT_DONE_WITH:
 		case LOGFMT_DISMISSING:
 		case LOGFMT_STARTING_SUBJECT:
 		case LOGFMT_STOPPING_SUBJECT:
 		case LOGFMT_STARTED_SUBJECT:
 		case LOGFMT_STOPPED_SUBJECT:
-			sprintf(output_buffer, log_formats[log_buffer.format], identifier_buffer,
-					log_subjects[log_buffer.subject_0],
-					log_buffer.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer.subject_1].description
-						: log_buffer.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer.subject_1].description
-						: log_subjects[log_buffer.subject_1],
-					log_subjects[log_buffer.subject_2]);
+			sprintf(output_buffer, log_formats[log_buffer_outgoing.format], identifier_buffer,
+					log_subjects[log_buffer_outgoing.subject_0],
+					log_buffer_outgoing.subject_0 == LOGSBJ_EVENT ? eventTemplates[log_buffer_outgoing.subject_1].description
+						: log_buffer_outgoing.subject_0 == LOGSBJ_JOB ? jobTemplates[log_buffer_outgoing.subject_1].description
+						: log_subjects[log_buffer_outgoing.subject_1],
+					log_subjects[log_buffer_outgoing.subject_2]);
 			break;
-			// log formats that use the subject fields like a secondary identifier
-			// to show interactions between departments, agents etc.
-		case LOGFMT_LOAN_RESOURCE:
-		case LOGFMT_RETURN_RESOURCE:
+		// log formats that use the subject fields like a secondary identifier
+		// to show interactions between departments, agents etc.
+		case LOGFMT_INITIALIZING_SUBJECT:
+		case LOGFMT_INITIALIZED_SUBJECT:
+		case LOGFMT_BORROWING_RESOURCE:
+		case LOGFMT_RETURNING_RESOURCE:
+			// prepare secondary identifier buffer
+			switch (log_buffer_outgoing.subject_0)
+			{
+				case LOGID_DEPARTMENT:
+					sprintf(identifier_buffer_secondary, log_identifiers[LOGID_DEPARTMENT], departmentNames[log_buffer_outgoing.subject_1]);
+					break;
+				case LOGID_AGENT:
+					sprintf(identifier_buffer_secondary, log_identifiers[LOGID_AGENT], departmentNames[log_buffer_outgoing.subject_1], log_buffer_outgoing.subject_2);
+					break;
+				default:
+					sprintf(identifier_buffer_secondary, log_identifiers[log_buffer_outgoing.subject_0]);
+					break;
+			}
+
+			// apply both identifier buffers
+			sprintf(output_buffer, log_formats[log_buffer_outgoing.format],
+					identifier_buffer,
+					identifier_buffer_secondary);
 			break;
 
 		default:

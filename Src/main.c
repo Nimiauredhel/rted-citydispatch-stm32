@@ -88,23 +88,6 @@ void StartDefaultTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-// the static initializations ensure that the value is only tested and set once
-// subsequent calls only have to return a value
-static inline bool was_power_cycled(void)
-{
-	static bool first_call = true;
-	static bool power_cycled = true;
-
-	if (first_call)
-	{
-		first_call = false;
-		power_cycled = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != RTC_BKUP_COMPARE;
-		if (power_cycled) HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, RTC_BKUP_COMPARE);
-	}
-
-	return power_cycled;
-}
 /* USER CODE END 0 */
 
 /**
@@ -351,15 +334,6 @@ static void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
-  if (!was_power_cycled())
-    {
-  	  if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BCD) != HAL_OK)
-  	  {
-  		Error_Handler();
-  	  }
-
-  	  return;
-    }
   /* USER CODE END Check_RTC_BKUP */
 
   /** Initialize RTC and set the Time and Date
