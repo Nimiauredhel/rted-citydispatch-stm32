@@ -22,7 +22,7 @@ const osThreadAttr_t controlTask_attributes = {
 
 /* Consts for control task */
 static const char *sim_separator = "\n\r\n\r--------------------------------\n\r\n\r";
-static const char *control_prompt = "Input 's' to start, 'h' to stop, 't' to set date and time, 'r' to restart.\n\r";
+static const char *control_prompt = "\n\rInput 's' to start, 'h' to stop,\n\r't' to set date and time, 'r' to restart.\n\r";
 
 /* Variables */
 extern UART_HandleTypeDef huart3;
@@ -59,29 +59,37 @@ static void simulation_control_task(void *argument)
 	{
 		osDelay(DELAY_300MS_TICKS);
 
-		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input, 1, DELAY_10MS_TICKS))
+		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input, 1, DELAY_100MS_TICKS))
 		{
-			if (running
-				&& input == 'h')
+			if (running)
 			{
-				running = false;
-				simulation_stop();
-				osDelay(DELAY_100MS_TICKS);
+				if (input == 'h')
+				{
+					running = false;
+					simulation_stop();
+					osDelay(DELAY_100MS_TICKS);
+					output_print_blocking_autosize(control_prompt);
+				}
 			}
-			else if (!running
-				&& input == 's')
+			else
 			{
-				running = true;
-				simulation_start();
-				osDelay(DELAY_100MS_TICKS);
-			}
-			else if (input == 't')
-			{
-				date_time_set();
-			}
-			else if (input == 'r')
-			{
-				HAL_NVIC_SystemReset();
+				switch (input)
+				{
+					case 's':
+						running = true;
+						simulation_start();
+						osDelay(DELAY_100MS_TICKS);
+						break;
+					case 't':
+						date_time_set();
+						output_print_blocking_autosize(control_prompt);
+						break;
+					case 'r':
+						HAL_NVIC_SystemReset();
+						break;
+					default:
+						break;
+				}
 			}
 
 			osDelay(DELAY_300MS_TICKS);

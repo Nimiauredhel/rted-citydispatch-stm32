@@ -11,6 +11,7 @@ extern UART_HandleTypeDef huart3;
 extern RTC_HandleTypeDef hrtc;
 RTC_TimeTypeDef time_now;
 RTC_DateTypeDef date_now;
+char output_buffer[64];
 
 // TODO: fix all the damn printfs here
 
@@ -79,8 +80,10 @@ void date_time_alarm_reset()
 void date_time_print()
 {
 	// TODO: fix this, make it useful
-	printf("\n\rThe current date is: %02u/%02u/%02u.\n\r", date_now.Date, date_now.Month, date_now.Year);
-	printf("The current time is: %02u:%02u:%02u.\n\r", time_now.Hours, time_now.Minutes, time_now.Seconds);
+	sprintf(output_buffer, "\n\rThe current date is: %02u/%02u/%02u.\n\r", date_now.Date, date_now.Month, date_now.Year);
+    output_print_blocking_autosize(output_buffer);
+	sprintf(output_buffer, "The current time is: %02u:%02u:%02u.\n\r", time_now.Hours, time_now.Minutes, time_now.Seconds);
+    output_print_blocking_autosize(output_buffer);
 }
 
 void date_time_set()
@@ -94,13 +97,15 @@ void date_time_set()
 	sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 	sTime.StoreOperation = RTC_STOREOPERATION_RESET;
 
-	printf("Let's set the date.\n\rAll values are two digits including leading zero.\n\r");
-	printf("enter year (yes two digits, STM is not Y2K prepared): ");
+	output_print_blocking_autosize("Let's set the date.\n\rAll values are two digits including leading zero.\n\r");
+	output_print_blocking_autosize("enter year (yes two digits, STM is not Y2K prepared): ");
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-	printf("%c", input[0]);
+	sprintf(output_buffer, "%c", input[0]);
+    output_print_blocking_autosize(output_buffer);
 	osDelay(100);
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-	printf("%c", input[1]);
+	sprintf(output_buffer, "%c", input[1]);
+    output_print_blocking_autosize(output_buffer);
 
 	num = atoi(input);
 	sDate.Year = num;
@@ -109,12 +114,14 @@ void date_time_set()
 	num = 30;
 	while (num < 1 || num > 12)
 	{
-		printf("\n\renter month: ");
+		output_print_blocking_autosize("\n\renter month: ");
 		HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-		printf("%c", input[0]);
+		sprintf(output_buffer, "%c", input[0]);
+        output_print_blocking_autosize(output_buffer);
 		osDelay(100);
 		HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-		printf("%c", input[1]);
+		sprintf(output_buffer, "%c", input[1]);
+        output_print_blocking_autosize(output_buffer);
 
 		num = atoi(input);
 	}
@@ -122,65 +129,73 @@ void date_time_set()
 	sDate.Month = num;
 	osDelay(100);
 
-	printf("\n\renter day of the month: ");
+	output_print_blocking_autosize("\n\renter day of the month: ");
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-	printf("%c", input[0]);
+	sprintf(output_buffer, "%c", input[0]);
+	output_print_blocking_autosize(output_buffer);
 	osDelay(100);
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-	printf("%c", input[1]);
+	sprintf(output_buffer, "%c", input[1]);
+	output_print_blocking_autosize(output_buffer);
 
 	num = atoi(input);
 	sDate.Date = num;
 	osDelay(100);
 
-	printf("Let's set the time.\n\rAll values are two digits including leading zero.\n\r");
-	printf("enter hour: ");
+	output_print_blocking_autosize("\n\rLet's set the time.\n\rAll values are two digits including leading zero.\n\r");
+	output_print_blocking_autosize("enter hour: ");
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-	printf("%c", input[0]);
+	sprintf(output_buffer, "%c", input[0]);
+    output_print_blocking_autosize(output_buffer);
 	osDelay(100);
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-	printf("%c", input[1]);
+	sprintf(output_buffer, "%c", input[1]);
+    output_print_blocking_autosize(output_buffer);
 
 	num = atoi(input);
 	sTime.Hours = num;
 	osDelay(100);
 
-	printf("\n\renter minutes: ");
+	output_print_blocking_autosize("\n\renter minutes: ");
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-	printf("%c", input[0]);
+	sprintf(output_buffer, "%c", input[0]);
+    output_print_blocking_autosize(output_buffer);
 	osDelay(100);
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-	printf("%c", input[1]);
+	sprintf(output_buffer, "%c", input[1]);
+    output_print_blocking_autosize(output_buffer);
 
 	num = atoi(input);
 	sTime.Minutes = num;
 	osDelay(100);
 
-	printf("\n\renter seconds: ");
+	output_print_blocking_autosize("\n\renter seconds: ");
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[0], 1, 0xFFFF);
-	printf("%c", input[0]);
+	sprintf(output_buffer, "%c", input[0]);
+    output_print_blocking_autosize(output_buffer);
 	osDelay(100);
 	HAL_UART_Receive(&huart3, (uint8_t *)&input[1], 1, 0xFFFF);
-	printf("%c", input[1]);
+	sprintf(output_buffer, "%c", input[1]);
+    output_print_blocking_autosize(output_buffer);
 
 	num = atoi(input);
 	sTime.Seconds = num;
 
 	if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
 	{
-		printf("Error setting the date, apparently.\n\r");
+		output_print_blocking_autosize("Error setting the date, apparently.\n\r");
 		//Error_Handler();
 	}
 
 	if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
 	{
-		printf("Error setting the time, apparently.\n\r");
+		output_print_blocking_autosize("Error setting the time, apparently.\n\r");
 		//Error_Handler();
 	}
 
 	date_time_alarm_reset();
-	printf("\n\rLet's wait a second...\n\r");
-	osDelay(pdMS_TO_TICKS(1100));
+	output_print_blocking_autosize("\n\rLet's wait a second...\n\r");
+	osDelay(pdMS_TO_TICKS(1000));
 	date_time_print();
-	osDelay(100);
+	osDelay(pdMS_TO_TICKS(100));
 }
