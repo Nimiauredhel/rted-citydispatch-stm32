@@ -558,16 +558,17 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* USER CODE BEGIN 5 */
+	/* USER CODE BEGIN 5 */
 
-  simulation_start_control_task();
+	osDelay(pdMS_TO_TICKS(500));
+	simulation_start_control_task();
 
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(pdMS_TO_TICKS(10000));
-  }
-  /* USER CODE END 5 */
+	/* Infinite loop */
+	for(;;)
+	{
+	osDelay(pdMS_TO_TICKS(osWaitForever));
+	}
+	/* USER CODE END 5 */
 }
 
 /**

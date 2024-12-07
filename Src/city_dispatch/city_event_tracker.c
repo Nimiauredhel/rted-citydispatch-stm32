@@ -172,8 +172,8 @@ void event_tracker_refresh()
 			log_buffer.subject_0 = LOGSBJ_EVENT;
 			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
 			log_buffer.subject_2 =
-					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_COMPLETE
-					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_OVERDUE
+					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_SUCCESS
+					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_FAILURE
 					: LOGSBJ_DEPRIORITIZED;
 
             // freeing a node

@@ -108,11 +108,8 @@ static void simulation_initialize()
 	city_departments_initialize();
 	osDelay(DELAY_100MS_TICKS);
 	city_inbox_initialize();
-	osDelay(DELAY_100MS_TICKS);
     event_tracker_initialize();
-	osDelay(DELAY_100MS_TICKS);
 	event_gen_initialize();
-	osDelay(DELAY_100MS_TICKS);
 	city_dispatcher_initialize();
 	osDelay(DELAY_100MS_TICKS);
 	log_buffer.format = LOGFMT_INITIALIZED;
@@ -125,30 +122,18 @@ static void simulation_start()
 	log_buffer.format = LOGFMT_STARTING_SUBJECT;
 	serial_printer_spool_log(&log_buffer);
 	osDelay(DELAY_10MS_TICKS);
-	city_inbox_clear();
+	city_departments_start();
 	osDelay(DELAY_10MS_TICKS);
 	city_dispatcher_start();
 	osDelay(DELAY_10MS_TICKS);
-	city_departments_start();
-	osDelay(DELAY_10MS_TICKS);
 	event_gen_start();
-	osDelay(DELAY_10MS_TICKS);
-	log_buffer.format = LOGFMT_STARTED_SUBJECT;
-	serial_printer_spool_log(&log_buffer);
 }
 
 static void simulation_stop()
 {
-	log_buffer.format = LOGFMT_STOPPING_SUBJECT;
-	serial_printer_spool_log(&log_buffer);
-	osDelay(DELAY_10MS_TICKS);
 	event_gen_stop();
-	osDelay(DELAY_10MS_TICKS);
 	city_dispatcher_stop();
-	osDelay(DELAY_10MS_TICKS);
 	city_departments_stop();
-	osDelay(DELAY_10MS_TICKS);
-	city_inbox_clear();
 	osDelay(DELAY_10MS_TICKS);
 	log_buffer.format = LOGFMT_STOPPED_SUBJECT;
 	serial_printer_spool_log(&log_buffer);

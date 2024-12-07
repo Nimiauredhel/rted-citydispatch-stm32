@@ -45,7 +45,7 @@ void city_dispatcher_stop()
 static void city_dispatcher_task()
 {
 	osDelay(DELAY_100MS_TICKS);
-	log_buffer.format = LOGFMT_INITIALIZED;
+	log_buffer.format = LOGFMT_TASK_STARTING;
 	serial_printer_spool_log(&log_buffer);
 
 	//osDelay(pdMS_TO_TICKS(100));

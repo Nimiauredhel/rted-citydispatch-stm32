@@ -136,12 +136,12 @@ static void city_agent_task(void *param)
 			if (agent->currentJob->status == JOB_OVERDUE)
 			{
 				agent->currentJob->status = JOB_FAILED;
-				agent->log_buffer.subject_2 = LOGSBJ_OVERDUE;
+				agent->log_buffer.subject_2 = LOGSBJ_FAILURE;
 			}
 			else
 			{
 				agent->currentJob->status = JOB_HANDLED;
-				agent->log_buffer.subject_2 = LOGSBJ_COMPLETE;
+				agent->log_buffer.subject_2 = LOGSBJ_SUCCESS;
 			}
 
 			agent->status = AGENT_FREE;
