@@ -27,9 +27,19 @@ static const char *control_prompt = "\n\rInput 's' to start, 'h' to stop,\n\r't'
 /* Variables */
 extern UART_HandleTypeDef huart3;
 
+static HAL_StatusTypeDef rxStatus;
 static char input = '~';
 static bool running = false;
+static bool hasInput = false;
 static CityLog_t log_buffer;
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART3)
+	{
+		hasInput = true;
+	}
+}
 
 void simulation_start_control_task()
 {
@@ -57,44 +67,46 @@ static void simulation_control_task(void *argument)
 
 	for(;;)
 	{
-		osDelay(DELAY_300MS_TICKS);
+		rxStatus = HAL_UART_Receive_IT(&huart3, (uint8_t *)&input, 1);
 
-		if (HAL_OK == HAL_UART_Receive(&huart3, (uint8_t *)&input, 1, DELAY_100MS_TICKS))
+		while (!hasInput && rxStatus != HAL_OK)
 		{
-			if (running)
-			{
-				if (input == 'h')
-				{
-					running = false;
-					simulation_stop();
-					osDelay(DELAY_100MS_TICKS);
-					output_print_blocking_autosize(control_prompt);
-				}
-			}
-			else
-			{
-				switch (input)
-				{
-					case 's':
-						running = true;
-						simulation_start();
-						osDelay(DELAY_100MS_TICKS);
-						break;
-					case 't':
-						date_time_set();
-						output_print_blocking_autosize(control_prompt);
-						break;
-					case 'r':
-						HAL_NVIC_SystemReset();
-						break;
-					default:
-						break;
-				}
-			}
-
-			osDelay(DELAY_300MS_TICKS);
-            input = '~';
+			osDelay(DELAY_100MS_TICKS);
 		}
+
+		if (running)
+		{
+			if (input == 'h')
+			{
+				running = false;
+				simulation_stop();
+				osDelay(DELAY_100MS_TICKS);
+				output_print_blocking_autosize(control_prompt);
+			}
+		}
+		else
+		{
+			switch (input)
+			{
+				case 's':
+					running = true;
+					simulation_start();
+					osDelay(DELAY_100MS_TICKS);
+					break;
+				case 't':
+					date_time_set();
+					output_print_blocking_autosize(control_prompt);
+					break;
+				case 'r':
+					HAL_NVIC_SystemReset();
+					break;
+				default:
+					break;
+			}
+		}
+
+		input = '~';
+		hasInput = false;
 	}
 }
 

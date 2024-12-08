@@ -558,7 +558,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-	/* USER CODE BEGIN 5 */
+  /* USER CODE BEGIN 5 */
 
 	osDelay(pdMS_TO_TICKS(500));
 	simulation_start_control_task();
@@ -568,7 +568,7 @@ void StartDefaultTask(void *argument)
 	{
 	osDelay(pdMS_TO_TICKS(osWaitForever));
 	}
-	/* USER CODE END 5 */
+  /* USER CODE END 5 */
 }
 
 /**
