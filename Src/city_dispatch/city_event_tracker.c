@@ -6,10 +6,13 @@
 
 #include "city_event_tracker.h"
 
-#define DISMISSAL_PENDING 0
-#define DISMISSAL_SUCCESS 1
-#define DISMISSAL_DEPRIORITIZED 2
-#define DISMISSAL_FAILURE 3
+typedef enum EventOutcome
+{
+	OUTCOME_PENDING = 0,
+	OUTCOME_SUCCESS = 1,
+	OUTCOME_FAILURE = 2,
+	OUTCOME_CANCELLED = 3,
+} EventOutcome_t;
 
 osMutexId_t eventTrackerMutexHandle;
 StaticSemaphore_t eventTrackerMutexControlBlock;
@@ -133,7 +136,6 @@ void event_tracker_refresh()
 
     osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
-    int8_t dismissed = DISMISSAL_PENDING;
     uint8_t jobIdx = 0;
     int8_t currentIdx = headIdx;
     int8_t prevIdx = -1;
@@ -142,9 +144,14 @@ void event_tracker_refresh()
     do
     {
 		osDelay(DELAY_10MS_TICKS);
-		dismissed = DISMISSAL_SUCCESS;
+		uint8_t pendingCount = 0;
+		uint8_t failedCount = 0;
+		uint8_t cancelledCount = 0;
+		uint8_t handledCount = 0;
+		bool canRemove = false;
+		EventOutcome_t outcome = OUTCOME_PENDING;
 
-        // determine if event should be dismissed
+		// loop through event jobs to determine if the event can be dismissed
         for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
         {
             if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_NONE
@@ -154,32 +161,76 @@ void event_tracker_refresh()
             }
             else
             {
-            	// in case of failure or deprioritization,
-            	// one failed/dismissed job is enough
-            	// to invalidate the whole event.
-				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_FAILED)
+            	bool acquiredMutex = false;
+            	// if this job doesn't have an assigned agent mutex yet,
+            	// it has likely been released or not yet assigned,
+            	// so it will be counted, but not altered
+            	if (nodeBuffer[currentIdx].event.jobs[jobIdx].assignedAgentMutex != NULL)
+            	{
+					osMutexAcquire(nodeBuffer[currentIdx].event.jobs[jobIdx].assignedAgentMutex, osWaitForever);
+					acquiredMutex = true;
+            	}
+
+				switch (nodeBuffer[currentIdx].event.jobs[jobIdx].status)
 				{
-					dismissed = DISMISSAL_FAILURE;
-					break;
+					case JOB_PENDING:
+					case JOB_ONGOING:
+						pendingCount++;
+						break;
+					case JOB_FAILED_TRACKER:
+						failedCount++;
+						pendingCount++;
+						break;
+					case JOB_FAILED_AGENT:
+						failedCount++;
+						break;
+					case JOB_CANCELLED_AGENT:
+						cancelledCount++;
+						break;
+					case JOB_CANCELLED_TRACKER:
+						cancelledCount++;
+						pendingCount++;
+						break;
+					case JOB_HANDLED_AGENT:
+						handledCount++;
+						break;
+					default:
+						break;
 				}
 
-				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_DISMISSED)
+				if (acquiredMutex)
 				{
-					dismissed = DISMISSAL_DEPRIORITIZED;
-					break;
-				}
-
-				// in case of success, all job of the event must have been handled
-				// for the event to count as successfully cleared.
-				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status != JOB_HANDLED)
-				{
-					dismissed = DISMISSAL_PENDING;
+					osMutexRelease(nodeBuffer[currentIdx].event.jobs[jobIdx].assignedAgentMutex);
 				}
             }
         }
 
-        // dismiss if required
-        if (dismissed > 0)
+		// use results of job loop to determine the event outcome
+		// in case of failure or deprioritization,
+		// one failed/dismissed job is enough
+		// to invalidate the whole event,
+		// but one pending job is enough to delay its release.
+		if (pendingCount == 0)
+		{
+			canRemove = true;
+			outcome = failedCount > 0 ? OUTCOME_FAILURE
+					: cancelledCount > 0 ? OUTCOME_CANCELLED
+					: OUTCOME_SUCCESS;
+		}
+		else if (failedCount > 0 || cancelledCount > 0)
+		{
+			for (jobIdx = 0; jobIdx < NUM_EVENT_JOBS; jobIdx++)
+			{
+				if (nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_PENDING
+					|| nodeBuffer[currentIdx].event.jobs[jobIdx].status == JOB_ONGOING)
+				{
+					nodeBuffer[currentIdx].event.jobs[jobIdx].status =
+					failedCount > 0 ? JOB_FAILED_TRACKER : JOB_CANCELLED_TRACKER;
+				}
+			}
+		}
+
+        if (canRemove)
         {
             // freeing a node
             nodeBuffer[currentIdx].used = false;
@@ -209,8 +260,8 @@ void event_tracker_refresh()
 			log_buffer.subject_0 = LOGSBJ_EVENT;
 			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
 			log_buffer.subject_2 =
-					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_SUCCESS
-					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_FAILURE
+					outcome == OUTCOME_SUCCESS ? LOGSBJ_SUCCESS
+					: outcome == OUTCOME_FAILURE ? LOGSBJ_FAILURE
 					: LOGSBJ_DEPRIORITIZED;
 			serial_printer_spool_log(log_buffer);
         }

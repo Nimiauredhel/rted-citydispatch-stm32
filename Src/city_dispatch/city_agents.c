@@ -118,9 +118,9 @@ static void city_agent_task(void *param)
 			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
 			osMutexAcquire(agent->mutexHandle, osWaitForever);
 		}
-		else if (agent->currentJob->status == JOB_OVERDUE)
+		else if (agent->currentJob->status == JOB_FAILED_TRACKER)
 		{
-			agent->currentJob->status = JOB_FAILED;
+			agent->currentJob->status = JOB_FAILED_AGENT;
 			event_tracker_set_dirty();
 		}
 
@@ -128,17 +128,23 @@ static void city_agent_task(void *param)
 		agent->log_buffer.subject_0 = LOGSBJ_JOB;
 		agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
 
-		if (agent->currentJob->status == JOB_OVERDUE)
+		if (agent->currentJob->status == JOB_FAILED_TRACKER)
 		{
-			agent->currentJob->status = JOB_FAILED;
+			agent->currentJob->status = JOB_FAILED_AGENT;
 			agent->log_buffer.subject_2 = LOGSBJ_FAILURE;
+		}
+		else if (agent->currentJob->status == JOB_CANCELLED_TRACKER)
+		{
+			agent->currentJob->status = JOB_CANCELLED_AGENT;
+			agent->log_buffer.subject_2 = LOGSBJ_DEPRIORITIZED;
 		}
 		else
 		{
-			agent->currentJob->status = JOB_HANDLED;
+			agent->currentJob->status = JOB_HANDLED_AGENT;
 			agent->log_buffer.subject_2 = LOGSBJ_SUCCESS;
 		}
 
+		agent->currentJob->assignedAgentMutex = NULL;
 		agent->status = AGENT_FREE;
 		agent->currentJob = NULL;
 

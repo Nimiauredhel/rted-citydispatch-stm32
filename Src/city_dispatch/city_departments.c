@@ -129,6 +129,7 @@ static void city_department_task(void *param)
 						assigned = true;
 						department->agents[agentIdx].currentJob = department->current_job_pointer;
 						department->agents[agentIdx].status = AGENT_ASSIGNED;
+						department->current_job_pointer->assignedAgentMutex = department->agents[agentIdx].mutexHandle;
 						department->current_job_pointer = NULL;
 						osMutexRelease(department->agents[agentIdx].mutexHandle);
 						break;

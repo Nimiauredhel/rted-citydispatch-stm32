@@ -30,10 +30,11 @@ typedef enum JobStatus
     JOB_NONE = 0,
     JOB_PENDING = 1,
     JOB_ONGOING = 2,
-    JOB_OVERDUE = 3,
-    JOB_HANDLED = -1,
-    JOB_FAILED = -2,
-    JOB_DISMISSED = -3,
+    JOB_FAILED_TRACKER = 3,
+    JOB_CANCELLED_TRACKER = 4,
+    JOB_HANDLED_AGENT = -1,
+    JOB_FAILED_AGENT = -2,
+    JOB_CANCELLED_AGENT = -3,
 } JobStatus_t;
 typedef enum EventPriority
 {
