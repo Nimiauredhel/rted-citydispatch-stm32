@@ -89,6 +89,7 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 		log_buffer.format = LOGFMT_DISMISSING;
 		log_buffer.subject_2 = LOGSBJ_INSUFFICIENT_SPACE;
 		serial_printer_spool_log(&log_buffer);
+		osMutexRelease(eventTrackerMutexHandle);
         return NULL;
     }
 
