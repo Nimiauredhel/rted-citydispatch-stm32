@@ -11,6 +11,14 @@
 #define DISMISSAL_DEPRIORITIZED 2
 #define DISMISSAL_FAILURE 3
 
+osSemaphoreId_t eventTrackerSemHandle;
+StaticSemaphore_t eventTrackerSemControlBlock;
+const osSemaphoreAttr_t eventTrackerSem_attributes = {
+  .name = "eventTrackerSem",
+  .cb_mem = &eventTrackerSemControlBlock,
+  .cb_size = sizeof(eventTrackerSemControlBlock),
+};
+
 static bool is_dirty = false;
 static int8_t length = 0;
 static int8_t nextFreeIdx = 0;
@@ -43,6 +51,9 @@ static void set_next_free_idx()
 
 void event_tracker_initialize()
 {
+    eventTrackerSemHandle = osSemaphoreNew(1, 1, &eventTrackerSem_attributes);
+    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+
     headIdx = -1;
     tailIdx = -1;
     length = 0;
@@ -60,12 +71,16 @@ void event_tracker_initialize()
 
     log_buffer.format = LOGFMT_INITIALIZED;
     serial_printer_spool_log(&log_buffer);
+
+    osSemaphoreRelease(eventTrackerSemHandle);
 }
 
 // if successful, returns pointer to stored address
 // if failed, returns NULL
 CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 {
+    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+
     log_buffer.subject_0 = LOGSBJ_EVENT;
     log_buffer.subject_1 = newEvent.eventTemplateIndex;
 
@@ -103,6 +118,7 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     log_buffer.format = LOGFMT_REGISTERED;
 	serial_printer_spool_log(&log_buffer);
 
+    osSemaphoreRelease(eventTrackerSemHandle);
     return &(nodeBuffer[targetIdx].event);
 }
 
@@ -111,13 +127,10 @@ void event_tracker_refresh()
     if (length == 0) return;
     if (headIdx == -1 || tailIdx == -1) return;
 
+    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+
     log_buffer.format = LOGFMT_REFRESHING;
     serial_printer_spool_log(&log_buffer);
-
-    // this function invokes CRITICAL mode
-    // due to "job status" being used as IPC
-    // between dispatcher & agents.
-    // TODO: use mutex instead (to only lock individual resources when required, rather than whole system every time)
 
     int8_t dismissed = DISMISSAL_PENDING;
     uint8_t jobIdx = 0;
@@ -166,8 +179,6 @@ void event_tracker_refresh()
         // dismiss if required
         if (dismissed > 0)
         {
-			taskENTER_CRITICAL();
-
 			log_buffer.format = LOGFMT_REMOVING;
 			log_buffer.subject_0 = LOGSBJ_EVENT;
 			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
@@ -200,8 +211,6 @@ void event_tracker_refresh()
             currentIdx = nodeBuffer[currentIdx].nextIdx;
             nodeBuffer[temp].nextIdx = -1;
 
-
-			taskEXIT_CRITICAL();
 			serial_printer_spool_log(&log_buffer);
         }
         else
@@ -217,12 +226,15 @@ void event_tracker_refresh()
 		set_next_free_idx();
     }
 
+    osSemaphoreRelease(eventTrackerSemHandle);
 	is_dirty = false;
 }
 
 void event_tracker_set_dirty()
 {
+    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
 	is_dirty = true;
+    osSemaphoreRelease(eventTrackerSemHandle);
 }
 
 bool event_tracker_get_dirty()
