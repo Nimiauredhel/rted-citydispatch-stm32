@@ -171,6 +171,7 @@ void print_city_log()
 		case LOGFMT_TASK_STOPPING:
 		case LOGFMT_WAITING:
 		case LOGFMT_REFRESHING:
+		case LOGFMT_CLEARED:
 			sprintf(output_buffer, log_formats[log_buffer_outgoing.format], identifier_buffer);
 			break;
 		// log formats that use every parameter,
@@ -189,6 +190,7 @@ void print_city_log()
 		// log formats that use every parameter,
 		// with subject_2 being an index for a cause/outcome/etc. text
 		case LOGFMT_DONE_WITH:
+		case LOGFMT_REMOVING:
 		case LOGFMT_DISMISSING:
 		case LOGFMT_STARTING_SUBJECT:
 		case LOGFMT_STOPPING_SUBJECT:
@@ -228,6 +230,7 @@ void print_city_log()
 			break;
 
 		default:
+			sprintf(output_buffer, "MISSING LOG FORMAT CASE #%u.", log_buffer_outgoing.format);
 	}
 
 	output_print_blocking(timestamp_buffer, 12);
