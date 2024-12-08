@@ -44,10 +44,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance == USART3)
 	{
-		if (osSemaphoreGetCount(userInputSemHandle) < 1)
-		{
-			osSemaphoreRelease(userInputSemHandle);
-		}
+		osSemaphoreRelease(userInputSemHandle);
 	}
 }
 
@@ -79,6 +76,7 @@ static void simulation_control_task(void *argument)
 
 	for(;;)
 	{
+		osDelay(DELAY_100MS_TICKS);
 		rxStatus = HAL_UART_Receive_IT(&huart3, (uint8_t *)&input, 1);
 		osSemaphoreAcquire(userInputSemHandle, osWaitForever);
 
