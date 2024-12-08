@@ -17,8 +17,6 @@ const osMutexAttr_t serialOutputMutex_attributes = {
   .cb_size = sizeof(serialOutputMutexControlBlock),
 };
 
-static const TickType_t serial_timeout = pdMS_TO_TICKS(1000);
-
 void output_initialize()
 {
     serialOutputMutexHandle = osMutexNew(&serialOutputMutex_attributes);

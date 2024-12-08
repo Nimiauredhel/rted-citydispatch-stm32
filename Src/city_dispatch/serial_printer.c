@@ -69,7 +69,13 @@ static const char log_subjects[10][19] =
 	"User Input",
 };
 
-static const uint16_t PRINTER_TIMEOUT_MS = 5000;
+osMutexId_t printSpoolMutexHandle;
+StaticSemaphore_t printSpoolMutexControlBlock;
+const osMutexAttr_t printSpoolMutex_attributes = {
+  .name = "printSpoolMutex",
+  .cb_mem = &printSpoolMutexControlBlock,
+  .cb_size = sizeof(printSpoolMutexControlBlock),
+};
 
 static const osThreadAttr_t serialPrinterTask_attributes = {
   .name = "serialPrinterTask",
@@ -113,11 +119,13 @@ void serial_printer_initialize()
 
 void serial_printer_spool_log(CityLog_t new_log)
 {
+	osMutexAcquire(printSpoolMutexHandle, osWaitForever);
 	RTC_TimeTypeDef time = time_get();
 	new_log.time_hour = time.Hours;
 	new_log.time_min = time.Minutes;
 	new_log.time_sec = time.Seconds;
 	osMessageQueuePut(serialPrinterQueueHandle, &new_log, 0, osWaitForever);
+	osMutexRelease(printSpoolMutexHandle);
 }
 
 static void serial_printer_task()
@@ -128,17 +136,8 @@ static void serial_printer_task()
 
 	for(;;)
 	{
-		queue_read_status = osMessageQueueGet(serialPrinterQueueHandle, &log_buffer_outgoing, NULL, pdMS_TO_TICKS(PRINTER_TIMEOUT_MS));
-
-		if (queue_read_status == osErrorTimeout)
-		{
-			//sprintf(output_buffer, "Printer timed out after %hums\n\r", PRINTER_TIMEOUT_MS);
-			//output_print_blocking_autosize(output_buffer);
-		}
-		else
-		{
-			print_city_log();
-		}
+		queue_read_status = osMessageQueueGet(serialPrinterQueueHandle, &log_buffer_outgoing, NULL, osWaitForever);
+		print_city_log();
 	}
 }
 

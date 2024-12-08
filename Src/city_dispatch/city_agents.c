@@ -47,6 +47,7 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
         newAgents[idx].log_buffer.format = LOGFMT_INITIALIZED;
 		serial_printer_spool_log(newAgents[idx].log_buffer);
 
+		newAgents[idx].mutexHandle = osMutexNew(NULL);
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
 	}
@@ -62,7 +63,9 @@ void city_agents_start()
 
     do
     {
+    	osMutexAcquire(current->mutexHandle, osWaitForever);
         osThreadResume(current->taskHandle);
+        osMutexRelease(current->mutexHandle);
         current = current->next;
     } while (current != NULL);
 }
@@ -75,7 +78,9 @@ void city_agents_stop()
 
     do
     {
+    	osMutexAcquire(current->mutexHandle, osWaitForever);
         osThreadSuspend(current->taskHandle);
+        osMutexRelease(current->mutexHandle);
         current = current->next;
     } while (current != NULL);
 }
@@ -96,10 +101,10 @@ static void city_agent_task(void *param)
 			osDelay(DELAY_100MS_TICKS);
 		}
 
+		osMutexAcquire(agent->mutexHandle, osWaitForever);
+
 		if (agent->currentJob->status == JOB_PENDING)
 		{
-			osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
-
 			agent->status = AGENT_BUSY;
 			agent->currentJob->status = JOB_ONGOING;
 
@@ -107,22 +112,17 @@ static void city_agent_task(void *param)
 			agent->log_buffer.subject_0 = LOGSBJ_JOB;
 			agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
 
-			osMutexRelease(eventTrackerMutexHandle);
+			osMutexRelease(agent->mutexHandle);
 			serial_printer_spool_log(agent->log_buffer);
-
 			// wait the job handling duration
 			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
+			osMutexAcquire(agent->mutexHandle, osWaitForever);
 		}
 		else if (agent->currentJob->status == JOB_OVERDUE)
 		{
 			agent->currentJob->status = JOB_FAILED;
 			event_tracker_set_dirty();
 		}
-
-		// TODO: improve the job status handling between the agent and tracker
-		// TODO: separate agent<->tracker interface from dispatcher<->tracker interface?
-
-		osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
 		agent->log_buffer.format = LOGFMT_DONE_WITH;
 		agent->log_buffer.subject_0 = LOGSBJ_JOB;
@@ -142,7 +142,7 @@ static void city_agent_task(void *param)
 		agent->status = AGENT_FREE;
 		agent->currentJob = NULL;
 
-		osMutexRelease(eventTrackerMutexHandle);
+		osMutexRelease(agent->mutexHandle);
 
 		event_tracker_set_dirty();
 		serial_printer_spool_log(agent->log_buffer);

@@ -113,34 +113,30 @@ static void city_department_task(void *param)
 			serial_printer_spool_log(department->log_buffer);
 
             bool assigned = false;
+            osStatus_t agentMutexStatus;
 
             while (!assigned)
             {
+				osDelay(DELAY_10MS_TICKS);
+
 				for (uint8_t agentIdx = 0; agentIdx < department->agentCount; agentIdx++)
 				{
+					agentMutexStatus = osMutexAcquire(department->agents[agentIdx].mutexHandle, DELAY_100MS_TICKS);
+					if (agentMutexStatus != osOK) continue;
+
 					if (department->agents[agentIdx].status == AGENT_FREE)
 					{
-						taskENTER_CRITICAL();
 						assigned = true;
 						department->agents[agentIdx].currentJob = department->current_job_pointer;
 						department->agents[agentIdx].status = AGENT_ASSIGNED;
 						department->current_job_pointer = NULL;
-						taskEXIT_CRITICAL();
+						osMutexRelease(department->agents[agentIdx].mutexHandle);
 						break;
 					}
-				}
 
-				osDelay(DELAY_100MS_TICKS);
+					osMutexRelease(department->agents[agentIdx].mutexHandle);
+				}
             }
 		}
-		else
-		{
-			// TODO: implement timeout & timeout behavior
-			osDelay(DELAY_100MS_TICKS);
-			continue;
-		}
-
-		//department->log_buffer.format = LOGFMT_WAITING;
-		//serial_printer_spool_log(&department->log_buffer);
 	}
 }

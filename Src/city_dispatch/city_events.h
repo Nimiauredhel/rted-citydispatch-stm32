@@ -65,6 +65,7 @@ typedef struct CityJob
 	JobStatus_t status;
     DepartmentCode_t code;
     uint16_t secsToHandle;
+    osMutexId_t *assignedAgentMutex;
 } CityJob_t;
 
 typedef struct CityEvent
