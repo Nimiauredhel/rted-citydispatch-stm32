@@ -13,6 +13,7 @@
 #include "stm32f7xx_hal.h"
 #include "cmsis_os.h"
 
+void output_initialize();
 void output_print_blocking_autosize(const char *string);
 void output_print_irq(const char *string, uint16_t size);
 void output_print_irq_autosize(const char *string);

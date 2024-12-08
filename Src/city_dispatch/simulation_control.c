@@ -117,6 +117,7 @@ static void simulation_control_task(void *argument)
 
 static void simulation_initialize()
 {
+    output_initialize();
 	serial_printer_initialize();
 	osDelay(DELAY_100MS_TICKS);
 	log_buffer.format = LOGFMT_INITIALIZING;
