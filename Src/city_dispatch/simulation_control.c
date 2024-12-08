@@ -20,6 +20,14 @@ const osThreadAttr_t controlTask_attributes = {
   .priority = (osPriority_t) CONTROL_PRIORITY,
 };
 
+osSemaphoreId_t userInputSemHandle;
+StaticSemaphore_t userInputSemControlBlock;
+const osSemaphoreAttr_t userInputSem_attributes = {
+  .name = "userInputSem",
+  .cb_mem = &userInputSemControlBlock,
+  .cb_size = sizeof(userInputSemControlBlock),
+};
+
 /* Consts for control task */
 static const char *sim_separator = "\n\r\n\r--------------------------------\n\r\n\r";
 static const char *control_prompt = "\n\rInput 's' to start, 'h' to stop,\n\r't' to set date and time, 'r' to restart.\n\r";
@@ -30,14 +38,16 @@ extern UART_HandleTypeDef huart3;
 static HAL_StatusTypeDef rxStatus;
 static char input = '~';
 static bool running = false;
-static bool hasInput = false;
 static CityLog_t log_buffer;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance == USART3)
 	{
-		hasInput = true;
+		if (osSemaphoreGetCount(userInputSemHandle) < 1)
+		{
+			osSemaphoreRelease(userInputSemHandle);
+		}
 	}
 }
 
@@ -50,6 +60,8 @@ void simulation_start_control_task()
 	log_buffer.subject_0 = LOGSBJ_SIMULATION;
 	log_buffer.subject_1 = LOGSBJ_BACKSPACE;
 	log_buffer.subject_2 = LOGSBJ_USER_INPUT;
+
+	userInputSemHandle = osSemaphoreNew(1, 0, &userInputSem_attributes);
 	controlTaskHandle = osThreadNew(simulation_control_task, NULL, &controlTask_attributes);
 }
 
@@ -68,11 +80,7 @@ static void simulation_control_task(void *argument)
 	for(;;)
 	{
 		rxStatus = HAL_UART_Receive_IT(&huart3, (uint8_t *)&input, 1);
-
-		while (!hasInput && rxStatus != HAL_OK)
-		{
-			osDelay(DELAY_100MS_TICKS);
-		}
+		osSemaphoreAcquire(userInputSemHandle, osWaitForever);
 
 		if (running)
 		{
@@ -106,7 +114,6 @@ static void simulation_control_task(void *argument)
 		}
 
 		input = '~';
-		hasInput = false;
 	}
 }
 

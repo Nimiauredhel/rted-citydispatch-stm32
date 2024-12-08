@@ -2,8 +2,9 @@
 CAD.formats=
 CAD.pinconfig=
 CAD.provider=
+FREERTOS.BinarySemaphores01=myBinarySem01,Static,myBinarySem01ControlBlock,Available;myBinarySem02,Dynamic,NULL,Available
 FREERTOS.FootprintOK=true
-FREERTOS.IPParameters=Tasks01,configUSE_NEWLIB_REENTRANT,FootprintOK,configMINIMAL_STACK_SIZE,configMAX_TASK_NAME_LEN
+FREERTOS.IPParameters=Tasks01,configUSE_NEWLIB_REENTRANT,FootprintOK,configMINIMAL_STACK_SIZE,configMAX_TASK_NAME_LEN,BinarySemaphores01
 FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Static,defaultTaskBuffer,defaultTaskControlBlock
 FREERTOS.configMAX_TASK_NAME_LEN=32
 FREERTOS.configMINIMAL_STACK_SIZE=128

@@ -9,7 +9,7 @@
 #define SIMULATION_CONTROL_H_
 
 #include "stm32f7xx_hal.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 
 #include "city_dispatcher.h"
 #include "city_departments.h"
