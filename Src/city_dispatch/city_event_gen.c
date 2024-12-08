@@ -137,6 +137,7 @@ static void event_gen_task()
         {
 			case EVENT_HIGH:
 				osMessageQueuePut(city_inbox.inboxHighPriorityQueueHandle, &generated_event, 0, osWaitForever);
+				break;
 			case EVENT_NORMAL:
 				osMessageQueuePut(city_inbox.inboxMediumPriorityQueueHandle, &generated_event, 0, osWaitForever);
 				break;
