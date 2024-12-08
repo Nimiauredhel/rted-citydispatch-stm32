@@ -52,7 +52,7 @@ void output_print_blocking(const char *string, uint16_t size)
 	HAL_StatusTypeDef transmitStatus = HAL_BUSY;
 	while (transmitStatus == HAL_BUSY)
 	{
-		transmitStatus = HAL_UART_Transmit(&huart3, (uint8_t *)string, size, serial_timeout);
+		transmitStatus = HAL_UART_Transmit(&huart3, (uint8_t *)string, size, osWaitForever);
 	}
 
     osMutexRelease(serialOutputMutexHandle);

@@ -26,6 +26,7 @@ typedef enum AgentStatus
 typedef struct AgentState
 {
     AgentStatus_t status;
+    osMutexId_t mutexHandle;
     osThreadId_t taskHandle;
     uint8_t index;
 	CityLog_t log_buffer;

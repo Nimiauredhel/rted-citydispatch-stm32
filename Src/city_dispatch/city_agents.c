@@ -45,11 +45,10 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
 		newAgents[idx].log_buffer.identifier_1 = code;
 		newAgents[idx].log_buffer.identifier_2 = idx;
         newAgents[idx].log_buffer.format = LOGFMT_INITIALIZED;
-		serial_printer_spool_log(&newAgents[idx].log_buffer);
+		serial_printer_spool_log(newAgents[idx].log_buffer);
 
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
-		osDelay(DELAY_10MS_TICKS);
 	}
 
 	return newAgents;
@@ -87,70 +86,65 @@ static void city_agent_task(void *param)
 	AgentState_t *agent = (AgentState_t *)param;
 
 	agent->log_buffer.format = LOGFMT_TASK_STARTING;
-	serial_printer_spool_log(&agent->log_buffer);
-
-	//osDelay(pdMS_TO_TICKS(100));
-	//agent->log_buffer.format = LOGFMT_WAITING;
-	//serial_printer_spool_log(&agent->log_buffer);
+	serial_printer_spool_log(agent->log_buffer);
 
 	for(;;)
 	{
-		osDelay(DELAY_100MS_TICKS);
-
-		if (agent->status == AGENT_ASSIGNED)
+		while (agent->status == AGENT_FREE
+				|| agent->currentJob == NULL)
 		{
-			taskENTER_CRITICAL();
+			osDelay(DELAY_100MS_TICKS);
+		}
 
-			if (agent->currentJob->status == JOB_PENDING)
-			{
-				agent->status = AGENT_BUSY;
-				agent->currentJob->status = JOB_ONGOING;
+		if (agent->currentJob->status == JOB_PENDING)
+		{
+			osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
-				agent->log_buffer.format = LOGFMT_RECEIVED;
-				agent->log_buffer.subject_0 = LOGSBJ_JOB;
-				agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
-				serial_printer_spool_log(&agent->log_buffer);
-				// TODO: think about whether this action also requires
-				// setting the event tracker to dirty
-			}
-			else if (agent->currentJob->status == JOB_OVERDUE)
-			{
-				agent->currentJob->status = JOB_FAILED;
-				event_tracker_set_dirty();
-			}
+			agent->status = AGENT_BUSY;
+			agent->currentJob->status = JOB_ONGOING;
 
-			taskEXIT_CRITICAL();
-
-			// wait the job handling duration
-			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
-
-			// TODO: improve the job status handling between the agent and tracker
-			// TODO: separate agent<->tracker interface from dispatcher<->tracker interface?
-
-			taskENTER_CRITICAL();
-
-			agent->log_buffer.format = LOGFMT_DONE_WITH;
+			agent->log_buffer.format = LOGFMT_RECEIVED;
 			agent->log_buffer.subject_0 = LOGSBJ_JOB;
 			agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
 
-			if (agent->currentJob->status == JOB_OVERDUE)
-			{
-				agent->currentJob->status = JOB_FAILED;
-				agent->log_buffer.subject_2 = LOGSBJ_FAILURE;
-			}
-			else
-			{
-				agent->currentJob->status = JOB_HANDLED;
-				agent->log_buffer.subject_2 = LOGSBJ_SUCCESS;
-			}
+			osMutexRelease(eventTrackerMutexHandle);
+			serial_printer_spool_log(agent->log_buffer);
 
-			agent->status = AGENT_FREE;
-			agent->currentJob = NULL;
-			event_tracker_set_dirty();
-
-			taskEXIT_CRITICAL();
-
-			serial_printer_spool_log(&agent->log_buffer);
+			// wait the job handling duration
+			osDelay(pdMS_TO_TICKS(agent->currentJob->secsToHandle * 1000));
 		}
+		else if (agent->currentJob->status == JOB_OVERDUE)
+		{
+			agent->currentJob->status = JOB_FAILED;
+			event_tracker_set_dirty();
+		}
+
+		// TODO: improve the job status handling between the agent and tracker
+		// TODO: separate agent<->tracker interface from dispatcher<->tracker interface?
+
+		osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
+
+		agent->log_buffer.format = LOGFMT_DONE_WITH;
+		agent->log_buffer.subject_0 = LOGSBJ_JOB;
+		agent->log_buffer.subject_1 = agent->currentJob->jobTemplateIndex;
+
+		if (agent->currentJob->status == JOB_OVERDUE)
+		{
+			agent->currentJob->status = JOB_FAILED;
+			agent->log_buffer.subject_2 = LOGSBJ_FAILURE;
+		}
+		else
+		{
+			agent->currentJob->status = JOB_HANDLED;
+			agent->log_buffer.subject_2 = LOGSBJ_SUCCESS;
+		}
+
+		agent->status = AGENT_FREE;
+		agent->currentJob = NULL;
+
+		osMutexRelease(eventTrackerMutexHandle);
+
+		event_tracker_set_dirty();
+		serial_printer_spool_log(agent->log_buffer);
 	}
 }

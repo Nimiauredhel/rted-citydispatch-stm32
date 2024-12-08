@@ -36,7 +36,7 @@ void city_departments_initialize(void)
 		departments[idx].log_buffer.identifier_0 = LOGID_DEPARTMENT;
 		departments[idx].log_buffer.identifier_1 = idx;
 		departments[idx].log_buffer.format = LOGFMT_INITIALIZING;
-		serial_printer_spool_log(&departments[idx].log_buffer);
+		serial_printer_spool_log(departments[idx].log_buffer);
 
 		departments[idx].code = (DepartmentCode_t)idx;
 		departments[idx].agentCount = departmentAgentCounts[idx];
@@ -47,7 +47,7 @@ void city_departments_initialize(void)
 		department_inboxes[idx] = &departments[idx].inbox;
 
 		departments[idx].log_buffer.format = LOGFMT_INITIALIZED;
-		serial_printer_spool_log(&departments[idx].log_buffer);
+		serial_printer_spool_log(departments[idx].log_buffer);
 
 		departments[idx].taskHandle = osThreadNew(city_department_task, &departments[idx], &city_department_task_attributes[idx]);
 		osThreadSuspend(departments[idx].taskHandle);
@@ -95,7 +95,7 @@ static void city_department_task(void *param)
 	department->log_buffer.identifier_1 = department->code;
 
 	department->log_buffer.format = LOGFMT_TASK_STARTING;
-	serial_printer_spool_log(&department->log_buffer);
+	serial_printer_spool_log(department->log_buffer);
 
 	//osDelay(pdMS_TO_TICKS(100));
 	//department->log_buffer.format = LOGFMT_WAITING;
@@ -110,7 +110,7 @@ static void city_department_task(void *param)
 			department->log_buffer.format = LOGFMT_RECEIVED;
 			department->log_buffer.subject_0 = LOGSBJ_JOB;
 			department->log_buffer.subject_1 = department->current_job_pointer->jobTemplateIndex;
-			serial_printer_spool_log(&department->log_buffer);
+			serial_printer_spool_log(department->log_buffer);
 
             bool assigned = false;
 

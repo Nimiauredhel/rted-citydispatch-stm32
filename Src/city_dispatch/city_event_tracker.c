@@ -70,7 +70,7 @@ void event_tracker_initialize()
     }
 
     log_buffer.format = LOGFMT_INITIALIZED;
-    serial_printer_spool_log(&log_buffer);
+    serial_printer_spool_log(log_buffer);
 
     osMutexRelease(eventTrackerMutexHandle);
 }
@@ -88,8 +88,8 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     {
 		log_buffer.format = LOGFMT_DISMISSING;
 		log_buffer.subject_2 = LOGSBJ_INSUFFICIENT_SPACE;
-		serial_printer_spool_log(&log_buffer);
 		osMutexRelease(eventTrackerMutexHandle);
+		serial_printer_spool_log(log_buffer);
         return NULL;
     }
 
@@ -114,12 +114,12 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     tailIdx = targetIdx;
 
 	set_next_free_idx();
+    osMutexRelease(eventTrackerMutexHandle);
 
     log_buffer.subject_2 = targetIdx;
     log_buffer.format = LOGFMT_REGISTERED;
-	serial_printer_spool_log(&log_buffer);
+	serial_printer_spool_log(log_buffer);
 
-    osMutexRelease(eventTrackerMutexHandle);
     return &(nodeBuffer[targetIdx].event);
 }
 
@@ -128,10 +128,10 @@ void event_tracker_refresh()
     if (length == 0) return;
     if (headIdx == -1 || tailIdx == -1) return;
 
-    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
-
     log_buffer.format = LOGFMT_REFRESHING;
-    serial_printer_spool_log(&log_buffer);
+    serial_printer_spool_log(log_buffer);
+
+    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
     int8_t dismissed = DISMISSAL_PENDING;
     uint8_t jobIdx = 0;
@@ -141,6 +141,7 @@ void event_tracker_refresh()
 
     do
     {
+		osDelay(DELAY_10MS_TICKS);
 		dismissed = DISMISSAL_SUCCESS;
 
         // determine if event should be dismissed
@@ -180,14 +181,6 @@ void event_tracker_refresh()
         // dismiss if required
         if (dismissed > 0)
         {
-			log_buffer.format = LOGFMT_REMOVING;
-			log_buffer.subject_0 = LOGSBJ_EVENT;
-			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
-			log_buffer.subject_2 =
-					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_SUCCESS
-					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_FAILURE
-					: LOGSBJ_DEPRIORITIZED;
-
             // freeing a node
             nodeBuffer[currentIdx].used = false;
             length--;
@@ -212,7 +205,14 @@ void event_tracker_refresh()
             currentIdx = nodeBuffer[currentIdx].nextIdx;
             nodeBuffer[temp].nextIdx = -1;
 
-			serial_printer_spool_log(&log_buffer);
+			log_buffer.format = LOGFMT_REMOVING;
+			log_buffer.subject_0 = LOGSBJ_EVENT;
+			log_buffer.subject_1 = nodeBuffer[currentIdx].event.eventTemplateIndex;
+			log_buffer.subject_2 =
+					dismissed == DISMISSAL_SUCCESS ? LOGSBJ_SUCCESS
+					: dismissed == DISMISSAL_FAILURE ? LOGSBJ_FAILURE
+					: LOGSBJ_DEPRIORITIZED;
+			serial_printer_spool_log(log_buffer);
         }
         else
         {
@@ -227,8 +227,8 @@ void event_tracker_refresh()
 		set_next_free_idx();
     }
 
-    osMutexRelease(eventTrackerMutexHandle);
 	is_dirty = false;
+    osMutexRelease(eventTrackerMutexHandle);
 }
 
 void event_tracker_set_dirty()

@@ -35,7 +35,7 @@ void event_gen_initialize()
 	event_gen_stop();
 	log_buffer.identifier_0 = LOGID_EVENT_GEN;
 	log_buffer.format = LOGFMT_INITIALIZED;
-	serial_printer_spool_log(&log_buffer);
+	serial_printer_spool_log(log_buffer);
 }
 
 void event_gen_start()
@@ -58,7 +58,7 @@ static void generate_event()
 	log_buffer.subject_0 = LOGSBJ_EVENT;
 	log_buffer.subject_1 = next_idx;
 	log_buffer.subject_2 = next_idx;
-	serial_printer_spool_log(&log_buffer);
+	serial_printer_spool_log(log_buffer);
 
     // apply event template to generated event
     generated_event.eventTemplateIndex = next_idx;

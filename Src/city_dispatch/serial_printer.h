@@ -86,6 +86,6 @@ typedef struct CityLog
 } CityLog_t;
 
 void serial_printer_initialize(void);
-void serial_printer_spool_log(CityLog_t *new_log);
+void serial_printer_spool_log(CityLog_t new_log);
 
 #endif /* SERIAL_PRINTER_H_ */

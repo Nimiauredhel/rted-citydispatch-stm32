@@ -96,8 +96,6 @@ static const char timestamp_format[18] = "%02u:%02u:%02u ~ ";
 
 static osStatus_t queue_read_status;
 
-static RTC_TimeTypeDef time_buffer;
-static CityLog_t log_buffer_incoming;
 static CityLog_t log_buffer_outgoing;
 static char timestamp_buffer[16];
 static char identifier_buffer[32];
@@ -113,21 +111,20 @@ void serial_printer_initialize()
   serialPrinterTaskHandle = osThreadNew(serial_printer_task, NULL, &serialPrinterTask_attributes);
 }
 
-void serial_printer_spool_log(CityLog_t *new_log)
+void serial_printer_spool_log(CityLog_t new_log)
 {
-	time_buffer = time_get();
-	log_buffer_incoming = *new_log;
-	log_buffer_incoming.time_hour = time_buffer.Hours;
-	log_buffer_incoming.time_min = time_buffer.Minutes;
-	log_buffer_incoming.time_sec = time_buffer.Seconds;
-	osMessageQueuePut(serialPrinterQueueHandle, &log_buffer_incoming, 0, osWaitForever);
+	RTC_TimeTypeDef time = time_get();
+	new_log.time_hour = time.Hours;
+	new_log.time_min = time.Minutes;
+	new_log.time_sec = time.Seconds;
+	osMessageQueuePut(serialPrinterQueueHandle, &new_log, 0, osWaitForever);
 }
 
 static void serial_printer_task()
 {
 	log_buffer_outgoing.format = LOGFMT_TASK_STARTING;
 	log_buffer_outgoing.identifier_0 = LOGID_LOGGER;
-	serial_printer_spool_log(&log_buffer_outgoing);
+	serial_printer_spool_log(log_buffer_outgoing);
 
 	for(;;)
 	{

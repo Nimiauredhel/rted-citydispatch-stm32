@@ -60,7 +60,7 @@ void city_inbox_initialize()
 
 	log_buffer.identifier_0 = LOGID_CITY_INBOX;
 	log_buffer.format = LOGFMT_INITIALIZED;
-	serial_printer_spool_log(&log_buffer);
+	serial_printer_spool_log(log_buffer);
 }
 
 void city_inbox_clear()
@@ -70,5 +70,5 @@ void city_inbox_clear()
 	osMessageQueueReset(city_inbox.inboxHighPriorityQueueHandle);
 
 	log_buffer.format = LOGFMT_CLEARED;
-	serial_printer_spool_log(&log_buffer);
+	serial_printer_spool_log(log_buffer);
 }

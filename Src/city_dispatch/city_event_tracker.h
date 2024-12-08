@@ -31,6 +31,8 @@ typedef struct EventTrackerNode
     CityEvent_t event;
 } EventTrackerNode_t;
 
+extern osMutexId_t eventTrackerMutexHandle;
+
 void event_tracker_initialize();
 CityEvent_t *event_tracker_add(CityEvent_t newEvent);
 void event_tracker_refresh();
