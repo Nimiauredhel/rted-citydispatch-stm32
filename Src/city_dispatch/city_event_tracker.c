@@ -11,12 +11,12 @@
 #define DISMISSAL_DEPRIORITIZED 2
 #define DISMISSAL_FAILURE 3
 
-osSemaphoreId_t eventTrackerSemHandle;
-StaticSemaphore_t eventTrackerSemControlBlock;
-const osSemaphoreAttr_t eventTrackerSem_attributes = {
-  .name = "eventTrackerSem",
-  .cb_mem = &eventTrackerSemControlBlock,
-  .cb_size = sizeof(eventTrackerSemControlBlock),
+osMutexId_t eventTrackerMutexHandle;
+StaticSemaphore_t eventTrackerMutexControlBlock;
+const osMutexAttr_t eventTrackerMutex_attributes = {
+  .name = "eventTrackerMutex",
+  .cb_mem = &eventTrackerMutexControlBlock,
+  .cb_size = sizeof(eventTrackerMutexControlBlock),
 };
 
 static bool is_dirty = false;
@@ -51,8 +51,8 @@ static void set_next_free_idx()
 
 void event_tracker_initialize()
 {
-    eventTrackerSemHandle = osSemaphoreNew(1, 1, &eventTrackerSem_attributes);
-    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+    eventTrackerMutexHandle = osMutexNew(&eventTrackerMutex_attributes);
+    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
     headIdx = -1;
     tailIdx = -1;
@@ -72,14 +72,14 @@ void event_tracker_initialize()
     log_buffer.format = LOGFMT_INITIALIZED;
     serial_printer_spool_log(&log_buffer);
 
-    osSemaphoreRelease(eventTrackerSemHandle);
+    osMutexRelease(eventTrackerMutexHandle);
 }
 
 // if successful, returns pointer to stored address
 // if failed, returns NULL
 CityEvent_t *event_tracker_add(CityEvent_t newEvent)
 {
-    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
     log_buffer.subject_0 = LOGSBJ_EVENT;
     log_buffer.subject_1 = newEvent.eventTemplateIndex;
@@ -118,7 +118,7 @@ CityEvent_t *event_tracker_add(CityEvent_t newEvent)
     log_buffer.format = LOGFMT_REGISTERED;
 	serial_printer_spool_log(&log_buffer);
 
-    osSemaphoreRelease(eventTrackerSemHandle);
+    osMutexRelease(eventTrackerMutexHandle);
     return &(nodeBuffer[targetIdx].event);
 }
 
@@ -127,7 +127,7 @@ void event_tracker_refresh()
     if (length == 0) return;
     if (headIdx == -1 || tailIdx == -1) return;
 
-    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 
     log_buffer.format = LOGFMT_REFRESHING;
     serial_printer_spool_log(&log_buffer);
@@ -226,15 +226,15 @@ void event_tracker_refresh()
 		set_next_free_idx();
     }
 
-    osSemaphoreRelease(eventTrackerSemHandle);
+    osMutexRelease(eventTrackerMutexHandle);
 	is_dirty = false;
 }
 
 void event_tracker_set_dirty()
 {
-    osSemaphoreAcquire(eventTrackerSemHandle, osWaitForever);
+    osMutexAcquire(eventTrackerMutexHandle, osWaitForever);
 	is_dirty = true;
-    osSemaphoreRelease(eventTrackerSemHandle);
+    osMutexRelease(eventTrackerMutexHandle);
 }
 
 bool event_tracker_get_dirty()
