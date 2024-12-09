@@ -7,6 +7,7 @@
 
 #include "city_departments.h"
 
+DepartmentLoad_t department_loads[NUM_DEPARTMENTS];
 osMessageQueueId_t *department_inboxes[NUM_DEPARTMENTS];
 
 const static osMessageQueueAttr_t city_department_inbox_attributes[NUM_DEPARTMENTS] = {
@@ -45,6 +46,7 @@ void city_departments_initialize(void)
 		// create department agents
 		departments[idx].agents = city_agents_initialize(departments[idx].agentCount, departments[idx].code);
 		department_inboxes[idx] = &departments[idx].inbox;
+		department_loads[idx] = DEPARTMENT_LOAD_FREE;
 
 		departments[idx].log_buffer.format = LOGFMT_INITIALIZED;
 		serial_printer_spool_log(departments[idx].log_buffer);
@@ -118,6 +120,11 @@ static void city_department_task(void *param)
             while (!assigned)
             {
 				osDelay(DELAY_10MS_TICKS);
+
+				if (department_loads[department->code] < DEPARTMENT_LOAD_MAX)
+				{
+					department_loads[department->code]++;
+				}
 
 				for (uint8_t agentIdx = 0; agentIdx < department->agentCount; agentIdx++)
 				{

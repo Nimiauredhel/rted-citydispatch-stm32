@@ -103,7 +103,31 @@ static void city_dispatcher_task()
 				if (trackedJob->code == DEPT_EMPTY
 					|| trackedJob->status == JOB_NONE) continue;
 
-				osMessageQueuePut(*(department_inboxes[trackedJob->code]), &trackedJob, 0, osWaitForever);
+				DepartmentCode_t targetDepartment = trackedJob->code;
+
+				if (department_loads[targetDepartment] == DEPARTMENT_LOAD_MAX)
+				{
+					for (uint8_t deps = 0; deps < NUM_DEPARTMENTS; deps++)
+					{
+						if (department_loads[deps] == DEPARTMENT_LOAD_FREE)
+						{
+							targetDepartment = deps;
+
+							log_buffer.format = LOGFMT_BORROWING_RESOURCE;
+							log_buffer.identifier_0 = LOGID_DEPARTMENT;
+							log_buffer.identifier_1 = trackedJob->code;
+							log_buffer.subject_0 = LOGID_DEPARTMENT;
+							log_buffer.subject_1 = targetDepartment;
+							serial_printer_spool_log(log_buffer);
+							log_buffer.identifier_0 = LOGID_DISPATCHER;
+							log_buffer.subject_0 = LOGSBJ_EVENT;
+
+							break;
+						}
+					}
+				}
+
+				osMessageQueuePut(*(department_inboxes[targetDepartment]), &trackedJob, 0, osWaitForever);
             }
 		}
 		else

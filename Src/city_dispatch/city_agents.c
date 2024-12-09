@@ -47,6 +47,7 @@ AgentState_t* city_agents_initialize(uint8_t numOfAgents, DepartmentCode_t code)
         newAgents[idx].log_buffer.format = LOGFMT_INITIALIZED;
 		serial_printer_spool_log(newAgents[idx].log_buffer);
 
+		newAgents[idx].departmentCode = code;
 		newAgents[idx].mutexHandle = osMutexNew(NULL);
         newAgents[idx].taskHandle = osThreadNew(city_agent_task, &newAgents[idx], &city_agent_task_attributes[code]);
         osThreadSuspend(newAgents[idx].taskHandle);
@@ -147,6 +148,11 @@ static void city_agent_task(void *param)
 		agent->currentJob->assignedAgentMutex = NULL;
 		agent->status = AGENT_FREE;
 		agent->currentJob = NULL;
+
+		if (department_loads[agent->departmentCode] > DEPARTMENT_LOAD_FREE)
+		{
+			department_loads[agent->departmentCode]--;
+		}
 
 		osMutexRelease(agent->mutexHandle);
 

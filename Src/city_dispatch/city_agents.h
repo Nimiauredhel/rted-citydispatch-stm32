@@ -14,13 +14,14 @@
 #include "simulation_defs.h"
 #include "simulation_constants.h"
 #include "city_events.h"
+#include "city_departments.h"
 #include "city_event_tracker.h"
 
 typedef enum AgentStatus
 {
     AGENT_FREE,
     AGENT_ASSIGNED,
-    AGENT_BUSY
+    AGENT_BUSY,
 } AgentStatus_t;
 
 typedef struct AgentState
@@ -29,6 +30,7 @@ typedef struct AgentState
     osMutexId_t mutexHandle;
     osThreadId_t taskHandle;
     uint8_t index;
+    DepartmentCode_t departmentCode;
 	CityLog_t log_buffer;
     CityJob_t *currentJob;
     struct AgentState *next;
