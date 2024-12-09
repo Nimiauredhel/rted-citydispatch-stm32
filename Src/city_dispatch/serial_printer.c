@@ -111,12 +111,23 @@ static char output_buffer[64];
 static void serial_printer_task();
 static void print_city_log();
 
+/**
+  * @brief  Function initializing the serial printer log queue,
+  * as well as the serial printer task itself.
+  * @retval None
+  */
 void serial_printer_initialize()
 {
   serialPrinterQueueHandle = osMessageQueueNew (OUTPUT_QUEUE_LENGTH, sizeof(CityLog_t), &serialPrinterQueue_attributes);
   serialPrinterTaskHandle = osThreadNew(serial_printer_task, NULL, &serialPrinterTask_attributes);
 }
 
+/**
+  * @brief  Function adding a log to the serial printer log queue,
+  * to be printed when the serial printer task gets to it.
+  * @param new_log: the encoded log object specifying what is to be printed.
+  * @retval None
+  */
 void serial_printer_spool_log(CityLog_t new_log)
 {
 	osMutexAcquire(printSpoolMutexHandle, osWaitForever);
@@ -128,6 +139,12 @@ void serial_printer_spool_log(CityLog_t new_log)
 	osMutexRelease(printSpoolMutexHandle);
 }
 
+/**
+  * @brief  Function implementing the Serial Printer task thread.
+  * This task waits for new encoded log objects in its associated queue,
+  * and prints them in order.
+  * @retval None
+  */
 static void serial_printer_task()
 {
 	log_buffer_outgoing.format = LOGFMT_TASK_STARTING;
@@ -141,6 +158,11 @@ static void serial_printer_task()
 	}
 }
 
+/**
+  * @brief Function constructing a simulation log as specified by the
+  * log_buffer_outgoing object, and printing it via serial output.
+  * @retval None
+  */
 void print_city_log()
 {
 	// prepare timestamp buffer
@@ -233,7 +255,10 @@ void print_city_log()
 			sprintf(output_buffer, "MISSING LOG FORMAT CASE #%u.", log_buffer_outgoing.format);
 	}
 
+    // prints the encoded timestamp before the textual content
 	output_print_blocking(timestamp_buffer, 12);
+    // prints the encoded textual content of the log object
 	output_print_blocking_autosize(output_buffer);
+    // prints a newline once finished printing the log content
 	output_print_blocking(newline, 3);
 }

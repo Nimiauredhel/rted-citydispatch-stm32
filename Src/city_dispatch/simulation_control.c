@@ -33,6 +33,8 @@ static const char *sim_separator = "\n\r\n\r--------------------------------\n\r
 static const char *control_prompt = "\n\rInput 's' to start, 'h' to stop,\n\r't' to set date and time, 'r' to restart.\n\r";
 
 /* Variables */
+
+// usart3 handle for reading serial input
 extern UART_HandleTypeDef huart3;
 
 static HAL_StatusTypeDef rxStatus;
@@ -40,6 +42,12 @@ static char input = '~';
 static bool running = false;
 static CityLog_t log_buffer;
 
+/**
+  * @brief callback for catching user input via USART
+  *        and allowing the control task to handle it.
+  * @param huart: the UART handle associated with the callback.
+  * @retval None
+  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance == USART3)
@@ -48,6 +56,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
+/**
+  * @brief the kickstart function for the entire simulation,
+  *        creating the simulation control task.
+  * @retval None
+  */
 void simulation_start_control_task()
 {
 	output_print_blocking_autosize(sim_separator);
@@ -66,6 +79,9 @@ void simulation_start_control_task()
 
 /**
   * @brief  Function implementing the simulation control task thread.
+  * This task first initializes (and pauses) the other simulation tasks,
+  * then awaits user input for starting and stopping the simulation.
+  * It also allows the user to set the time & date, as well as restart the device.
   * @param  argument: Not used
   * @retval None
   */
@@ -77,9 +93,13 @@ static void simulation_control_task(void *argument)
 	for(;;)
 	{
 		osDelay(DELAY_100MS_TICKS);
+        // request serial input, then wait for the semaphore to become available.
+        // the semaphore will be released by callback when input is received.
 		rxStatus = HAL_UART_Receive_IT(&huart3, (uint8_t *)&input, 1);
 		osSemaphoreAcquire(userInputSemHandle, osWaitForever);
 
+        // once the semaphore has been acquired,
+        // handle the the now stored user input.
 		if (running)
 		{
 			if (input == 'h')
@@ -115,6 +135,11 @@ static void simulation_control_task(void *argument)
 	}
 }
 
+/**
+  * @brief  Function initializing every simulation task for the first time,
+  * and immediately suspending it.
+  * @retval None
+  */
 static void simulation_initialize()
 {
     output_initialize();
@@ -135,6 +160,10 @@ static void simulation_initialize()
 	osDelay(DELAY_100MS_TICKS);
 }
 
+/**
+  * @brief  Function starting (actually resuming) every simulation task.
+  * @retval None
+  */
 static void simulation_start()
 {
 	log_buffer.format = LOGFMT_STARTING_SUBJECT;
@@ -147,6 +176,10 @@ static void simulation_start()
 	event_gen_start();
 }
 
+/**
+  * @brief  Function suspending every simulation task.
+  * @retval None
+  */
 static void simulation_stop()
 {
 	event_gen_stop();
