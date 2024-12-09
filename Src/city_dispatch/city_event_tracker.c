@@ -4,8 +4,18 @@
  *      Author: mickey
  */
 
+/*
+ * The event tracker module is where pending events are stored,
+ * until they reach a final outcome state (handled, failed, or otherwise dismissed).
+ * It is necessary since a single event contains a multitude of associated jobs
+ * that often require multiple agents from different departments to handle,
+ * which means that an event cannot be simply passed on to a singular department or agent.
+ */
+
 #include "city_event_tracker.h"
 
+/// The different outcome states that events may reach.
+/// TODO: Implement the fail states. Currently events may not fail.
 typedef enum EventOutcome
 {
 	OUTCOME_PENDING = 0,
@@ -22,7 +32,13 @@ const osMutexAttr_t eventTrackerMutex_attributes = {
   .cb_size = sizeof(eventTrackerMutexControlBlock),
 };
 
+/// The is_dirty flag is set whenever an ongoing job state is altered,
+/// and cleared when the event tracker is "refreshed" (e.g. when jobs are cleaned up).
+/// It allows the event tracker refresh function to only run as necessary.
 static bool is_dirty = false;
+/// The event tracker holds "linked list" style variables since it uses
+/// linked list style operation to iterate on its active job objects.
+/// This allows it to only iterate on array cells that are in use.
 static int8_t length = 0;
 static int8_t nextFreeIdx = 0;
 static int8_t headIdx;

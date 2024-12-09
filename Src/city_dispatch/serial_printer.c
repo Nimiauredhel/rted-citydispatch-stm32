@@ -14,6 +14,7 @@
  * Private serial printer variables
  */
 
+/// Pre-determined log formats for the encoded output logs.
 static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 {
 	"~",
@@ -41,6 +42,8 @@ static const char log_formats[NUM_LOG_FORMATS][MAX_LEN_LOG_FORMATS] =
 	"%s: stopped %s %s following %s.",
 };
 
+//! Pre-determined "identifiers" for the encoded output logs,
+//! used to identify the department or module where the log originates.
 static const char log_identifiers[10][19] =
 {
 	"[?]",
@@ -55,6 +58,8 @@ static const char log_identifiers[10][19] =
 	"Simulation Control",
 };
 
+//! Pre-determined "subjects" for the encoded output logs,
+//! used to express the subject or outcome of a logged action.
 static const char log_subjects[10][19] =
 {
 	"[?]",
@@ -69,6 +74,8 @@ static const char log_subjects[10][19] =
 	"User Input",
 };
 
+//! A mutex object used to manage access to the serial printer queue,
+//! as different modules may attempt to access it concurrently.
 osMutexId_t printSpoolMutexHandle;
 StaticSemaphore_t printSpoolMutexControlBlock;
 const osMutexAttr_t printSpoolMutex_attributes = {

@@ -7,10 +7,13 @@
 
 #include "city_events.h"
 
-// the different job types that can be associated
-// with different events, and must be each handled
-// for an event to be considered handled as a whole.
-// index 0 holds the "null job"
+/*
+ * The different job types that can be associated
+ * with different events, and must each be handled
+ * for an event to be considered handled as a whole.
+ * index 0 holds the "null job", required since
+ * the event job arrays are fixed-size.
+ */
 const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES] =
 {
     { DEPT_EMPTY, 0, 0, "NULL JOB" },
@@ -26,8 +29,16 @@ const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES] =
     { COVID,   7,  14,  "Covid-19 Quarantine" },
     { COVID,   14, 28,  "Covid-19 Treatment" },
 };
-// Events will be generated, randomly or otherwise,
-// from this pool of event templates
+/*
+ * Events will be generated, randomly or otherwise,
+ * from this pool of event templates.
+ * Each event is comprised of: a priority, minimum and maximum expiration times,
+ * a description string, and a fixed-size array of associated jobs.
+ * An event instance is considered handled when all associated job instances
+ * have been handled by city agents. It is considered failed when its expiration time
+ * has passed before being handled.
+ * TODO: implement the fail state. Currently events cannot fail.
+ */
 const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES] =
 {
     { EVENT_LOW,    600, 1200, "Stubbed Toe",       {1, 0, 0, 0, 0, 0, 0, 0} },

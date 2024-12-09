@@ -5,6 +5,15 @@
  *      Author: mickey
  */
 
+/*
+ * The "City Inbox" is the collection of prioritized input queues
+ * from which the "City Dispatcher" task accepts new events as input.
+ * It is only written to from the "Event Generator" task.
+ * This module is separate from the dispatcher module itself to reduce
+ * coupling between the current event generator and other parts of the simulation,
+ * as it may later be desirable to replace it with a different input source.
+ */
+
 #include "city_inbox.h"
 
 /*
@@ -50,7 +59,9 @@ static CityLog_t log_buffer;
 CityInbox_t city_inbox;
 
 /*
- * Public City Inbox Initialization Function
+ * @brief The city inbox initialization function,
+ * which creates the prioritized message queues.
+ * @retval None
  */
 void city_inbox_initialize()
 {
@@ -63,6 +74,11 @@ void city_inbox_initialize()
 	serial_printer_spool_log(log_buffer);
 }
 
+/*
+ * @brief The city inbox clear function,
+ * which resets the prioritized message queues.
+ * @retval None
+ */
 void city_inbox_clear()
 {
 	osMessageQueueReset(city_inbox.inboxLowPriorityQueueHandle);
