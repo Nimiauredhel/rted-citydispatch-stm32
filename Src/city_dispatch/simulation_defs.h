@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef SIMULATION_DEFS_H_
 #define SIMULATION_DEFS_H_
 
@@ -47,3 +51,7 @@ typedef struct CityDepartmentAgentState
 } CityDepartmentAgentState_t;
 
 #endif /* SIMULATION_DEFS_H_ */
+
+/** 
+  * @}
+  */

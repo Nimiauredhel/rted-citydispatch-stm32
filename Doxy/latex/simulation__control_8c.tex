@@ -1,0 +1,37 @@
+\hypertarget{simulation__control_8c}{}\doxysection{Src/city\+\_\+dispatch/simulation\+\_\+control.c File Reference}
+\label{simulation__control_8c}\index{Src/city\_dispatch/simulation\_control.c@{Src/city\_dispatch/simulation\_control.c}}
+
+
+The \char`\"{}\+Simulation Control\char`\"{} task and associated USART callback. which together initialize the simulation, then receive and process user input to start and stop at it, and a few other utilities.  
+
+
+{\ttfamily \#include \char`\"{}simulation\+\_\+control.\+h\char`\"{}}\newline
+Include dependency graph for simulation\+\_\+control.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{simulation__control_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group__City__Dispatch_gae494a9643f29b87d6d81e5264e60e57b}{HAL\+\_\+\+UART\+\_\+\+Rx\+Cplt\+Callback}} (UART\+\_\+\+Handle\+Type\+Def $\ast$huart)
+\begin{DoxyCompactList}\small\item\em callback for catching user input via USART and allowing the control task to handle it. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__City__Dispatch_ga798825092f684968d5473d7e89c0b105}{simulation\+\_\+start\+\_\+control\+\_\+task}} ()
+\begin{DoxyCompactList}\small\item\em the kickstart function for the entire simulation, creating the simulation control task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+os\+Thread\+Id\+\_\+t {\bfseries control\+Task\+Handle}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries control\+Task\+\_\+attributes}
+\item 
+UART\+\_\+\+Handle\+Type\+Def {\bfseries huart3}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \char`\"{}\+Simulation Control\char`\"{} task and associated USART callback. which together initialize the simulation, then receive and process user input to start and stop at it, and a few other utilities. 
+

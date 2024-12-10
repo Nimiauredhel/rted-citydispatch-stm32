@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup Sim_Utils
+  * @{
+  */
+
 #include "date_time.h"
 
 extern UART_HandleTypeDef huart3;
@@ -199,3 +203,7 @@ void date_time_set()
 	date_time_print();
 	osDelay(pdMS_TO_TICKS(100));
 }
+
+/**
+  * @}
+  */

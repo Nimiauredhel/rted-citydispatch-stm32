@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef CITY_DISPATCHER_H_
 #define CITY_DISPATCHER_H_
 
@@ -21,3 +25,7 @@ void city_dispatcher_start();
 void city_dispatcher_stop();
 
 #endif /* CITY_DISPATCHER_H_ */
+
+/** 
+  * @}
+  */

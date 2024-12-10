@@ -5,6 +5,17 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file city_departments.c
+ * @brief Implements the "City Department" task, which is run in multiple instances.
+ * A city department is associated with several resources ("Agent" tasks), and the
+ * department task's job is to assign incoming work to these agents as it comes in.
+ */
+
 #include "city_departments.h"
 
 DepartmentLoad_t department_loads[NUM_DEPARTMENTS];
@@ -148,3 +159,7 @@ static void city_department_task(void *param)
 		}
 	}
 }
+
+/** 
+  * @}
+  */

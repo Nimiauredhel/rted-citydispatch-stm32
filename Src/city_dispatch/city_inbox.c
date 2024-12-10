@@ -5,8 +5,13 @@
  *      Author: mickey
  */
 
-/*
- * The "City Inbox" is the collection of prioritized input queues
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file : city_inbox.c
+ * @brief The "City Inbox" is the collection of prioritized input queues
  * from which the "City Dispatcher" task accepts new events as input.
  * It is only written to from the "Event Generator" task.
  * This module is separate from the dispatcher module itself to reduce
@@ -88,3 +93,7 @@ void city_inbox_clear()
 	log_buffer.format = LOGFMT_CLEARED;
 	serial_printer_spool_log(log_buffer);
 }
+
+/** 
+  * @}
+  */

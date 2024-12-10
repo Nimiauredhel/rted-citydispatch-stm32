@@ -1,0 +1,43 @@
+\hypertarget{serial__printer_8c}{}\doxysection{Src/city\+\_\+dispatch/serial\+\_\+printer.c File Reference}
+\label{serial__printer_8c}\index{Src/city\_dispatch/serial\_printer.c@{Src/city\_dispatch/serial\_printer.c}}
+
+
+The \char`\"{}\+Serial Printer\char`\"{} task reads from a queue of encoded log requests, and sends them via USART3 in order.  
+
+
+{\ttfamily \#include \char`\"{}serial\+\_\+printer.\+h\char`\"{}}\newline
+Include dependency graph for serial\+\_\+printer.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serial__printer_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries NUM\+\_\+\+LOG\+\_\+\+FORMATS}~23
+\item 
+\#define {\bfseries MAX\+\_\+\+LEN\+\_\+\+LOG\+\_\+\+FORMATS}~64
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group__City__Dispatch_gab9c9a6dfaf11f3f06b5a328f33c6abb7}{serial\+\_\+printer\+\_\+initialize}} ()
+\begin{DoxyCompactList}\small\item\em Function initializing the serial printer log queue, as well as the serial printer task itself. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__City__Dispatch_gaa0a1c84ef5e2b0401e59dc49f93b722d}{serial\+\_\+printer\+\_\+spool\+\_\+log}} (\mbox{\hyperlink{structCityLog}{City\+Log\+\_\+t}} new\+\_\+log)
+\begin{DoxyCompactList}\small\item\em Function adding a log to the serial printer log queue, to be printed when the serial printer task gets to it. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+os\+Mutex\+Id\+\_\+t \mbox{\hyperlink{group__City__Dispatch_gab198827907cd6e0ffe10cf4398583e66}{print\+Spool\+Mutex\+Handle}}
+\item 
+Static\+Semaphore\+\_\+t {\bfseries print\+Spool\+Mutex\+Control\+Block}
+\item 
+const os\+Mutex\+Attr\+\_\+t {\bfseries print\+Spool\+Mutex\+\_\+attributes}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \char`\"{}\+Serial Printer\char`\"{} task reads from a queue of encoded log requests, and sends them via USART3 in order. 
+

@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef SERIAL_PRINTER_H_
 #define SERIAL_PRINTER_H_
 
@@ -89,3 +93,7 @@ void serial_printer_initialize(void);
 void serial_printer_spool_log(CityLog_t new_log);
 
 #endif /* SERIAL_PRINTER_H_ */
+
+/** 
+  * @}
+  */

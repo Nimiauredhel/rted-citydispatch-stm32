@@ -1,0 +1,36 @@
+\hypertarget{city__inbox_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+inbox.c File Reference}
+\label{city__inbox_8c}\index{Src/city\_dispatch/city\_inbox.c@{Src/city\_dispatch/city\_inbox.c}}
+
+
+The \char`\"{}\+City Inbox\char`\"{} is the collection of prioritized input queues from which the \char`\"{}\+City Dispatcher\char`\"{} task accepts new events as input. It is only written to from the \char`\"{}\+Event Generator\char`\"{} task. This module is separate from the dispatcher module itself to reduce coupling between the current event generator and other parts of the simulation, as it may later be desirable to replace it with a different input source.  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+inbox.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+inbox.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__inbox_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries city\+\_\+inbox\+\_\+initialize} ()
+\item 
+void {\bfseries city\+\_\+inbox\+\_\+clear} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const os\+Message\+Queue\+Attr\+\_\+t {\bfseries inbox\+Medium\+Priority\+Queue\+\_\+attributes}
+\item 
+const os\+Message\+Queue\+Attr\+\_\+t {\bfseries inbox\+High\+Priority\+Queue\+\_\+attributes}
+\item 
+\mbox{\hyperlink{structCityInbox}{City\+Inbox\+\_\+t}} {\bfseries city\+\_\+inbox}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \char`\"{}\+City Inbox\char`\"{} is the collection of prioritized input queues from which the \char`\"{}\+City Dispatcher\char`\"{} task accepts new events as input. It is only written to from the \char`\"{}\+Event Generator\char`\"{} task. This module is separate from the dispatcher module itself to reduce coupling between the current event generator and other parts of the simulation, as it may later be desirable to replace it with a different input source. 
+

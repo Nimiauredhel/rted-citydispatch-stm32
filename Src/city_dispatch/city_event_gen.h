@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef CITY_EVENT_GEN_H_
 #define CITY_EVENT_GEN_H_
 
@@ -25,3 +29,7 @@ void event_gen_start();
 void event_gen_stop();
 
 #endif /* CITY_EVENT_GEN_H_ */
+
+/** 
+  * @}
+  */

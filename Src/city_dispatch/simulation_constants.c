@@ -5,10 +5,15 @@
  *      Author: mickey
  */
 
-/*
- * A collection of pre-determined values
- * to be used by different simulation modules.
- */
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+* @file : simulation_constants.c
+* @brief A collection of pre-determined values
+* to be used by different simulation tasks.
+*/
 
 #ifndef SIMULATION_CONSTANTS_C_
 #define SIMULATION_CONSTANTS_C_
@@ -31,3 +36,7 @@ const TickType_t DELAY_500MS_TICKS = pdMS_TO_TICKS(500);
 const TickType_t DELAY_1000MS_TICKS = pdMS_TO_TICKS(1000);
 
 #endif /* SIMULATION_CONSTANTS_C_ */
+
+/** 
+  * @}
+  */

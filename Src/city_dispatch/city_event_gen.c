@@ -5,6 +5,17 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file city_event_gen.c
+ * @brief Implements the "Event Generator" task, which generates event instances
+ * from a pool of pre-determined event templates, then sends them
+ * to the appropriate "City Inbox" queue according to priority.
+ */
+
 #include "city_event_gen.h"
 
 // the rng handle
@@ -150,3 +161,7 @@ static void event_gen_task()
         //serial_printer_spool_chars(output_buffer);
 	}
 }
+
+/** 
+  * @}
+  */

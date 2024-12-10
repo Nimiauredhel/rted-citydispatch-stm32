@@ -1,19 +1,25 @@
 /*
- * event_config.c
+ * city_events.c
  *
  *  Created on: Nov 5, 2024
  *      Author: mickey
  */
 
-#include "city_events.h"
+/** @addtogroup City_Dispatch
+  * @{
+  */
 
-/*
- * The different job types that can be associated
+/**
+ * @file : city_events.c
+ * @brief Defines the different job types that can be associated
  * with different events, and must each be handled
  * for an event to be considered handled as a whole.
- * index 0 holds the "null job", required since
+ * Index 0 holds the "null job", required since
  * the event job arrays are fixed-size.
  */
+
+#include "city_events.h"
+
 const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES] =
 {
     { DEPT_EMPTY, 0, 0, "NULL JOB" },
@@ -52,3 +58,7 @@ const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES] =
     { EVENT_HIGH,   80,  100,  "Covid-19 Outbreak", {2, 2, 2, 10, 10, 10, 11, 11} },
 };
 
+
+/** 
+  * @}
+  */

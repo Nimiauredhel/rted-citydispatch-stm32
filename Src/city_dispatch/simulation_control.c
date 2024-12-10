@@ -5,6 +5,19 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+  ******************************************************************************
+  /**
+  * @file : simulation_control.c
+  * @brief The "Simulation Control" task and associated USART callback.
+  * which together initialize the simulation, then receive and process user input
+  * to start and stop at it, and a few other utilities.
+  ******************************************************************************
+  */
+
 #include "simulation_control.h"
 
 static void simulation_control_task(void *argument);
@@ -183,3 +196,7 @@ static void simulation_stop()
 	log_buffer.format = LOGFMT_STOPPED_SUBJECT;
 	serial_printer_spool_log(log_buffer);
 }
+
+/** 
+  * @}
+  */

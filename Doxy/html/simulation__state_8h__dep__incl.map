@@ -1,0 +1,6 @@
+<map id="Src/city_dispatch/simulation_state.h" name="Src/city_dispatch/simulation_state.h">
+<area shape="rect" id="node1" title="[Unimplemented] The &quot;simulation state&quot; structure will hold up&#45;to&#45;date data about the current state of..." alt="" coords="33,5,239,47"/>
+<area shape="rect" id="node2" href="$simulation__control_8h_source.html" title=" " alt="" coords="33,95,239,136"/>
+<area shape="rect" id="node3" href="$main_8c.html" title="Program entry point." alt="" coords="5,191,96,218"/>
+<area shape="rect" id="node4" href="$simulation__control_8c.html" title="The &quot;Simulation Control&quot; task and associated USART callback. which together initialize the simulation..." alt="" coords="120,184,325,225"/>
+</map>

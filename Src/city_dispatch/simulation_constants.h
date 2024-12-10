@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef SIMULATION_CONSTANTS_H_
 #define SIMULATION_CONSTANTS_H_
 
@@ -20,3 +24,7 @@ extern const TickType_t DELAY_500MS_TICKS;
 extern const TickType_t DELAY_1000MS_TICKS;
 
 #endif /* SIMULATION_CONSTANTS_H_ */
+
+/** 
+  * @}
+  */

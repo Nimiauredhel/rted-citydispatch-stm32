@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef CITY_DISPATCH_CITY_EVENT_TRACKER_H_
 #define CITY_DISPATCH_CITY_EVENT_TRACKER_H_
 
@@ -42,3 +46,7 @@ int8_t event_tracker_get_remaining_storage();
 int8_t event_tracker_get_length();
 
 #endif /* CITY_DISPATCH_CITY_EVENT_TRACKER_H_ */
+
+/** 
+  * @}
+  */

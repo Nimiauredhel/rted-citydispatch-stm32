@@ -1,0 +1,60 @@
+\hypertarget{city__event__tracker_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+event\+\_\+tracker.c File Reference}
+\label{city__event__tracker_8c}\index{Src/city\_dispatch/city\_event\_tracker.c@{Src/city\_dispatch/city\_event\_tracker.c}}
+
+
+Implements the \char`\"{}\+Event Tracker\char`\"{} structure, where pending events are stored, until they reach a final outcome state (handled, failed, or otherwise dismissed). It is necessary since a single event contains a multitude of associated jobs that often require multiple agents from different departments to handle, which means that an event cannot be simply passed on to a singular department or agent.  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+event\+\_\+tracker.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+event\+\_\+tracker.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__event__tracker_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}} \mbox{\hyperlink{group__City__Dispatch_ga232194b80d03374a903ff6071323bae6}{Event\+Outcome\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}} \{ {\bfseries OUTCOME\+\_\+\+PENDING} = 0
+, {\bfseries OUTCOME\+\_\+\+SUCCESS} = 1
+, {\bfseries OUTCOME\+\_\+\+FAILURE} = 2
+, {\bfseries OUTCOME\+\_\+\+CANCELLED} = 3
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries event\+\_\+tracker\+\_\+initialize} ()
+\item 
+\mbox{\hyperlink{structCityEvent}{City\+Event\+\_\+t}} $\ast$ {\bfseries event\+\_\+tracker\+\_\+add} (\mbox{\hyperlink{structCityEvent}{City\+Event\+\_\+t}} new\+Event)
+\item 
+void {\bfseries event\+\_\+tracker\+\_\+refresh} ()
+\item 
+void {\bfseries event\+\_\+tracker\+\_\+set\+\_\+dirty} ()
+\item 
+bool {\bfseries event\+\_\+tracker\+\_\+get\+\_\+dirty} ()
+\item 
+int8\+\_\+t {\bfseries event\+\_\+tracker\+\_\+get\+\_\+remaining\+\_\+storage} ()
+\item 
+int8\+\_\+t {\bfseries event\+\_\+tracker\+\_\+get\+\_\+length} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+os\+Mutex\+Id\+\_\+t {\bfseries event\+Tracker\+Mutex\+Handle}
+\item 
+Static\+Semaphore\+\_\+t {\bfseries event\+Tracker\+Mutex\+Control\+Block}
+\item 
+const os\+Mutex\+Attr\+\_\+t {\bfseries event\+Tracker\+Mutex\+\_\+attributes}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implements the \char`\"{}\+Event Tracker\char`\"{} structure, where pending events are stored, until they reach a final outcome state (handled, failed, or otherwise dismissed). It is necessary since a single event contains a multitude of associated jobs that often require multiple agents from different departments to handle, which means that an event cannot be simply passed on to a singular department or agent. 
+

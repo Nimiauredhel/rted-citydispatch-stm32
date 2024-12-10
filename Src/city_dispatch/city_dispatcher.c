@@ -4,6 +4,19 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file : city_dispatcher.c
+ * @brief Implements the "City Dispatcher" task, which periodically reads
+ * incoming "city events" from several "City Inbox" event queues,
+ * stores them in the "event tracker",
+ * then breaks them up into individual jobs, which are then forwarded
+ * to the appropriate "city departments" for further handling.
+ */
+
 #include "city_dispatcher.h"
 
 /* Definitions for city dispatcher task */
@@ -142,3 +155,7 @@ static void city_dispatcher_task()
 	}
 }
 
+
+/** 
+  * @}
+  */

@@ -4,8 +4,13 @@
  *      Author: mickey
  */
 
-/*
- * The event tracker module is where pending events are stored,
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file city_event_tracker.c
+ * @brief Implements the "Event Tracker" structure, where pending events are stored,
  * until they reach a final outcome state (handled, failed, or otherwise dismissed).
  * It is necessary since a single event contains a multitude of associated jobs
  * that often require multiple agents from different departments to handle,
@@ -319,3 +324,7 @@ int8_t event_tracker_get_length()
 {
     return length;
 }
+
+/** 
+  * @}
+  */

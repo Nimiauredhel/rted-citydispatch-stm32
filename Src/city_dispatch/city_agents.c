@@ -5,6 +5,17 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
+/**
+ * @file city_agents.c
+ * @brief Implements the "City Agent" task, which is run in multiple instances.
+ * A city agent receives work from its associated department, and updates its state
+ * once it is complete (or otherwise).
+ */
+
 #include "city_agents.h"
 
 const osThreadAttr_t city_agent_task_attributes[NUM_DEPARTMENTS] = {
@@ -160,3 +171,7 @@ static void city_agent_task(void *param)
 		serial_printer_spool_log(agent->log_buffer);
 	}
 }
+
+/** 
+  * @}
+  */

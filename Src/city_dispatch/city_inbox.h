@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef CITY_INBOX_H_
 #define CITY_INBOX_H_
 
@@ -25,3 +29,7 @@ void city_inbox_initialize();
 void city_inbox_clear();
 
 #endif /* CITY_INBOX_H_ */
+
+/** 
+  * @}
+  */

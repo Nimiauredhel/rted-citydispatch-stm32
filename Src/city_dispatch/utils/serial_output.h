@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup Sim_Utils
+  * @{
+  */
+
 #ifndef SERIAL_OUTPUT_H_
 #define SERIAL_OUTPUT_H_
 
@@ -20,3 +24,7 @@ void output_print_irq_autosize(const char *string);
 void output_print_blocking(const char *string, uint16_t size);
 
 #endif /* SERIAL_OUTPUT_H_ */
+
+/** 
+  * @}
+  */

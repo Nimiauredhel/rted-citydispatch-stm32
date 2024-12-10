@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef SIMULATION_CONTROL_H_
 #define SIMULATION_CONTROL_H_
 
@@ -22,3 +26,7 @@
 void simulation_start_control_task();
 
 #endif /* SIMULATION_CONTROL_H_ */
+
+/** 
+  * @}
+  */

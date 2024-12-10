@@ -1,9 +1,18 @@
 /*
- * simulation_output.c
- *
+ * serial_printer.c
  *  Created on: Nov 2, 2024
  *      Author: mickey
  */
+
+/**
+ * @file : serial_printer.c
+ * @brief The "Serial Printer" task reads from a queue of encoded log requests,
+ * and sends them via USART3 in order.
+ */
+
+/** @addtogroup City_Dispatch
+  * @{
+  */
 
 #include "serial_printer.h"
 
@@ -269,3 +278,7 @@ void print_city_log()
     // prints a newline once finished printing the log content
 	output_print_blocking(newline, 3);
 }
+
+/** 
+  * @}
+  */

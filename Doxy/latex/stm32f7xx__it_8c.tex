@@ -7,8 +7,7 @@ Interrupt Service Routines.
 
 {\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}stm32f7xx\+\_\+it.\+h\char`\"{}}\newline
-Include dependency graph for stm32f7xx\+\_\+it.\+c\+:
-\nopagebreak
+Include dependency graph for stm32f7xx\+\_\+it.\+c\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -38,9 +37,21 @@ void \mbox{\hyperlink{stm32f7xx__it_8c_adbdfb05858cc36fc520974df37ec3cb0}{Debug\
 \begin{DoxyCompactList}\small\item\em This function handles Debug monitor. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{stm32f7xx__it_8c_ad1fd361bc5ad89facee67c76d1ff8dc0}\label{stm32f7xx__it_8c_ad1fd361bc5ad89facee67c76d1ff8dc0}} 
 void \mbox{\hyperlink{stm32f7xx__it_8c_ad1fd361bc5ad89facee67c76d1ff8dc0}{TIM1\+\_\+\+UP\+\_\+\+TIM10\+\_\+\+IRQHandler}} (void)
-\begin{DoxyCompactList}\small\item\em This function handles TIM1 update interrupt and TIM10 global interrupt. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em This function handles TIM1 update interrupt and TIM10 global interrupt. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{stm32f7xx__it_8c_a0d108a3468b2051548183ee5ca2158a0}\label{stm32f7xx__it_8c_a0d108a3468b2051548183ee5ca2158a0}} 
+void \mbox{\hyperlink{stm32f7xx__it_8c_a0d108a3468b2051548183ee5ca2158a0}{USART3\+\_\+\+IRQHandler}} (void)
+\begin{DoxyCompactList}\small\item\em This function handles USART3 global interrupt. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{stm32f7xx__it_8c_a4da4fb52ec579671d337938e78f9a207}\label{stm32f7xx__it_8c_a4da4fb52ec579671d337938e78f9a207}} 
+void \mbox{\hyperlink{stm32f7xx__it_8c_a4da4fb52ec579671d337938e78f9a207}{RTC\+\_\+\+Alarm\+\_\+\+IRQHandler}} (void)
+\begin{DoxyCompactList}\small\item\em This function handles RTC alarms (A and B) interrupt through EXTI line 17. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{stm32f7xx__it_8c_aa0c7fca836406ade332e1e3f1039d8ab}\label{stm32f7xx__it_8c_aa0c7fca836406ade332e1e3f1039d8ab}} 
+RTC\+\_\+\+Handle\+Type\+Def {\bfseries hrtc}
+\item 
+\mbox{\Hypertarget{stm32f7xx__it_8c_ab7c63c1b0f65db92b6a4ea19edf957e1}\label{stm32f7xx__it_8c_ab7c63c1b0f65db92b6a4ea19edf957e1}} 
+UART\+\_\+\+Handle\+Type\+Def {\bfseries huart3}
 \item 
 \mbox{\Hypertarget{stm32f7xx__it_8c_a25fc663547539bc49fecc0011bd76ab5}\label{stm32f7xx__it_8c_a25fc663547539bc49fecc0011bd76ab5}} 
 TIM\+\_\+\+Handle\+Type\+Def {\bfseries htim1}

@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup Sim_Utils
+  * @{
+  */
+
 #ifndef DATE_TIME_H_
 #define DATE_TIME_H_
 
@@ -21,3 +25,7 @@ void date_time_print();
 void date_time_set();
 
 #endif /* DATE_TIME_H_ */
+
+/** 
+  * @}
+  */

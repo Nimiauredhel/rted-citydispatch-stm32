@@ -1,0 +1,37 @@
+\hypertarget{simulation__constants_8c}{}\doxysection{Src/city\+\_\+dispatch/simulation\+\_\+constants.c File Reference}
+\label{simulation__constants_8c}\index{Src/city\_dispatch/simulation\_constants.c@{Src/city\_dispatch/simulation\_constants.c}}
+
+
+A collection of pre-\/determined values to be used by different simulation tasks.  
+
+
+{\ttfamily \#include \char`\"{}simulation\+\_\+constants.\+h\char`\"{}}\newline
+Include dependency graph for simulation\+\_\+constants.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{simulation__constants_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const char \mbox{\hyperlink{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}{department\+Names}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}\mbox{[}10\mbox{]} = \{\char`\"{}Medical\textbackslash{}0\char`\"{}, \char`\"{}Police\textbackslash{}0\char`\"{}, \char`\"{}Fire\textbackslash{}0\char`\"{}, \char`\"{}Covid-\/19\textbackslash{}0\char`\"{}\}
+\begin{DoxyCompactList}\small\item\em Names of the different city departments, to be used in output logs. \end{DoxyCompactList}\item 
+const uint8\+\_\+t \mbox{\hyperlink{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}{department\+Agent\+Counts}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]} = \{4, 3, 2, 4\}
+\item 
+const Tick\+Type\+\_\+t \mbox{\hyperlink{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}{DELAY\+\_\+10\+MS\+\_\+\+TICKS}} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(10)
+\item 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+100\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(100)
+\item 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+300\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(300)
+\item 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+500\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(500)
+\item 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+1000\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(1000)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A collection of pre-\/determined values to be used by different simulation tasks. 
+

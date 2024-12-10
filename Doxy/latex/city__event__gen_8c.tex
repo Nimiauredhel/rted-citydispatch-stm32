@@ -1,0 +1,34 @@
+\hypertarget{city__event__gen_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+event\+\_\+gen.c File Reference}
+\label{city__event__gen_8c}\index{Src/city\_dispatch/city\_event\_gen.c@{Src/city\_dispatch/city\_event\_gen.c}}
+
+
+Implements the \char`\"{}\+Event Generator\char`\"{} task, which generates event instances from a pool of pre-\/determined event templates, then sends them to the appropriate \char`\"{}\+City Inbox\char`\"{} queue according to priority.  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+event\+\_\+gen.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+event\+\_\+gen.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__event__gen_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries event\+\_\+gen\+\_\+initialize} ()
+\item 
+void {\bfseries event\+\_\+gen\+\_\+start} ()
+\item 
+void {\bfseries event\+\_\+gen\+\_\+stop} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+RNG\+\_\+\+Handle\+Type\+Def {\bfseries hrng}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implements the \char`\"{}\+Event Generator\char`\"{} task, which generates event instances from a pool of pre-\/determined event templates, then sends them to the appropriate \char`\"{}\+City Inbox\char`\"{} queue according to priority. 
+

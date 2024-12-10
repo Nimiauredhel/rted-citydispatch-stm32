@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup Sim_Utils
+  * @{
+  */
+
 #include "serial_output.h"
 
 extern UART_HandleTypeDef huart3;
@@ -55,3 +59,7 @@ void output_print_blocking(const char *string, uint16_t size)
 
     osMutexRelease(serialOutputMutexHandle);
 }
+
+/**
+  * @}
+  */

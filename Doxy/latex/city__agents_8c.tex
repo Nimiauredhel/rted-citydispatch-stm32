@@ -1,0 +1,34 @@
+\hypertarget{city__agents_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+agents.c File Reference}
+\label{city__agents_8c}\index{Src/city\_dispatch/city\_agents.c@{Src/city\_dispatch/city\_agents.c}}
+
+
+Implements the \char`\"{}\+City Agent\char`\"{} task, which is run in multiple instances. A city agent receives work from its associated department, and updates its state once it is complete (or otherwise).  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+agents.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+agents.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__agents_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structAgentState}{Agent\+State\+\_\+t}} $\ast$ {\bfseries city\+\_\+agents\+\_\+initialize} (uint8\+\_\+t num\+Of\+Agents, Department\+Code\+\_\+t code)
+\item 
+void {\bfseries city\+\_\+agents\+\_\+start} ()
+\item 
+void {\bfseries city\+\_\+agents\+\_\+stop} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries city\+\_\+agent\+\_\+task\+\_\+attributes} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implements the \char`\"{}\+City Agent\char`\"{} task, which is run in multiple instances. A city agent receives work from its associated department, and updates its state once it is complete (or otherwise). 
+

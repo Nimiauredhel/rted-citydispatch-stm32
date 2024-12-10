@@ -1,0 +1,739 @@
+\hypertarget{group__City__Dispatch}{}\doxysection{City\+\_\+\+Dispatch}
+\label{group__City__Dispatch}\index{City\_Dispatch@{City\_Dispatch}}
+\doxysubsection*{Files}
+\begin{DoxyCompactItemize}
+\item 
+file \mbox{\hyperlink{city__agents_8c}{city\+\_\+agents.\+c}}
+\begin{DoxyCompactList}\small\item\em Implements the \char`\"{}\+City Agent\char`\"{} task, which is run in multiple instances. A city agent receives work from its associated department, and updates its state once it is complete (or otherwise). \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__departments_8c}{city\+\_\+departments.\+c}}
+\begin{DoxyCompactList}\small\item\em Implements the \char`\"{}\+City Department\char`\"{} task, which is run in multiple instances. A city department is associated with several resources (\char`\"{}\+Agent\char`\"{} tasks), and the department task\textquotesingle{}s job is to assign incoming work to these agents as it comes in. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__dispatcher_8c}{city\+\_\+dispatcher.\+c}}
+\begin{DoxyCompactList}\small\item\em Implements the \char`\"{}\+City Dispatcher\char`\"{} task, which periodically reads incoming \char`\"{}city events\char`\"{} from several \char`\"{}\+City Inbox\char`\"{} event queues, stores them in the \char`\"{}event tracker\char`\"{}, then breaks them up into individual jobs, which are then forwarded to the appropriate \char`\"{}city departments\char`\"{} for further handling. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__event__gen_8c}{city\+\_\+event\+\_\+gen.\+c}}
+\begin{DoxyCompactList}\small\item\em Implements the \char`\"{}\+Event Generator\char`\"{} task, which generates event instances from a pool of pre-\/determined event templates, then sends them to the appropriate \char`\"{}\+City Inbox\char`\"{} queue according to priority. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__event__tracker_8c}{city\+\_\+event\+\_\+tracker.\+c}}
+\begin{DoxyCompactList}\small\item\em Implements the \char`\"{}\+Event Tracker\char`\"{} structure, where pending events are stored, until they reach a final outcome state (handled, failed, or otherwise dismissed). It is necessary since a single event contains a multitude of associated jobs that often require multiple agents from different departments to handle, which means that an event cannot be simply passed on to a singular department or agent. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__events_8c}{city\+\_\+events.\+c}}
+\begin{DoxyCompactList}\small\item\em Defines the different job types that can be associated with different events, and must each be handled for an event to be considered handled as a whole. Index 0 holds the \char`\"{}null job\char`\"{}, required since the event job arrays are fixed-\/size. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{city__inbox_8c}{city\+\_\+inbox.\+c}}
+\begin{DoxyCompactList}\small\item\em The \char`\"{}\+City Inbox\char`\"{} is the collection of prioritized input queues from which the \char`\"{}\+City Dispatcher\char`\"{} task accepts new events as input. It is only written to from the \char`\"{}\+Event Generator\char`\"{} task. This module is separate from the dispatcher module itself to reduce coupling between the current event generator and other parts of the simulation, as it may later be desirable to replace it with a different input source. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{simulation__constants_8c}{simulation\+\_\+constants.\+c}}
+\begin{DoxyCompactList}\small\item\em A collection of pre-\/determined values to be used by different simulation tasks. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{simulation__control_8c}{simulation\+\_\+control.\+c}}
+\begin{DoxyCompactList}\small\item\em The \char`\"{}\+Simulation Control\char`\"{} task and associated USART callback. which together initialize the simulation, then receive and process user input to start and stop at it, and a few other utilities. \end{DoxyCompactList}\item 
+file \mbox{\hyperlink{simulation__state_8h}{simulation\+\_\+state.\+h}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Unimplemented\mbox{]} The \char`\"{}simulation state\char`\"{} structure will hold up-\/to-\/date data about the current state of the simulation, for both internal use and user output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structAgentState}{Agent\+State}}
+\item 
+struct \mbox{\hyperlink{structDepartmentState}{Department\+State}}
+\item 
+struct \mbox{\hyperlink{structEventTrackerNode}{Event\+Tracker\+Node}}
+\item 
+struct \mbox{\hyperlink{structCityJobTemplate}{City\+Job\+Template}}
+\item 
+struct \mbox{\hyperlink{structCityEventTemplate}{City\+Event\+Template}}
+\item 
+struct \mbox{\hyperlink{structCityJob}{City\+Job}}
+\item 
+struct \mbox{\hyperlink{structCityEvent}{City\+Event}}
+\item 
+struct \mbox{\hyperlink{structCityInbox}{City\+Inbox}}
+\item 
+struct \mbox{\hyperlink{structCityLog}{City\+Log}}
+\item 
+struct \mbox{\hyperlink{structCityDepartmentAgentState}{City\+Department\+Agent\+State}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga2cbb1339f4ebb654cad460171dde6428}\label{group__City__Dispatch_ga2cbb1339f4ebb654cad460171dde6428}} 
+\#define {\bfseries NUM\+\_\+\+JOB\+\_\+\+TEMPLATES}~12
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga72c3e3aa488d8c17a4f1e6868c3ce62f}\label{group__City__Dispatch_ga72c3e3aa488d8c17a4f1e6868c3ce62f}} 
+\#define {\bfseries NUM\+\_\+\+EVENT\+\_\+\+TEMPLATES}~9
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga6b7f715cb038c3df4b45d3d13a01e2f1}\label{group__City__Dispatch_ga6b7f715cb038c3df4b45d3d13a01e2f1}} 
+\#define {\bfseries NUM\+\_\+\+EVENT\+\_\+\+JOBS}~8
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gad2b63f15b58385388f1985d0cb8486bc}\label{group__City__Dispatch_gad2b63f15b58385388f1985d0cb8486bc}} 
+\#define {\bfseries NUM\+\_\+\+LOG\+\_\+\+FORMATS}~23
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga600ed04e0ec3cd8baf4f241fd4eadfef}\label{group__City__Dispatch_ga600ed04e0ec3cd8baf4f241fd4eadfef}} 
+\#define {\bfseries MAX\+\_\+\+LEN\+\_\+\+LOG\+\_\+\+FORMATS}~64
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga4801bc853871568a8691b0e2a222fc31}\label{group__City__Dispatch_ga4801bc853871568a8691b0e2a222fc31}} 
+\#define {\bfseries SIMULATION\+\_\+\+CONSTANTS\+\_\+\+C\+\_\+}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga0aa10a5d5871917fe6e6f5196f5b2d12}\label{group__City__Dispatch_ga0aa10a5d5871917fe6e6f5196f5b2d12}} 
+\#define {\bfseries NUM\+\_\+\+DEPARTMENTS}~(4)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga5486258f1f34d3baeda92a74b63c27c3}\label{group__City__Dispatch_ga5486258f1f34d3baeda92a74b63c27c3}} 
+\#define {\bfseries TASK\+\_\+\+STACK\+\_\+\+SIZE}~(config\+MINIMAL\+\_\+\+STACK\+\_\+\+SIZE $\ast$ 4)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gadf73b7ed6043effb313a6948c06a28cb}\label{group__City__Dispatch_gadf73b7ed6043effb313a6948c06a28cb}} 
+\#define {\bfseries DEPARTMENT\+\_\+\+TASK\+\_\+\+STACK\+\_\+\+SIZE}~(config\+MINIMAL\+\_\+\+STACK\+\_\+\+SIZE $\ast$ 2)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga0a4bc5a6f023829ba73dfee359db2e2d}\label{group__City__Dispatch_ga0a4bc5a6f023829ba73dfee359db2e2d}} 
+\#define {\bfseries AGENT\+\_\+\+TASK\+\_\+\+STACK\+\_\+\+SIZE}~(config\+MINIMAL\+\_\+\+STACK\+\_\+\+SIZE $\ast$ 2)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga364cc49b0d43f172a5e57e37959f786b}\label{group__City__Dispatch_ga364cc49b0d43f172a5e57e37959f786b}} 
+\#define {\bfseries EVENT\+\_\+\+TRACKER\+\_\+\+CAPACITY}~(16)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga77d1bc4d27fa103881847c13742091b4}\label{group__City__Dispatch_ga77d1bc4d27fa103881847c13742091b4}} 
+\#define {\bfseries INCOMING\+\_\+\+QUEUE\+\_\+\+LENGTH}~(32)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf07fed2021c278f776e1f7a1f9b995c1}\label{group__City__Dispatch_gaf07fed2021c278f776e1f7a1f9b995c1}} 
+\#define {\bfseries OUTPUT\+\_\+\+QUEUE\+\_\+\+LENGTH}~(64)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga5eaff48f5a898478f18752f3436e959e}\label{group__City__Dispatch_ga5eaff48f5a898478f18752f3436e959e}} 
+\#define {\bfseries DEPARTMENT\+\_\+\+QUEUE\+\_\+\+LENGTH}~(32)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga6b1aebc87789412e66e7865324cf07f3}\label{group__City__Dispatch_ga6b1aebc87789412e66e7865324cf07f3}} 
+\#define {\bfseries LOGGER\+\_\+\+PRIORITY}~(os\+Priority\+Normal)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga38777b82d7db9369682db737b237e0be}\label{group__City__Dispatch_ga38777b82d7db9369682db737b237e0be}} 
+\#define {\bfseries EVENT\+\_\+\+GENERATOR\+\_\+\+PRIORITY}~(os\+Priority\+Realtime1)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gacf183de156af985f46210bdcf1c5645c}\label{group__City__Dispatch_gacf183de156af985f46210bdcf1c5645c}} 
+\#define {\bfseries CITY\+\_\+\+DISPATCHER\+\_\+\+PRIORITY}~(os\+Priority\+Realtime2)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gabcc668ca69635c97c94eafe9125e073d}\label{group__City__Dispatch_gabcc668ca69635c97c94eafe9125e073d}} 
+\#define {\bfseries CITY\+\_\+\+DEPARTMENT\+\_\+\+PRIORITY}~(os\+Priority\+Realtime3)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga335142490e61fd2227fe20e6bc13ccb3}\label{group__City__Dispatch_ga335142490e61fd2227fe20e6bc13ccb3}} 
+\#define {\bfseries CITY\+\_\+\+AGENT\+\_\+\+PRIORITY}~(os\+Priority\+Realtime4)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf1e970e49915c36967fbd8acd7fa07c0}\label{group__City__Dispatch_gaf1e970e49915c36967fbd8acd7fa07c0}} 
+\#define {\bfseries CONTROL\+\_\+\+PRIORITY}~(os\+Priority\+Realtime5)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga61278985d5e334c816f224a3d9f2c137}\label{group__City__Dispatch_ga61278985d5e334c816f224a3d9f2c137}} 
+\#define {\bfseries EVENT\+\_\+\+GENERATION\+\_\+\+DELAY\+\_\+\+MIN}~(pd\+MS\+\_\+\+TO\+\_\+\+TICKS(2000))
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf1bcf879777260f50e082c5db7762bef}\label{group__City__Dispatch_gaf1bcf879777260f50e082c5db7762bef}} 
+\#define {\bfseries EVENT\+\_\+\+GENERATION\+\_\+\+DELAY\+\_\+\+MAX}~(pd\+MS\+\_\+\+TO\+\_\+\+TICKS(4000))
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gab6cdf326b64043824832ae672a01fb96}\label{group__City__Dispatch_gab6cdf326b64043824832ae672a01fb96}} 
+typedef enum Agent\+Status {\bfseries Agent\+Status\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga8683636d9dd11cd8d4e3e7da707067d0}\label{group__City__Dispatch_ga8683636d9dd11cd8d4e3e7da707067d0}} 
+typedef struct \mbox{\hyperlink{structAgentState}{Agent\+State}} {\bfseries Agent\+State\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gade09b71a689da9e3dd2d72dbeff57831}\label{group__City__Dispatch_gade09b71a689da9e3dd2d72dbeff57831}} 
+typedef struct \mbox{\hyperlink{structDepartmentState}{Department\+State}} {\bfseries Department\+State\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga46a389c46ae4db1d6e384b83cb58c486}\label{group__City__Dispatch_ga46a389c46ae4db1d6e384b83cb58c486}} 
+typedef enum Department\+Load {\bfseries Department\+Load\+\_\+t}
+\item 
+typedef enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}} \mbox{\hyperlink{group__City__Dispatch_ga232194b80d03374a903ff6071323bae6}{Event\+Outcome\+\_\+t}}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gac9674fbc8f0b6bb9324996383ce89e46}\label{group__City__Dispatch_gac9674fbc8f0b6bb9324996383ce89e46}} 
+typedef struct \mbox{\hyperlink{structEventTrackerNode}{Event\+Tracker\+Node}} {\bfseries Event\+Tracker\+Node\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga093eddc504c3af83b8a6171975bcaaa8}\label{group__City__Dispatch_ga093eddc504c3af83b8a6171975bcaaa8}} 
+typedef enum Department\+Code {\bfseries Department\+Code\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gab4ad3d13af47e0044ae13388d22f7f4b}\label{group__City__Dispatch_gab4ad3d13af47e0044ae13388d22f7f4b}} 
+typedef enum Job\+Status {\bfseries Job\+Status\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga95fa6bbe93416ad0f4f54db65e6ff78f}\label{group__City__Dispatch_ga95fa6bbe93416ad0f4f54db65e6ff78f}} 
+typedef enum Event\+Priority {\bfseries Event\+Priority\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga6e6939fc07541056bc78ff33f26c7a58}\label{group__City__Dispatch_ga6e6939fc07541056bc78ff33f26c7a58}} 
+typedef struct \mbox{\hyperlink{structCityJobTemplate}{City\+Job\+Template}} {\bfseries City\+Job\+Template\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga496948c0353dc62e311b74948a882a43}\label{group__City__Dispatch_ga496948c0353dc62e311b74948a882a43}} 
+typedef struct \mbox{\hyperlink{structCityEventTemplate}{City\+Event\+Template}} {\bfseries City\+Event\+Template\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga10ae068bcff8459ae31d9128f7ac358c}\label{group__City__Dispatch_ga10ae068bcff8459ae31d9128f7ac358c}} 
+typedef struct \mbox{\hyperlink{structCityJob}{City\+Job}} {\bfseries City\+Job\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga0c7a2293a6c1f360e0f0ce47ac412797}\label{group__City__Dispatch_ga0c7a2293a6c1f360e0f0ce47ac412797}} 
+typedef struct \mbox{\hyperlink{structCityEvent}{City\+Event}} {\bfseries City\+Event\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gac5e8b2d195d8c83c97aff51d8994a431}\label{group__City__Dispatch_gac5e8b2d195d8c83c97aff51d8994a431}} 
+typedef struct \mbox{\hyperlink{structCityInbox}{City\+Inbox}} {\bfseries City\+Inbox\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gad1ebc006f4aa7df5e14897c84544619d}\label{group__City__Dispatch_gad1ebc006f4aa7df5e14897c84544619d}} 
+typedef enum Log\+Format {\bfseries Log\+Format\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga83a9cf91b847cf183b9dd43c08de210c}\label{group__City__Dispatch_ga83a9cf91b847cf183b9dd43c08de210c}} 
+typedef enum Log\+Identifier {\bfseries Log\+Identifier\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga46cd4810718dc788cac6b8cbd4da2773}\label{group__City__Dispatch_ga46cd4810718dc788cac6b8cbd4da2773}} 
+typedef enum Log\+Subject {\bfseries Log\+Subject\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaa314600df4e2ab2b539d0adbb6458b05}\label{group__City__Dispatch_gaa314600df4e2ab2b539d0adbb6458b05}} 
+typedef struct \mbox{\hyperlink{structCityLog}{City\+Log}} {\bfseries City\+Log\+\_\+t}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga8a4b17228c324d9005258150582a0b70}\label{group__City__Dispatch_ga8a4b17228c324d9005258150582a0b70}} 
+typedef struct \mbox{\hyperlink{structCityDepartmentAgentState}{City\+Department\+Agent\+State}} {\bfseries City\+Department\+Agent\+State\+\_\+t}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gadf1ee7be5ae9f0a6ae5c13260c24c541}\label{group__City__Dispatch_gadf1ee7be5ae9f0a6ae5c13260c24c541}} 
+enum {\bfseries Agent\+Status} \{ {\bfseries AGENT\+\_\+\+FREE}
+, {\bfseries AGENT\+\_\+\+ASSIGNED}
+, {\bfseries AGENT\+\_\+\+BUSY}
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga570712c4a878e7a490dec3f1cc334dc7}\label{group__City__Dispatch_ga570712c4a878e7a490dec3f1cc334dc7}} 
+enum {\bfseries Department\+Load} \{ {\bfseries DEPARTMENT\+\_\+\+LOAD\+\_\+\+FREE} = 0
+, {\bfseries DEPARTMENT\+\_\+\+LOAD\+\_\+\+LOW} = 1
+, {\bfseries DEPARTMENT\+\_\+\+LOAD\+\_\+\+HIGH} = 2
+, {\bfseries DEPARTMENT\+\_\+\+LOAD\+\_\+\+MAX} = 3
+ \}
+\item 
+enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}} \{ {\bfseries OUTCOME\+\_\+\+PENDING} = 0
+, {\bfseries OUTCOME\+\_\+\+SUCCESS} = 1
+, {\bfseries OUTCOME\+\_\+\+FAILURE} = 2
+, {\bfseries OUTCOME\+\_\+\+CANCELLED} = 3
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gacec62dbaaf2160865393f359750ed700}\label{group__City__Dispatch_gacec62dbaaf2160865393f359750ed700}} 
+enum {\bfseries Department\+Code} \{ \newline
+{\bfseries DEPT\+\_\+\+EMPTY} = -\/1
+, {\bfseries MEDICAL} = 0
+, {\bfseries POLICE} = 1
+, {\bfseries FIRE} = 2
+, \newline
+{\bfseries COVID} = 3
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga5df92147ec0babfdf2aa8856833bb4b8}\label{group__City__Dispatch_ga5df92147ec0babfdf2aa8856833bb4b8}} 
+enum {\bfseries Job\+Status} \{ \newline
+{\bfseries JOB\+\_\+\+NONE} = 0
+, {\bfseries JOB\+\_\+\+PENDING} = 1
+, {\bfseries JOB\+\_\+\+ONGOING} = 2
+, {\bfseries JOB\+\_\+\+FAILED\+\_\+\+TRACKER} = 3
+, \newline
+{\bfseries JOB\+\_\+\+CANCELLED\+\_\+\+TRACKER} = 4
+, {\bfseries JOB\+\_\+\+HANDLED\+\_\+\+AGENT} = -\/1
+, {\bfseries JOB\+\_\+\+FAILED\+\_\+\+AGENT} = -\/2
+, {\bfseries JOB\+\_\+\+CANCELLED\+\_\+\+AGENT} = -\/3
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga08465fe6904adf8c8d29f737f43f1fda}\label{group__City__Dispatch_ga08465fe6904adf8c8d29f737f43f1fda}} 
+enum {\bfseries Event\+Priority} \{ {\bfseries EVENT\+\_\+\+LOW} = 0
+, {\bfseries EVENT\+\_\+\+NORMAL} = 1
+, {\bfseries EVENT\+\_\+\+HIGH} = 2
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga043aa97de3c71ad015852f46ec4cc6ad}\label{group__City__Dispatch_ga043aa97de3c71ad015852f46ec4cc6ad}} 
+enum {\bfseries Log\+Format} \{ \newline
+{\bfseries LOGFMT\+\_\+\+NULL} = 0
+, {\bfseries LOGFMT\+\_\+\+INITIALIZING}
+, {\bfseries LOGFMT\+\_\+\+INITIALIZED}
+, {\bfseries LOGFMT\+\_\+\+TASK\+\_\+\+STARTING}
+, \newline
+{\bfseries LOGFMT\+\_\+\+TASK\+\_\+\+STOPPING}
+, {\bfseries LOGFMT\+\_\+\+WAITING}
+, {\bfseries LOGFMT\+\_\+\+RECEIVED}
+, {\bfseries LOGFMT\+\_\+\+PROCESSING}
+, \newline
+{\bfseries LOGFMT\+\_\+\+REGISTERED}
+, {\bfseries LOGFMT\+\_\+\+BORROWING\+\_\+\+RESOURCE}
+, {\bfseries LOGFMT\+\_\+\+RETURNING\+\_\+\+RESOURCE}
+, {\bfseries LOGFMT\+\_\+\+GENERATING\+\_\+\+SUBJECT}
+, \newline
+{\bfseries LOGFMT\+\_\+\+REFRESHING}
+, {\bfseries LOGFMT\+\_\+\+CLEARED}
+, {\bfseries LOGFMT\+\_\+\+DONE\+\_\+\+WITH}
+, {\bfseries LOGFMT\+\_\+\+REMOVING}
+, \newline
+{\bfseries LOGFMT\+\_\+\+DISMISSING}
+, {\bfseries LOGFMT\+\_\+\+INITIALIZING\+\_\+\+SUBJECT}
+, {\bfseries LOGFMT\+\_\+\+INITIALIZED\+\_\+\+SUBJECT}
+, {\bfseries LOGFMT\+\_\+\+STARTING\+\_\+\+SUBJECT}
+, \newline
+{\bfseries LOGFMT\+\_\+\+STOPPING\+\_\+\+SUBJECT}
+, {\bfseries LOGFMT\+\_\+\+STARTED\+\_\+\+SUBJECT}
+, {\bfseries LOGFMT\+\_\+\+STOPPED\+\_\+\+SUBJECT}
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gae3418c924869bd02b41bfc8575d4e3f6}\label{group__City__Dispatch_gae3418c924869bd02b41bfc8575d4e3f6}} 
+enum {\bfseries Log\+Identifier} \{ \newline
+{\bfseries LOGID\+\_\+\+NULL} = 0
+, {\bfseries LOGID\+\_\+\+BACKSPACE}
+, {\bfseries LOGID\+\_\+\+EVENT\+\_\+\+GEN}
+, {\bfseries LOGID\+\_\+\+DISPATCHER}
+, \newline
+{\bfseries LOGID\+\_\+\+CITY\+\_\+\+INBOX}
+, {\bfseries LOGID\+\_\+\+EVENT\+\_\+\+TRACKER}
+, {\bfseries LOGID\+\_\+\+DEPARTMENT}
+, {\bfseries LOGID\+\_\+\+AGENT}
+, \newline
+{\bfseries LOGID\+\_\+\+LOGGER}
+, {\bfseries LOGID\+\_\+\+CONTROL}
+ \}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga96b1b9d283d34726e8b259da28c3081c}\label{group__City__Dispatch_ga96b1b9d283d34726e8b259da28c3081c}} 
+enum {\bfseries Log\+Subject} \{ \newline
+{\bfseries LOGSBJ\+\_\+\+NULL} = 0
+, {\bfseries LOGSBJ\+\_\+\+BACKSPACE}
+, {\bfseries LOGSBJ\+\_\+\+SIMULATION}
+, {\bfseries LOGSBJ\+\_\+\+EVENT}
+, \newline
+{\bfseries LOGSBJ\+\_\+\+JOB}
+, {\bfseries LOGSBJ\+\_\+\+SUCCESS}
+, {\bfseries LOGSBJ\+\_\+\+FAILURE}
+, {\bfseries LOGSBJ\+\_\+\+DEPRIORITIZED}
+, \newline
+{\bfseries LOGSBJ\+\_\+\+INSUFFICIENT\+\_\+\+SPACE}
+, {\bfseries LOGSBJ\+\_\+\+USER\+\_\+\+INPUT}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga16a8d36a60dd4149bc4c612e8f237e62}\label{group__City__Dispatch_ga16a8d36a60dd4149bc4c612e8f237e62}} 
+\mbox{\hyperlink{structAgentState}{Agent\+State\+\_\+t}} $\ast$ {\bfseries city\+\_\+agents\+\_\+initialize} (uint8\+\_\+t num\+Of\+Agents, Department\+Code\+\_\+t code)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga4e743b3ef5083714643bd46fc2c5cc9c}\label{group__City__Dispatch_ga4e743b3ef5083714643bd46fc2c5cc9c}} 
+void {\bfseries city\+\_\+agents\+\_\+start} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga2e1164412f225301639a263bcfb9b9bf}\label{group__City__Dispatch_ga2e1164412f225301639a263bcfb9b9bf}} 
+void {\bfseries city\+\_\+agents\+\_\+stop} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga2a0ad303c68ac995506f6c1790f257d5}\label{group__City__Dispatch_ga2a0ad303c68ac995506f6c1790f257d5}} 
+void {\bfseries city\+\_\+departments\+\_\+initialize} (void)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga147bb6e300684bedfa42bf9c362a4cf7}\label{group__City__Dispatch_ga147bb6e300684bedfa42bf9c362a4cf7}} 
+void {\bfseries city\+\_\+departments\+\_\+start} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga49c4ee42fd5c2e1b762979a0ffaa0c77}\label{group__City__Dispatch_ga49c4ee42fd5c2e1b762979a0ffaa0c77}} 
+void {\bfseries city\+\_\+departments\+\_\+stop} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga2041733662fc44bdd6e66400bcef590f}\label{group__City__Dispatch_ga2041733662fc44bdd6e66400bcef590f}} 
+void {\bfseries city\+\_\+dispatcher\+\_\+initialize} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga10d54c504e4504bb9b71587b40b831ae}\label{group__City__Dispatch_ga10d54c504e4504bb9b71587b40b831ae}} 
+void {\bfseries city\+\_\+dispatcher\+\_\+start} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gac7130cb90a77692f0bb74bd9db99d90f}\label{group__City__Dispatch_gac7130cb90a77692f0bb74bd9db99d90f}} 
+void {\bfseries city\+\_\+dispatcher\+\_\+stop} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf66ce10059c9ace12d70d7e3ea841aa5}\label{group__City__Dispatch_gaf66ce10059c9ace12d70d7e3ea841aa5}} 
+void {\bfseries event\+\_\+gen\+\_\+initialize} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gae3bf752b626c4f36fbbbfd1e12e90f42}\label{group__City__Dispatch_gae3bf752b626c4f36fbbbfd1e12e90f42}} 
+void {\bfseries event\+\_\+gen\+\_\+start} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga671bd75656402d99324d31724b0396cb}\label{group__City__Dispatch_ga671bd75656402d99324d31724b0396cb}} 
+void {\bfseries event\+\_\+gen\+\_\+stop} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf80f4e012fc0c4157e085551cb3642a1}\label{group__City__Dispatch_gaf80f4e012fc0c4157e085551cb3642a1}} 
+void {\bfseries event\+\_\+tracker\+\_\+initialize} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gae6b900a8464b59dd33b7465bc1df75a1}\label{group__City__Dispatch_gae6b900a8464b59dd33b7465bc1df75a1}} 
+\mbox{\hyperlink{structCityEvent}{City\+Event\+\_\+t}} $\ast$ {\bfseries event\+\_\+tracker\+\_\+add} (\mbox{\hyperlink{structCityEvent}{City\+Event\+\_\+t}} new\+Event)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga1f33a3ee7b971608968547857f255b7b}\label{group__City__Dispatch_ga1f33a3ee7b971608968547857f255b7b}} 
+void {\bfseries event\+\_\+tracker\+\_\+refresh} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gac4ef87c81d5c19c8cca33e3857b70275}\label{group__City__Dispatch_gac4ef87c81d5c19c8cca33e3857b70275}} 
+void {\bfseries event\+\_\+tracker\+\_\+set\+\_\+dirty} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga43c535f83c4d82635a445a4a40f0bd79}\label{group__City__Dispatch_ga43c535f83c4d82635a445a4a40f0bd79}} 
+bool {\bfseries event\+\_\+tracker\+\_\+get\+\_\+dirty} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga4d6a5f9e4e59935d7d7c799d14e004fd}\label{group__City__Dispatch_ga4d6a5f9e4e59935d7d7c799d14e004fd}} 
+int8\+\_\+t {\bfseries event\+\_\+tracker\+\_\+get\+\_\+remaining\+\_\+storage} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gad9e5d0d7c3560dd97d526693306dd1f7}\label{group__City__Dispatch_gad9e5d0d7c3560dd97d526693306dd1f7}} 
+int8\+\_\+t {\bfseries event\+\_\+tracker\+\_\+get\+\_\+length} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gae8c9c4d094a6adb268b31cccf56ec3c3}\label{group__City__Dispatch_gae8c9c4d094a6adb268b31cccf56ec3c3}} 
+void {\bfseries city\+\_\+inbox\+\_\+initialize} ()
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga76e402dbd081157ef311bc8e7e80257d}\label{group__City__Dispatch_ga76e402dbd081157ef311bc8e7e80257d}} 
+void {\bfseries city\+\_\+inbox\+\_\+clear} ()
+\item 
+void \mbox{\hyperlink{group__City__Dispatch_gab9c9a6dfaf11f3f06b5a328f33c6abb7}{serial\+\_\+printer\+\_\+initialize}} ()
+\begin{DoxyCompactList}\small\item\em Function initializing the serial printer log queue, as well as the serial printer task itself. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__City__Dispatch_gaa0a1c84ef5e2b0401e59dc49f93b722d}{serial\+\_\+printer\+\_\+spool\+\_\+log}} (\mbox{\hyperlink{structCityLog}{City\+Log\+\_\+t}} new\+\_\+log)
+\begin{DoxyCompactList}\small\item\em Function adding a log to the serial printer log queue, to be printed when the serial printer task gets to it. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__City__Dispatch_gae494a9643f29b87d6d81e5264e60e57b}{HAL\+\_\+\+UART\+\_\+\+Rx\+Cplt\+Callback}} (UART\+\_\+\+Handle\+Type\+Def $\ast$huart)
+\begin{DoxyCompactList}\small\item\em callback for catching user input via USART and allowing the control task to handle it. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__City__Dispatch_ga798825092f684968d5473d7e89c0b105}{simulation\+\_\+start\+\_\+control\+\_\+task}} ()
+\begin{DoxyCompactList}\small\item\em the kickstart function for the entire simulation, creating the simulation control task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries city\+\_\+agent\+\_\+task\+\_\+attributes} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga7828269688ab0430a5640b97061910ba}\label{group__City__Dispatch_ga7828269688ab0430a5640b97061910ba}} 
+Department\+Load\+\_\+t {\bfseries department\+\_\+loads} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga418a9832bd022eaf0222fef172c90781}\label{group__City__Dispatch_ga418a9832bd022eaf0222fef172c90781}} 
+os\+Message\+Queue\+Id\+\_\+t $\ast$ {\bfseries department\+\_\+inboxes} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga418a9832bd022eaf0222fef172c90781}\label{group__City__Dispatch_ga418a9832bd022eaf0222fef172c90781}} 
+os\+Message\+Queue\+Id\+\_\+t $\ast$ {\bfseries department\+\_\+inboxes} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga7828269688ab0430a5640b97061910ba}\label{group__City__Dispatch_ga7828269688ab0430a5640b97061910ba}} 
+Department\+Load\+\_\+t {\bfseries department\+\_\+loads} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaac2dceb5bba58c53cf7a0be6934c4df6}\label{group__City__Dispatch_gaac2dceb5bba58c53cf7a0be6934c4df6}} 
+RNG\+\_\+\+Handle\+Type\+Def {\bfseries hrng}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga11dc6470bdb7593714c1dcaeb0925f98}\label{group__City__Dispatch_ga11dc6470bdb7593714c1dcaeb0925f98}} 
+os\+Mutex\+Id\+\_\+t {\bfseries event\+Tracker\+Mutex\+Handle}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga2d7491a892aee7849e4aa6f7816d34c3}\label{group__City__Dispatch_ga2d7491a892aee7849e4aa6f7816d34c3}} 
+Static\+Semaphore\+\_\+t {\bfseries event\+Tracker\+Mutex\+Control\+Block}
+\item 
+const os\+Mutex\+Attr\+\_\+t {\bfseries event\+Tracker\+Mutex\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga11dc6470bdb7593714c1dcaeb0925f98}\label{group__City__Dispatch_ga11dc6470bdb7593714c1dcaeb0925f98}} 
+os\+Mutex\+Id\+\_\+t {\bfseries event\+Tracker\+Mutex\+Handle}
+\item 
+const \mbox{\hyperlink{structCityJobTemplate}{City\+Job\+Template\+\_\+t}} {\bfseries job\+Templates} \mbox{[}NUM\+\_\+\+JOB\+\_\+\+TEMPLATES\mbox{]}
+\item 
+const \mbox{\hyperlink{structCityEventTemplate}{City\+Event\+Template\+\_\+t}} {\bfseries event\+Templates} \mbox{[}NUM\+\_\+\+EVENT\+\_\+\+TEMPLATES\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga336062e41c89d0a15112ffe72771dc06}\label{group__City__Dispatch_ga336062e41c89d0a15112ffe72771dc06}} 
+const \mbox{\hyperlink{structCityJobTemplate}{City\+Job\+Template\+\_\+t}} {\bfseries job\+Templates} \mbox{[}NUM\+\_\+\+JOB\+\_\+\+TEMPLATES\mbox{]}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga55e2d4e36f9e4c97ac0dc588c88c6971}\label{group__City__Dispatch_ga55e2d4e36f9e4c97ac0dc588c88c6971}} 
+const \mbox{\hyperlink{structCityEventTemplate}{City\+Event\+Template\+\_\+t}} {\bfseries event\+Templates} \mbox{[}NUM\+\_\+\+EVENT\+\_\+\+TEMPLATES\mbox{]}
+\item 
+const os\+Message\+Queue\+Attr\+\_\+t {\bfseries inbox\+Medium\+Priority\+Queue\+\_\+attributes}
+\item 
+const os\+Message\+Queue\+Attr\+\_\+t {\bfseries inbox\+High\+Priority\+Queue\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga42468eb8dc89e9a4047b8a22141a289e}\label{group__City__Dispatch_ga42468eb8dc89e9a4047b8a22141a289e}} 
+\mbox{\hyperlink{structCityInbox}{City\+Inbox\+\_\+t}} {\bfseries city\+\_\+inbox}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga42468eb8dc89e9a4047b8a22141a289e}\label{group__City__Dispatch_ga42468eb8dc89e9a4047b8a22141a289e}} 
+\mbox{\hyperlink{structCityInbox}{City\+Inbox\+\_\+t}} {\bfseries city\+\_\+inbox}
+\item 
+os\+Mutex\+Id\+\_\+t \mbox{\hyperlink{group__City__Dispatch_gab198827907cd6e0ffe10cf4398583e66}{print\+Spool\+Mutex\+Handle}}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaaa8c2fb8853c61425b5096e6b7646833}\label{group__City__Dispatch_gaaa8c2fb8853c61425b5096e6b7646833}} 
+Static\+Semaphore\+\_\+t {\bfseries print\+Spool\+Mutex\+Control\+Block}
+\item 
+const os\+Mutex\+Attr\+\_\+t {\bfseries print\+Spool\+Mutex\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}\label{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}} 
+const char \mbox{\hyperlink{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}{department\+Names}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}\mbox{[}10\mbox{]} = \{\char`\"{}Medical\textbackslash{}0\char`\"{}, \char`\"{}Police\textbackslash{}0\char`\"{}, \char`\"{}Fire\textbackslash{}0\char`\"{}, \char`\"{}Covid-\/19\textbackslash{}0\char`\"{}\}
+\begin{DoxyCompactList}\small\item\em Names of the different city departments, to be used in output logs. \end{DoxyCompactList}\item 
+const uint8\+\_\+t \mbox{\hyperlink{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}{department\+Agent\+Counts}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]} = \{4, 3, 2, 4\}
+\item 
+const Tick\+Type\+\_\+t \mbox{\hyperlink{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}{DELAY\+\_\+10\+MS\+\_\+\+TICKS}} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(10)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gacc52e6f14d597b583d7960e4e0063643}\label{group__City__Dispatch_gacc52e6f14d597b583d7960e4e0063643}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+100\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(100)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga7f6192ac216e01bde6e580227a20a6ef}\label{group__City__Dispatch_ga7f6192ac216e01bde6e580227a20a6ef}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+300\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(300)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga01355e735b32b80e2cf86b3dbee6b782}\label{group__City__Dispatch_ga01355e735b32b80e2cf86b3dbee6b782}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+500\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(500)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga48adddf2dcf77fc380ccc5bc16ccac9c}\label{group__City__Dispatch_ga48adddf2dcf77fc380ccc5bc16ccac9c}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+1000\+MS\+\_\+\+TICKS} = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(1000)
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}\label{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}} 
+const char \mbox{\hyperlink{group__City__Dispatch_gaf0e22f89e04af6cfc1cb1de58b730661}{department\+Names}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}\mbox{[}10\mbox{]}
+\begin{DoxyCompactList}\small\item\em Names of the different city departments, to be used in output logs. \end{DoxyCompactList}\item 
+const uint8\+\_\+t \mbox{\hyperlink{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}{department\+Agent\+Counts}} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+const Tick\+Type\+\_\+t \mbox{\hyperlink{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}{DELAY\+\_\+10\+MS\+\_\+\+TICKS}}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gacc52e6f14d597b583d7960e4e0063643}\label{group__City__Dispatch_gacc52e6f14d597b583d7960e4e0063643}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+100\+MS\+\_\+\+TICKS}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga7f6192ac216e01bde6e580227a20a6ef}\label{group__City__Dispatch_ga7f6192ac216e01bde6e580227a20a6ef}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+300\+MS\+\_\+\+TICKS}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga01355e735b32b80e2cf86b3dbee6b782}\label{group__City__Dispatch_ga01355e735b32b80e2cf86b3dbee6b782}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+500\+MS\+\_\+\+TICKS}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_ga48adddf2dcf77fc380ccc5bc16ccac9c}\label{group__City__Dispatch_ga48adddf2dcf77fc380ccc5bc16ccac9c}} 
+const Tick\+Type\+\_\+t {\bfseries DELAY\+\_\+1000\+MS\+\_\+\+TICKS}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gab849e9a451f9261b65be932e08bac141}\label{group__City__Dispatch_gab849e9a451f9261b65be932e08bac141}} 
+os\+Thread\+Id\+\_\+t {\bfseries control\+Task\+Handle}
+\item 
+const os\+Thread\+Attr\+\_\+t {\bfseries control\+Task\+\_\+attributes}
+\item 
+\mbox{\Hypertarget{group__City__Dispatch_gab7c63c1b0f65db92b6a4ea19edf957e1}\label{group__City__Dispatch_gab7c63c1b0f65db92b6a4ea19edf957e1}} 
+UART\+\_\+\+Handle\+Type\+Def {\bfseries huart3}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{group__City__Dispatch_ga232194b80d03374a903ff6071323bae6}\label{group__City__Dispatch_ga232194b80d03374a903ff6071323bae6}} 
+\index{City\_Dispatch@{City\_Dispatch}!EventOutcome\_t@{EventOutcome\_t}}
+\index{EventOutcome\_t@{EventOutcome\_t}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{EventOutcome\_t}{EventOutcome\_t}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}} \mbox{\hyperlink{group__City__Dispatch_ga232194b80d03374a903ff6071323bae6}{Event\+Outcome\+\_\+t}}}
+
+The different outcome states that events may reach. TODO\+: Implement the fail states. Currently events may not fail. 
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}\label{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}} 
+\index{City\_Dispatch@{City\_Dispatch}!EventOutcome@{EventOutcome}}
+\index{EventOutcome@{EventOutcome}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{EventOutcome}{EventOutcome}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group__City__Dispatch_ga36283ce9b82862409b9ce0e918c81e7a}{Event\+Outcome}}}
+
+The different outcome states that events may reach. TODO\+: Implement the fail states. Currently events may not fail. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group__City__Dispatch_gae494a9643f29b87d6d81e5264e60e57b}\label{group__City__Dispatch_gae494a9643f29b87d6d81e5264e60e57b}} 
+\index{City\_Dispatch@{City\_Dispatch}!HAL\_UART\_RxCpltCallback@{HAL\_UART\_RxCpltCallback}}
+\index{HAL\_UART\_RxCpltCallback@{HAL\_UART\_RxCpltCallback}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{HAL\_UART\_RxCpltCallback()}{HAL\_UART\_RxCpltCallback()}}
+{\footnotesize\ttfamily void HAL\+\_\+\+UART\+\_\+\+Rx\+Cplt\+Callback (\begin{DoxyParamCaption}\item[{UART\+\_\+\+Handle\+Type\+Def $\ast$}]{huart }\end{DoxyParamCaption})}
+
+
+
+callback for catching user input via USART and allowing the control task to handle it. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em huart} & the UART handle associated with the callback. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{group__City__Dispatch_gab9c9a6dfaf11f3f06b5a328f33c6abb7}\label{group__City__Dispatch_gab9c9a6dfaf11f3f06b5a328f33c6abb7}} 
+\index{City\_Dispatch@{City\_Dispatch}!serial\_printer\_initialize@{serial\_printer\_initialize}}
+\index{serial\_printer\_initialize@{serial\_printer\_initialize}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{serial\_printer\_initialize()}{serial\_printer\_initialize()}}
+{\footnotesize\ttfamily void serial\+\_\+printer\+\_\+initialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function initializing the serial printer log queue, as well as the serial printer task itself. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{group__City__Dispatch_gaa0a1c84ef5e2b0401e59dc49f93b722d}\label{group__City__Dispatch_gaa0a1c84ef5e2b0401e59dc49f93b722d}} 
+\index{City\_Dispatch@{City\_Dispatch}!serial\_printer\_spool\_log@{serial\_printer\_spool\_log}}
+\index{serial\_printer\_spool\_log@{serial\_printer\_spool\_log}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{serial\_printer\_spool\_log()}{serial\_printer\_spool\_log()}}
+{\footnotesize\ttfamily void serial\+\_\+printer\+\_\+spool\+\_\+log (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCityLog}{City\+Log\+\_\+t}}}]{new\+\_\+log }\end{DoxyParamCaption})}
+
+
+
+Function adding a log to the serial printer log queue, to be printed when the serial printer task gets to it. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+\_\+log} & the encoded log object specifying what is to be printed. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{group__City__Dispatch_ga798825092f684968d5473d7e89c0b105}\label{group__City__Dispatch_ga798825092f684968d5473d7e89c0b105}} 
+\index{City\_Dispatch@{City\_Dispatch}!simulation\_start\_control\_task@{simulation\_start\_control\_task}}
+\index{simulation\_start\_control\_task@{simulation\_start\_control\_task}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{simulation\_start\_control\_task()}{simulation\_start\_control\_task()}}
+{\footnotesize\ttfamily void simulation\+\_\+start\+\_\+control\+\_\+task (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+the kickstart function for the entire simulation, creating the simulation control task. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{group__City__Dispatch_ga8c298fe7e6995b0a73b0b05be8c23d62}\label{group__City__Dispatch_ga8c298fe7e6995b0a73b0b05be8c23d62}} 
+\index{City\_Dispatch@{City\_Dispatch}!city\_agent\_task\_attributes@{city\_agent\_task\_attributes}}
+\index{city\_agent\_task\_attributes@{city\_agent\_task\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{city\_agent\_task\_attributes}{city\_agent\_task\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t city\+\_\+agent\+\_\+task\+\_\+attributes\mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{    \{ .name = \textcolor{stringliteral}{"{}medicalAgentTask"{}}, .stack\_size = AGENT\_TASK\_STACK\_SIZE, .priority = (osPriority\_t) osPriorityNormal, \},}
+\DoxyCodeLine{    \{ .name = \textcolor{stringliteral}{"{}policeAgentTask"{}}, .stack\_size = AGENT\_TASK\_STACK\_SIZE, .priority = (osPriority\_t) osPriorityNormal, \},}
+\DoxyCodeLine{    \{ .name = \textcolor{stringliteral}{"{}fireAgentTask"{}}, .stack\_size = AGENT\_TASK\_STACK\_SIZE, .priority = (osPriority\_t) osPriorityNormal, \},}
+\DoxyCodeLine{    \{ .name = \textcolor{stringliteral}{"{}covidAgentTask"{}}, .stack\_size = AGENT\_TASK\_STACK\_SIZE, .priority = (osPriority\_t) osPriorityNormal, \},}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_gad6f23cd968d91d127628debb6d57e39c}\label{group__City__Dispatch_gad6f23cd968d91d127628debb6d57e39c}} 
+\index{City\_Dispatch@{City\_Dispatch}!controlTask\_attributes@{controlTask\_attributes}}
+\index{controlTask\_attributes@{controlTask\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{controlTask\_attributes}{controlTask\_attributes}}
+{\footnotesize\ttfamily const os\+Thread\+Attr\+\_\+t control\+Task\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}controlTask"{}},}
+\DoxyCodeLine{  .stack\_size = TASK\_STACK\_SIZE*2,}
+\DoxyCodeLine{  .priority = (osPriority\_t) CONTROL\_PRIORITY,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}\label{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}} 
+\index{City\_Dispatch@{City\_Dispatch}!DELAY\_10MS\_TICKS@{DELAY\_10MS\_TICKS}}
+\index{DELAY\_10MS\_TICKS@{DELAY\_10MS\_TICKS}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{DELAY\_10MS\_TICKS}{DELAY\_10MS\_TICKS}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Tick\+Type\+\_\+t DELAY\+\_\+10\+MS\+\_\+\+TICKS = pd\+MS\+\_\+\+TO\+\_\+\+TICKS(10)}
+
+An assortment of pre-\/determined tick delay durations, to avoid unnecessarily cluttering functions (and stacks) with commonly used delay times. \mbox{\Hypertarget{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}\label{group__City__Dispatch_ga43c95861f171c72e5861a2535c293ac0}} 
+\index{City\_Dispatch@{City\_Dispatch}!DELAY\_10MS\_TICKS@{DELAY\_10MS\_TICKS}}
+\index{DELAY\_10MS\_TICKS@{DELAY\_10MS\_TICKS}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{DELAY\_10MS\_TICKS}{DELAY\_10MS\_TICKS}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Tick\+Type\+\_\+t DELAY\+\_\+10\+MS\+\_\+\+TICKS\hspace{0.3cm}{\ttfamily [extern]}}
+
+An assortment of pre-\/determined tick delay durations, to avoid unnecessarily cluttering functions (and stacks) with commonly used delay times. \mbox{\Hypertarget{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}\label{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}} 
+\index{City\_Dispatch@{City\_Dispatch}!departmentAgentCounts@{departmentAgentCounts}}
+\index{departmentAgentCounts@{departmentAgentCounts}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{departmentAgentCounts}{departmentAgentCounts}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const uint8\+\_\+t department\+Agent\+Counts\mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]} = \{4, 3, 2, 4\}}
+
+The pre-\/determined number of resources assigned to each city department, indexed by department codes (which are conveniently also zero-\/indexed). \mbox{\Hypertarget{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}\label{group__City__Dispatch_gad1456ac3e3b2aa4d1e0f165ab41b5ced}} 
+\index{City\_Dispatch@{City\_Dispatch}!departmentAgentCounts@{departmentAgentCounts}}
+\index{departmentAgentCounts@{departmentAgentCounts}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{departmentAgentCounts}{departmentAgentCounts}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const uint8\+\_\+t department\+Agent\+Counts\mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}\hspace{0.3cm}{\ttfamily [extern]}}
+
+The pre-\/determined number of resources assigned to each city department, indexed by department codes (which are conveniently also zero-\/indexed). \mbox{\Hypertarget{group__City__Dispatch_ga55e2d4e36f9e4c97ac0dc588c88c6971}\label{group__City__Dispatch_ga55e2d4e36f9e4c97ac0dc588c88c6971}} 
+\index{City\_Dispatch@{City\_Dispatch}!eventTemplates@{eventTemplates}}
+\index{eventTemplates@{eventTemplates}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{eventTemplates}{eventTemplates}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structCityEventTemplate}{City\+Event\+Template\+\_\+t}} event\+Templates\mbox{[}NUM\+\_\+\+EVENT\+\_\+\+TEMPLATES\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \{ EVENT\_LOW,    600, 1200, \textcolor{stringliteral}{"{}Stubbed Toe"{}},       \{1, 0, 0, 0, 0, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_NORMAL, 20,  50,   \textcolor{stringliteral}{"{}Work Accident"{}},     \{2, 3, 0, 0, 0, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_HIGH,   60,  120,  \textcolor{stringliteral}{"{}Violent Crime"{}},     \{3, 3, 4, 4, 6, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_LOW,    20,  40,   \textcolor{stringliteral}{"{}Noise Complaint"{}},   \{5, 0, 0, 0, 0, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_HIGH,   50,  100,  \textcolor{stringliteral}{"{}Vehicle Crash"{}},     \{2, 2, 3, 3, 5, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_HIGH,   10,  40,   \textcolor{stringliteral}{"{}Serial Arsonist"{}},   \{4, 4, 7, 7, 9, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_HIGH,   60,  100,  \textcolor{stringliteral}{"{}Factory Fire"{}},      \{2, 3, 3, 3, 8, 8, 9, 9\} \},}
+\DoxyCodeLine{    \{ EVENT\_NORMAL, 80,  100,  \textcolor{stringliteral}{"{}Covid-\/19 Case"{}},     \{2, 10, 11, 0, 0, 0, 0, 0\} \},}
+\DoxyCodeLine{    \{ EVENT\_HIGH,   80,  100,  \textcolor{stringliteral}{"{}Covid-\/19 Outbreak"{}}, \{2, 2, 2, 10, 10, 10, 11, 11\} \},}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga7e42009b49e5800b7100de24f9b9a31e}\label{group__City__Dispatch_ga7e42009b49e5800b7100de24f9b9a31e}} 
+\index{City\_Dispatch@{City\_Dispatch}!eventTrackerMutex\_attributes@{eventTrackerMutex\_attributes}}
+\index{eventTrackerMutex\_attributes@{eventTrackerMutex\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{eventTrackerMutex\_attributes}{eventTrackerMutex\_attributes}}
+{\footnotesize\ttfamily const os\+Mutex\+Attr\+\_\+t event\+Tracker\+Mutex\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}eventTrackerMutex"{}},}
+\DoxyCodeLine{  .cb\_mem = \&eventTrackerMutexControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(eventTrackerMutexControlBlock),}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga7188e6f5b212d478de2c24786393bf74}\label{group__City__Dispatch_ga7188e6f5b212d478de2c24786393bf74}} 
+\index{City\_Dispatch@{City\_Dispatch}!inboxHighPriorityQueue\_attributes@{inboxHighPriorityQueue\_attributes}}
+\index{inboxHighPriorityQueue\_attributes@{inboxHighPriorityQueue\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{inboxHighPriorityQueue\_attributes}{inboxHighPriorityQueue\_attributes}}
+{\footnotesize\ttfamily const os\+Message\+Queue\+Attr\+\_\+t inbox\+High\+Priority\+Queue\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}inboxHighPriorityQueue"{}},}
+\DoxyCodeLine{  .cb\_mem = \&inboxHighPriorityQueueControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(inboxHighPriorityQueueControlBlock),}
+\DoxyCodeLine{  .mq\_mem = \&inboxHighPriorityQueueBuffer,}
+\DoxyCodeLine{  .mq\_size = \textcolor{keyword}{sizeof}(inboxHighPriorityQueueBuffer)}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga01ac80f5ee1f321be3a2ded9ae8b673d}\label{group__City__Dispatch_ga01ac80f5ee1f321be3a2ded9ae8b673d}} 
+\index{City\_Dispatch@{City\_Dispatch}!inboxMediumPriorityQueue\_attributes@{inboxMediumPriorityQueue\_attributes}}
+\index{inboxMediumPriorityQueue\_attributes@{inboxMediumPriorityQueue\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{inboxMediumPriorityQueue\_attributes}{inboxMediumPriorityQueue\_attributes}}
+{\footnotesize\ttfamily const os\+Message\+Queue\+Attr\+\_\+t inbox\+Medium\+Priority\+Queue\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}inboxMediumPriorityQueue"{}},}
+\DoxyCodeLine{  .cb\_mem = \&inboxMediumPriorityQueueControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(inboxMediumPriorityQueueControlBlock),}
+\DoxyCodeLine{  .mq\_mem = \&inboxMediumPriorityQueueBuffer,}
+\DoxyCodeLine{  .mq\_size = \textcolor{keyword}{sizeof}(inboxMediumPriorityQueueBuffer)}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga336062e41c89d0a15112ffe72771dc06}\label{group__City__Dispatch_ga336062e41c89d0a15112ffe72771dc06}} 
+\index{City\_Dispatch@{City\_Dispatch}!jobTemplates@{jobTemplates}}
+\index{jobTemplates@{jobTemplates}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{jobTemplates}{jobTemplates}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structCityJobTemplate}{City\+Job\+Template\+\_\+t}} job\+Templates\mbox{[}NUM\+\_\+\+JOB\+\_\+\+TEMPLATES\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \{ DEPT\_EMPTY, 0, 0, \textcolor{stringliteral}{"{}NULL JOB"{}} \},}
+\DoxyCodeLine{    \{ MEDICAL, 2,  5,   \textcolor{stringliteral}{"{}Ambulance Ride"{}} \},}
+\DoxyCodeLine{    \{ MEDICAL, 4,  8,   \textcolor{stringliteral}{"{}Medical Evacuation"{}} \},}
+\DoxyCodeLine{    \{ MEDICAL, 6,  12,  \textcolor{stringliteral}{"{}Field Treatment"{}} \},}
+\DoxyCodeLine{    \{ POLICE,  2,  4,   \textcolor{stringliteral}{"{}Suspect Arrest"{}} \},}
+\DoxyCodeLine{    \{ POLICE,  2,  4,   \textcolor{stringliteral}{"{}Low Stakes Enforcement"{}} \},}
+\DoxyCodeLine{    \{ POLICE,  5,  10,  \textcolor{stringliteral}{"{}High Stakes Enforcement"{}} \},}
+\DoxyCodeLine{    \{ FIRE,    1,  4,   \textcolor{stringliteral}{"{}Minor Fire Suppression"{}} \},}
+\DoxyCodeLine{    \{ FIRE,    4,  8,   \textcolor{stringliteral}{"{}Rescue"{}} \},}
+\DoxyCodeLine{    \{ FIRE,    6,  16,  \textcolor{stringliteral}{"{}Major Fire Suppression"{}} \},}
+\DoxyCodeLine{    \{ COVID,   7,  14,  \textcolor{stringliteral}{"{}Covid-\/19 Quarantine"{}} \},}
+\DoxyCodeLine{    \{ COVID,   14, 28,  \textcolor{stringliteral}{"{}Covid-\/19 Treatment"{}} \},}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_ga375170523562ba871f90e27ba9da3f88}\label{group__City__Dispatch_ga375170523562ba871f90e27ba9da3f88}} 
+\index{City\_Dispatch@{City\_Dispatch}!printSpoolMutex\_attributes@{printSpoolMutex\_attributes}}
+\index{printSpoolMutex\_attributes@{printSpoolMutex\_attributes}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{printSpoolMutex\_attributes}{printSpoolMutex\_attributes}}
+{\footnotesize\ttfamily const os\+Mutex\+Attr\+\_\+t print\+Spool\+Mutex\+\_\+attributes}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{  .name = \textcolor{stringliteral}{"{}printSpoolMutex"{}},}
+\DoxyCodeLine{  .cb\_mem = \&printSpoolMutexControlBlock,}
+\DoxyCodeLine{  .cb\_size = \textcolor{keyword}{sizeof}(printSpoolMutexControlBlock),}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{group__City__Dispatch_gab198827907cd6e0ffe10cf4398583e66}\label{group__City__Dispatch_gab198827907cd6e0ffe10cf4398583e66}} 
+\index{City\_Dispatch@{City\_Dispatch}!printSpoolMutexHandle@{printSpoolMutexHandle}}
+\index{printSpoolMutexHandle@{printSpoolMutexHandle}!City\_Dispatch@{City\_Dispatch}}
+\doxysubsubsection{\texorpdfstring{printSpoolMutexHandle}{printSpoolMutexHandle}}
+{\footnotesize\ttfamily os\+Mutex\+Id\+\_\+t print\+Spool\+Mutex\+Handle}
+
+A mutex object used to manage access to the serial printer queue, as different modules may attempt to access it concurrently. 

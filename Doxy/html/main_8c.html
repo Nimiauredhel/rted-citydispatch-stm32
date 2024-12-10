@@ -68,6 +68,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
@@ -76,21 +77,51 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>: Main program body  
+<p>Program entry point.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;main.h&quot;</code><br />
 <code>#include &quot;cmsis_os.h&quot;</code><br />
+<code>#include &quot;city_dispatch/simulation_control.h&quot;</code><br />
+<code>#include &quot;city_dispatch/utils/date_time.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for main.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="main_8c__incl.png" border="0" usemap="#aSrc_2main_8c" alt=""/></div>
 <map name="aSrc_2main_8c" id="aSrc_2main_8c">
-<area shape="rect" title=": Main program body" alt="" coords="45,5,136,32"/>
-<area shape="rect" title=" " alt="" coords="5,80,72,107"/>
-<area shape="rect" title=" " alt="" coords="97,80,191,107"/>
+<area shape="rect" title="Program entry point." alt="" coords="277,5,368,32"/>
+<area shape="rect" title=" " alt="" coords="5,617,72,644"/>
+<area shape="rect" title=" " alt="" coords="1373,767,1467,793"/>
+<area shape="rect" href="simulation__control_8h_source.html" title=" " alt="" coords="456,80,637,121"/>
+<area shape="rect" href="date__time_8h_source.html" title=" " alt="" coords="110,543,242,569"/>
+<area shape="rect" title=" " alt="" coords="525,767,656,793"/>
+<area shape="rect" title=" " alt="" coords="214,169,317,196"/>
+<area shape="rect" href="city__dispatcher_8h_source.html" title=" " alt="" coords="926,169,1058,196"/>
+<area shape="rect" href="city__inbox_8h_source.html" title=" " alt="" coords="925,393,1027,420"/>
+<area shape="rect" href="serial__printer_8h_source.html" title=" " alt="" coords="787,468,906,495"/>
+<area shape="rect" href="city__departments_8h_source.html" title=" " alt="" coords="483,244,631,271"/>
+<area shape="rect" href="city__event__gen_8h_source.html" title=" " alt="" coords="1380,319,1513,345"/>
+<area shape="rect" href="simulation__state_8h.html" title="[Unimplemented] The &quot;simulation state&quot; structure will hold up&#45;to&#45;date data about the current state of..." alt="" coords="341,169,483,196"/>
+<area shape="rect" title=" " alt="" coords="525,692,592,719"/>
+<area shape="rect" href="simulation__defs_8h_source.html" title=" " alt="" coords="931,617,1069,644"/>
+<area shape="rect" href="city__events_8h_source.html" title=" " alt="" coords="1289,692,1399,719"/>
+<area shape="rect" href="city__event__tracker_8h_source.html" title=" " alt="" coords="1102,393,1255,420"/>
+<area shape="rect" title=" " alt="" coords="1087,692,1169,719"/>
+<area shape="rect" href="simulation__constants_8h_source.html" title=" " alt="" coords="672,543,845,569"/>
+<area shape="rect" href="serial__output_8h_source.html" title=" " alt="" coords="294,617,445,644"/>
+<area shape="rect" title=" " alt="" coords="379,692,450,719"/>
+<area shape="rect" title=" " alt="" coords="147,617,218,644"/>
+<area shape="rect" title=" " alt="" coords="1083,468,1154,495"/>
+<area shape="rect" href="city__agents_8h_source.html" title=" " alt="" coords="488,319,597,345"/>
+<area shape="rect" title=" " alt="" coords="1534,393,1671,420"/>
 </map>
 </div>
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a4f58c8ea86e1d4c14a0a027eec6896da"><td class="memItemLeft" align="right" valign="top"><a id="a4f58c8ea86e1d4c14a0a027eec6896da"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>RTC_BKUP_COMPARE</b>&#160;&#160;&#160;0x1234</td></tr>
+<tr class="separator:a4f58c8ea86e1d4c14a0a027eec6896da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a5bee4f77f84f0c92aeb06fdccdb82573"><td class="memItemLeft" align="right" valign="top"><a id="a5bee4f77f84f0c92aeb06fdccdb82573"></a>
@@ -102,18 +133,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a70af21c671abfcc773614a9a4f63d920"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a70af21c671abfcc773614a9a4f63d920">SystemClock_Config</a> (void)</td></tr>
 <tr class="memdesc:a70af21c671abfcc773614a9a4f63d920"><td class="mdescLeft">&#160;</td><td class="mdescRight">System Clock Configuration.  <a href="main_8c.html#a70af21c671abfcc773614a9a4f63d920">More...</a><br /></td></tr>
 <tr class="separator:a70af21c671abfcc773614a9a4f63d920"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af475b2bcffc8ac53bc8e5eb934fc1c88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#af475b2bcffc8ac53bc8e5eb934fc1c88">EventGenTask</a> (void *argument)</td></tr>
-<tr class="memdesc:af475b2bcffc8ac53bc8e5eb934fc1c88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function implementing the eventGenTask thread.  <a href="main_8c.html#af475b2bcffc8ac53bc8e5eb934fc1c88">More...</a><br /></td></tr>
-<tr class="separator:af475b2bcffc8ac53bc8e5eb934fc1c88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76fd42ab5eea65dfe446816f0beb1595"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a76fd42ab5eea65dfe446816f0beb1595">DispatcherTask</a> (void *argument)</td></tr>
-<tr class="memdesc:a76fd42ab5eea65dfe446816f0beb1595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function implementing the dispatcherTask thread.  <a href="main_8c.html#a76fd42ab5eea65dfe446816f0beb1595">More...</a><br /></td></tr>
-<tr class="separator:a76fd42ab5eea65dfe446816f0beb1595"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2abd7613d2a0ed87b890f90473043d4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a2abd7613d2a0ed87b890f90473043d4a">LoggerTask</a> (void *argument)</td></tr>
-<tr class="memdesc:a2abd7613d2a0ed87b890f90473043d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function implementing the loggerTask thread.  <a href="main_8c.html#a2abd7613d2a0ed87b890f90473043d4a">More...</a><br /></td></tr>
-<tr class="separator:a2abd7613d2a0ed87b890f90473043d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6c52cdee7e7dcebc89d6c59e2746413"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#aa6c52cdee7e7dcebc89d6c59e2746413">UserInputTask</a> (void *argument)</td></tr>
-<tr class="memdesc:aa6c52cdee7e7dcebc89d6c59e2746413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function implementing the userInputTask thread.  <a href="main_8c.html#aa6c52cdee7e7dcebc89d6c59e2746413">More...</a><br /></td></tr>
-<tr class="separator:aa6c52cdee7e7dcebc89d6c59e2746413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99d0fdb0434092bcb24d9c9af917e4e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a99d0fdb0434092bcb24d9c9af917e4e9">StartDefaultTask</a> (void *argument)</td></tr>
+<tr class="memdesc:a99d0fdb0434092bcb24d9c9af917e4e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function implementing the defaultTask thread.  <a href="main_8c.html#a99d0fdb0434092bcb24d9c9af917e4e9">More...</a><br /></td></tr>
+<tr class="separator:a99d0fdb0434092bcb24d9c9af917e4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a840291bc02cba5474a4cb46a9b9566fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a840291bc02cba5474a4cb46a9b9566fe">main</a> (void)</td></tr>
 <tr class="memdesc:a840291bc02cba5474a4cb46a9b9566fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">The application entry point.  <a href="main_8c.html#a840291bc02cba5474a4cb46a9b9566fe">More...</a><br /></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,101 +151,36 @@ Variables</h2></td></tr>
 <tr class="memitem:af7b2c26e44dadaaa798a5c3d82914ba7"><td class="memItemLeft" align="right" valign="top"><a id="af7b2c26e44dadaaa798a5c3d82914ba7"></a>
 I2C_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>hi2c1</b></td></tr>
 <tr class="separator:af7b2c26e44dadaaa798a5c3d82914ba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac2dceb5bba58c53cf7a0be6934c4df6"><td class="memItemLeft" align="right" valign="top"><a id="aac2dceb5bba58c53cf7a0be6934c4df6"></a>
+<tr class="memitem:gaac2dceb5bba58c53cf7a0be6934c4df6"><td class="memItemLeft" align="right" valign="top">
 RNG_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>hrng</b></td></tr>
-<tr class="separator:aac2dceb5bba58c53cf7a0be6934c4df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0c7fca836406ade332e1e3f1039d8ab"><td class="memItemLeft" align="right" valign="top"><a id="aa0c7fca836406ade332e1e3f1039d8ab"></a>
+<tr class="separator:gaac2dceb5bba58c53cf7a0be6934c4df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0c7fca836406ade332e1e3f1039d8ab"><td class="memItemLeft" align="right" valign="top">
 RTC_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>hrtc</b></td></tr>
-<tr class="separator:aa0c7fca836406ade332e1e3f1039d8ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7c63c1b0f65db92b6a4ea19edf957e1"><td class="memItemLeft" align="right" valign="top"><a id="ab7c63c1b0f65db92b6a4ea19edf957e1"></a>
+<tr class="separator:gaa0c7fca836406ade332e1e3f1039d8ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab7c63c1b0f65db92b6a4ea19edf957e1"><td class="memItemLeft" align="right" valign="top">
 UART_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>huart3</b></td></tr>
-<tr class="separator:ab7c63c1b0f65db92b6a4ea19edf957e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:gab7c63c1b0f65db92b6a4ea19edf957e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ec0d70a6cb9406d997fb3d006cc940d"><td class="memItemLeft" align="right" valign="top"><a id="a3ec0d70a6cb9406d997fb3d006cc940d"></a>
 PCD_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>hpcd_USB_OTG_FS</b></td></tr>
 <tr class="separator:a3ec0d70a6cb9406d997fb3d006cc940d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3367f4d39eb563401e0d809dc11b9655"><td class="memItemLeft" align="right" valign="top"><a id="a3367f4d39eb563401e0d809dc11b9655"></a>
-osThreadId_t&#160;</td><td class="memItemRight" valign="bottom"><b>eventGenTaskHandle</b></td></tr>
-<tr class="separator:a3367f4d39eb563401e0d809dc11b9655"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e01eb02d48412135f7649a3adda554f"><td class="memItemLeft" align="right" valign="top"><a id="a6e01eb02d48412135f7649a3adda554f"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>eventGenTaskBuffer</b> [128]</td></tr>
-<tr class="separator:a6e01eb02d48412135f7649a3adda554f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe2de154962e9b7635ae7f85d30a5554"><td class="memItemLeft" align="right" valign="top"><a id="afe2de154962e9b7635ae7f85d30a5554"></a>
-osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>eventGenTaskControlBlock</b></td></tr>
-<tr class="separator:afe2de154962e9b7635ae7f85d30a5554"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab56c561d6aebf1268b0448dc1f2d6c17"><td class="memItemLeft" align="right" valign="top">const osThreadAttr_t&#160;</td><td class="memItemRight" valign="bottom"><b>eventGenTask_attributes</b></td></tr>
-<tr class="separator:ab56c561d6aebf1268b0448dc1f2d6c17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73c0584c9a0db2c0b7504839139f6388"><td class="memItemLeft" align="right" valign="top"><a id="a73c0584c9a0db2c0b7504839139f6388"></a>
-osThreadId_t&#160;</td><td class="memItemRight" valign="bottom"><b>dispatcherTaskHandle</b></td></tr>
-<tr class="separator:a73c0584c9a0db2c0b7504839139f6388"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0307327f59edd302a9fb70b5feca699"><td class="memItemLeft" align="right" valign="top"><a id="ad0307327f59edd302a9fb70b5feca699"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>dispatcherTaskBuffer</b> [128]</td></tr>
-<tr class="separator:ad0307327f59edd302a9fb70b5feca699"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd6454f74359ac27aea1dea7d239e12f"><td class="memItemLeft" align="right" valign="top"><a id="acd6454f74359ac27aea1dea7d239e12f"></a>
-osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>dispatcherTaskControlBlock</b></td></tr>
-<tr class="separator:acd6454f74359ac27aea1dea7d239e12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11bb5110b251f4265f06d3e59252359a"><td class="memItemLeft" align="right" valign="top">const osThreadAttr_t&#160;</td><td class="memItemRight" valign="bottom"><b>dispatcherTask_attributes</b></td></tr>
-<tr class="separator:a11bb5110b251f4265f06d3e59252359a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e388479fe5c044beb8e4881c6346122"><td class="memItemLeft" align="right" valign="top"><a id="a2e388479fe5c044beb8e4881c6346122"></a>
-osThreadId_t&#160;</td><td class="memItemRight" valign="bottom"><b>loggerTaskHandle</b></td></tr>
-<tr class="separator:a2e388479fe5c044beb8e4881c6346122"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64c77ec82238fecbb15b75d5305551ae"><td class="memItemLeft" align="right" valign="top"><a id="a64c77ec82238fecbb15b75d5305551ae"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>loggerTaskBuffer</b> [128]</td></tr>
-<tr class="separator:a64c77ec82238fecbb15b75d5305551ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2631d86b7bd12b570cf2b9b55c150daf"><td class="memItemLeft" align="right" valign="top"><a id="a2631d86b7bd12b570cf2b9b55c150daf"></a>
-osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>loggerTaskControlBlock</b></td></tr>
-<tr class="separator:a2631d86b7bd12b570cf2b9b55c150daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4490fa52f97a3b348bf5e4c6995e41f1"><td class="memItemLeft" align="right" valign="top">const osThreadAttr_t&#160;</td><td class="memItemRight" valign="bottom"><b>loggerTask_attributes</b></td></tr>
-<tr class="separator:a4490fa52f97a3b348bf5e4c6995e41f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac728d0856a9248edd3378e1d90cfb6e4"><td class="memItemLeft" align="right" valign="top"><a id="ac728d0856a9248edd3378e1d90cfb6e4"></a>
-osThreadId_t&#160;</td><td class="memItemRight" valign="bottom"><b>userInputTaskHandle</b></td></tr>
-<tr class="separator:ac728d0856a9248edd3378e1d90cfb6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5edcb63a28b6286a96ed50c3e70054a"><td class="memItemLeft" align="right" valign="top"><a id="ab5edcb63a28b6286a96ed50c3e70054a"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>userInputTaskBuffer</b> [128]</td></tr>
-<tr class="separator:ab5edcb63a28b6286a96ed50c3e70054a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a320b96a627cd43467141168b7c3988df"><td class="memItemLeft" align="right" valign="top"><a id="a320b96a627cd43467141168b7c3988df"></a>
-osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>userInputTaskControlBlock</b></td></tr>
-<tr class="separator:a320b96a627cd43467141168b7c3988df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82e0f338a0535b8208c4ddc7874109ab"><td class="memItemLeft" align="right" valign="top">const osThreadAttr_t&#160;</td><td class="memItemRight" valign="bottom"><b>userInputTask_attributes</b></td></tr>
-<tr class="separator:a82e0f338a0535b8208c4ddc7874109ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a263905468b0c37de4ee5e50ede4e74"><td class="memItemLeft" align="right" valign="top"><a id="a6a263905468b0c37de4ee5e50ede4e74"></a>
+osThreadId_t&#160;</td><td class="memItemRight" valign="bottom"><b>defaultTaskHandle</b></td></tr>
+<tr class="separator:a6a263905468b0c37de4ee5e50ede4e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef1a80eb9a31084b335d4b71c24e001"><td class="memItemLeft" align="right" valign="top"><a id="a0ef1a80eb9a31084b335d4b71c24e001"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>defaultTaskBuffer</b> [128]</td></tr>
+<tr class="separator:a0ef1a80eb9a31084b335d4b71c24e001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca18732f09ae696fd34b94d393dc9a42"><td class="memItemLeft" align="right" valign="top"><a id="aca18732f09ae696fd34b94d393dc9a42"></a>
+osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>defaultTaskControlBlock</b></td></tr>
+<tr class="separator:aca18732f09ae696fd34b94d393dc9a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25fbb54afdba71c24ba51ed50166ac8d"><td class="memItemLeft" align="right" valign="top">const osThreadAttr_t&#160;</td><td class="memItemRight" valign="bottom"><b>defaultTask_attributes</b></td></tr>
+<tr class="separator:a25fbb54afdba71c24ba51ed50166ac8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>: Main program body </p>
+<div class="textblock"><p>Program entry point. </p>
 <dl class="section attention"><dt>Attention</dt><dd></dd></dl>
 <p>Copyright (c) 2024 STMicroelectronics. All rights reserved.</p>
 <p>This software is licensed under terms that can be found in the LICENSE file in the root directory of this software component. If no LICENSE file comes with this software, it is provided AS-IS. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a76fd42ab5eea65dfe446816f0beb1595"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76fd42ab5eea65dfe446816f0beb1595">&#9670;&nbsp;</a></span>DispatcherTask()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DispatcherTask </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>argument</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function implementing the dispatcherTask thread. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argument</td><td>Not used </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a1730ffe1e560465665eb47d9264826f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1730ffe1e560465665eb47d9264826f9">&#9670;&nbsp;</a></span>Error_Handler()</h2>
 
@@ -241,38 +198,6 @@ osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>userIn
 </div><div class="memdoc">
 
 <p>This function is executed in case of error occurrence. </p>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af475b2bcffc8ac53bc8e5eb934fc1c88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af475b2bcffc8ac53bc8e5eb934fc1c88">&#9670;&nbsp;</a></span>EventGenTask()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void EventGenTask </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>argument</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function implementing the eventGenTask thread. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argument</td><td>Not used </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
     <tr><td class="paramname">None</td><td></td></tr>
@@ -315,38 +240,6 @@ osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>userIn
 
 </div>
 </div>
-<a id="a2abd7613d2a0ed87b890f90473043d4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2abd7613d2a0ed87b890f90473043d4a">&#9670;&nbsp;</a></span>LoggerTask()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LoggerTask </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>argument</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function implementing the loggerTask thread. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argument</td><td>Not used </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a840291bc02cba5474a4cb46a9b9566fe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a840291bc02cba5474a4cb46a9b9566fe">&#9670;&nbsp;</a></span>main()</h2>
 
@@ -367,6 +260,38 @@ osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>userIn
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
     <tr><td class="paramname">int</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a99d0fdb0434092bcb24d9c9af917e4e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99d0fdb0434092bcb24d9c9af917e4e9">&#9670;&nbsp;</a></span>StartDefaultTask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void StartDefaultTask </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>argument</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function implementing the defaultTask thread. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argument</td><td>Not used </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -403,122 +328,24 @@ osStaticThreadDef_t&#160;</td><td class="memItemRight" valign="bottom"><b>userIn
 
 </div>
 </div>
-<a id="aa6c52cdee7e7dcebc89d6c59e2746413"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6c52cdee7e7dcebc89d6c59e2746413">&#9670;&nbsp;</a></span>UserInputTask()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void UserInputTask </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>argument</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function implementing the userInputTask thread. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argument</td><td>Not used </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a11bb5110b251f4265f06d3e59252359a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11bb5110b251f4265f06d3e59252359a">&#9670;&nbsp;</a></span>dispatcherTask_attributes</h2>
+<a id="a25fbb54afdba71c24ba51ed50166ac8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25fbb54afdba71c24ba51ed50166ac8d">&#9670;&nbsp;</a></span>defaultTask_attributes</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const osThreadAttr_t dispatcherTask_attributes</td>
+          <td class="memname">const osThreadAttr_t defaultTask_attributes</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">  .name = <span class="stringliteral">&quot;dispatcherTask&quot;</span>,</div>
-<div class="line">  .cb_mem = &amp;dispatcherTaskControlBlock,</div>
-<div class="line">  .cb_size = <span class="keyword">sizeof</span>(dispatcherTaskControlBlock),</div>
-<div class="line">  .stack_mem = &amp;dispatcherTaskBuffer[0],</div>
-<div class="line">  .stack_size = <span class="keyword">sizeof</span>(dispatcherTaskBuffer),</div>
-<div class="line">  .priority = (osPriority_t) osPriorityNormal,</div>
-<div class="line">}</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="ab56c561d6aebf1268b0448dc1f2d6c17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab56c561d6aebf1268b0448dc1f2d6c17">&#9670;&nbsp;</a></span>eventGenTask_attributes</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const osThreadAttr_t eventGenTask_attributes</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">  .name = <span class="stringliteral">&quot;eventGenTask&quot;</span>,</div>
-<div class="line">  .cb_mem = &amp;eventGenTaskControlBlock,</div>
-<div class="line">  .cb_size = <span class="keyword">sizeof</span>(eventGenTaskControlBlock),</div>
-<div class="line">  .stack_mem = &amp;eventGenTaskBuffer[0],</div>
-<div class="line">  .stack_size = <span class="keyword">sizeof</span>(eventGenTaskBuffer),</div>
-<div class="line">  .priority = (osPriority_t) osPriorityNormal,</div>
-<div class="line">}</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a4490fa52f97a3b348bf5e4c6995e41f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4490fa52f97a3b348bf5e4c6995e41f1">&#9670;&nbsp;</a></span>loggerTask_attributes</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const osThreadAttr_t loggerTask_attributes</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">  .name = <span class="stringliteral">&quot;loggerTask&quot;</span>,</div>
-<div class="line">  .cb_mem = &amp;loggerTaskControlBlock,</div>
-<div class="line">  .cb_size = <span class="keyword">sizeof</span>(loggerTaskControlBlock),</div>
-<div class="line">  .stack_mem = &amp;loggerTaskBuffer[0],</div>
-<div class="line">  .stack_size = <span class="keyword">sizeof</span>(loggerTaskBuffer),</div>
-<div class="line">  .priority = (osPriority_t) osPriorityNormal,</div>
-<div class="line">}</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a82e0f338a0535b8208c4ddc7874109ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82e0f338a0535b8208c4ddc7874109ab">&#9670;&nbsp;</a></span>userInputTask_attributes</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const osThreadAttr_t userInputTask_attributes</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">  .name = <span class="stringliteral">&quot;userInputTask&quot;</span>,</div>
-<div class="line">  .cb_mem = &amp;userInputTaskControlBlock,</div>
-<div class="line">  .cb_size = <span class="keyword">sizeof</span>(userInputTaskControlBlock),</div>
-<div class="line">  .stack_mem = &amp;userInputTaskBuffer[0],</div>
-<div class="line">  .stack_size = <span class="keyword">sizeof</span>(userInputTaskBuffer),</div>
+<div class="line">  .name = <span class="stringliteral">&quot;defaultTask&quot;</span>,</div>
+<div class="line">  .cb_mem = &amp;defaultTaskControlBlock,</div>
+<div class="line">  .cb_size = <span class="keyword">sizeof</span>(defaultTaskControlBlock),</div>
+<div class="line">  .stack_mem = &amp;defaultTaskBuffer[0],</div>
+<div class="line">  .stack_size = <span class="keyword">sizeof</span>(defaultTaskBuffer),</div>
 <div class="line">  .priority = (osPriority_t) osPriorityNormal,</div>
 <div class="line">}</div>
 </div><!-- fragment -->

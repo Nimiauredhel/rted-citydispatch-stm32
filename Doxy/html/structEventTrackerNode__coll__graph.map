@@ -1,0 +1,5 @@
+<map id="EventTrackerNode" name="EventTrackerNode">
+<area shape="rect" id="node1" title=" " alt="" coords="5,184,144,211"/>
+<area shape="rect" id="node2" href="$structCityEvent.html" title=" " alt="" coords="32,95,117,121"/>
+<area shape="rect" id="node3" href="$structCityJob.html" title=" " alt="" coords="41,5,109,32"/>
+</map>

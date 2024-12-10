@@ -1,0 +1,36 @@
+\hypertarget{city__departments_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+departments.c File Reference}
+\label{city__departments_8c}\index{Src/city\_dispatch/city\_departments.c@{Src/city\_dispatch/city\_departments.c}}
+
+
+Implements the \char`\"{}\+City Department\char`\"{} task, which is run in multiple instances. A city department is associated with several resources (\char`\"{}\+Agent\char`\"{} tasks), and the department task\textquotesingle{}s job is to assign incoming work to these agents as it comes in.  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+departments.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+departments.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__departments_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries city\+\_\+departments\+\_\+initialize} (void)
+\item 
+void {\bfseries city\+\_\+departments\+\_\+start} ()
+\item 
+void {\bfseries city\+\_\+departments\+\_\+stop} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Department\+Load\+\_\+t {\bfseries department\+\_\+loads} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\item 
+os\+Message\+Queue\+Id\+\_\+t $\ast$ {\bfseries department\+\_\+inboxes} \mbox{[}NUM\+\_\+\+DEPARTMENTS\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implements the \char`\"{}\+City Department\char`\"{} task, which is run in multiple instances. A city department is associated with several resources (\char`\"{}\+Agent\char`\"{} tasks), and the department task\textquotesingle{}s job is to assign incoming work to these agents as it comes in. 
+

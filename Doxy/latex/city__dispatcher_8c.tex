@@ -1,0 +1,29 @@
+\hypertarget{city__dispatcher_8c}{}\doxysection{Src/city\+\_\+dispatch/city\+\_\+dispatcher.c File Reference}
+\label{city__dispatcher_8c}\index{Src/city\_dispatch/city\_dispatcher.c@{Src/city\_dispatch/city\_dispatcher.c}}
+
+
+Implements the \char`\"{}\+City Dispatcher\char`\"{} task, which periodically reads incoming \char`\"{}city events\char`\"{} from several \char`\"{}\+City Inbox\char`\"{} event queues, stores them in the \char`\"{}event tracker\char`\"{}, then breaks them up into individual jobs, which are then forwarded to the appropriate \char`\"{}city departments\char`\"{} for further handling.  
+
+
+{\ttfamily \#include \char`\"{}city\+\_\+dispatcher.\+h\char`\"{}}\newline
+Include dependency graph for city\+\_\+dispatcher.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{city__dispatcher_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries city\+\_\+dispatcher\+\_\+initialize} ()
+\item 
+void {\bfseries city\+\_\+dispatcher\+\_\+start} ()
+\item 
+void {\bfseries city\+\_\+dispatcher\+\_\+stop} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implements the \char`\"{}\+City Dispatcher\char`\"{} task, which periodically reads incoming \char`\"{}city events\char`\"{} from several \char`\"{}\+City Inbox\char`\"{} event queues, stores them in the \char`\"{}event tracker\char`\"{}, then breaks them up into individual jobs, which are then forwarded to the appropriate \char`\"{}city departments\char`\"{} for further handling. 
+

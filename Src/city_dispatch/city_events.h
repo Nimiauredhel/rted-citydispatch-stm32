@@ -5,6 +5,10 @@
  *      Author: mickey
  */
 
+/** @addtogroup City_Dispatch
+  * @{
+  */
+
 #ifndef CITY_EVENTS_H_
 #define CITY_EVENTS_H_
 
@@ -83,3 +87,7 @@ extern const CityJobTemplate_t jobTemplates[NUM_JOB_TEMPLATES];
 extern const CityEventTemplate_t eventTemplates[NUM_EVENT_TEMPLATES];
 
 #endif /* CITY_EVENTS_H_ */
+
+/** 
+  * @}
+  */
