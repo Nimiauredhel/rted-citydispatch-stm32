@@ -9,8 +9,8 @@
   * @{
   */
 
-  ******************************************************************************
   /**
+  ******************************************************************************
   * @file : simulation_control.c
   * @brief The "Simulation Control" task and associated USART callback.
   * which together initialize the simulation, then receive and process user input
